@@ -140,6 +140,16 @@ feature -- Access - Nested Structures
 			end
 		end
 
+
+	item_at (a_index: INTEGER): detachable SIMPLE_JSON_VALUE
+			-- Get value at index wrapped in appropriate SIMPLE_JSON_VALUE type
+		require
+			valid_index: valid_index (a_index)
+		do
+			if attached json_array.i_th (a_index) as l_value then
+				Result := wrap_json_value (l_value)
+			end
+		end
 feature -- Modification (Append/Prepend)
 
 	append_string (a_value: STRING)
@@ -445,7 +455,7 @@ feature {NONE} -- Implementation
 			result_exists: attached Result
 		end
 
-feature {SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY, JSON_BUILDER} -- Implementation Access
+feature {SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY, JSON_BUILDER, JSON_SCHEMA_VALIDATOR} -- Implementation Access
 
 	internal_json_array: JSON_ARRAY
 			-- Direct access to underlying eJSON array for internal use

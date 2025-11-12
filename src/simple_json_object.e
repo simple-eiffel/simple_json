@@ -142,6 +142,16 @@ feature -- Access
 			end
 		end
 
+
+	item_at_key (a_key: STRING): detachable SIMPLE_JSON_VALUE
+			-- Get value for key wrapped in appropriate SIMPLE_JSON_VALUE type
+		require
+			not_empty_key: not a_key.is_empty
+		do
+			if attached json_object.item (a_key) as l_value then
+				Result := wrap_json_value (l_value)
+			end
+		end
 feature -- Modification (Basic)
 
 	put_string (a_key: STRING; a_value: STRING)
@@ -458,7 +468,7 @@ feature {NONE} -- Implementation
 			result_exists: attached Result
 		end
 
-feature {SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY, JSON_BUILDER} -- Implementation Access
+feature {SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY, JSON_BUILDER, JSON_SCHEMA_VALIDATOR} -- Implementation Access
 
 	internal_json_object: JSON_OBJECT
 			-- Direct access to underlying eJSON object for internal use

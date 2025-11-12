@@ -151,7 +151,6 @@ feature -- Test - Collections
 			-- Test simple OBJECT pretty printing
 		local
 			l_object: SIMPLE_JSON_OBJECT
-			l_expected: STRING
 			l_actual: STRING
 		do
 			create l_object.make_empty
