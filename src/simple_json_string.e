@@ -57,6 +57,14 @@ feature -- Conversion
 			Result := json_string.representation
 		end
 
+feature -- Output
+
+	to_pretty_string (a_indent_level: INTEGER): STRING
+			-- <Precursor>
+		do
+			Result := "%"" + value + "%""
+		end
+
 feature {NONE} -- Implementation
 
 	json_string: JSON_STRING

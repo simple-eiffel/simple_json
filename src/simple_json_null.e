@@ -49,6 +49,14 @@ feature -- Conversion
 			Result := json_null.representation
 		end
 
+feature -- Output
+
+	to_pretty_string (a_indent_level: INTEGER): STRING
+			-- <Precursor>
+		do
+			Result := "null"
+		end
+		
 feature {NONE} -- Implementation
 
 	json_null: JSON_NULL

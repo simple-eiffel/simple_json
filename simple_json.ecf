@@ -2,7 +2,6 @@
 <system xmlns="http://www.eiffel.com/developers/xml/configuration-1-23-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-23-0 http://www.eiffel.com/developers/xml/configuration-1-23-0.xsd" name="simple_json" uuid="C43DFE87-DAE3-4F85-8801-807151403E9F" library_target="simple_json">
 	<target name="simple_json">
 		<root all_classes="true"/>
-		<variable name="SYSTEM_PATH" value="D:\prod\simple_json"/>
 		<file_rule>
 			<exclude>/EIFGENs$</exclude>
 			<exclude>/\..*$</exclude>
@@ -12,18 +11,20 @@
 		</option>
 		<setting name="console_application" value="true"/>
 		<setting name="dead_code_removal" value="feature"/>
+		<variable name="SYSTEM_PATH" value="D:\prod\simple_json"/>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<library name="json" location="$ISE_LIBRARY\contrib\library\text\parser\json\library\json.ecf"/>
 		<cluster name="src" location=".\src\" recursive="true"/>
 	</target>
 	<target name="simple_json_tests" extends="simple_json">
 		<root class="APPLICATION" feature="make"/>
-		<variable name="SYSTEM_PATH" value="D:\prod\simple_json"/>
 		<option warning="warning">
 			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
 		</option>
 		<setting name="console_application" value="true"/>
 		<setting name="total_order_on_reals" value="true"/>
+		<variable name="SYSTEM_PATH" value="D:\prod\simple_json"/>
+		<library name="decimal" location="$ISE_LIBRARY\contrib\library\math\decimal\decimal\decimal.ecf"/>
 		<library name="testing" location="$ISE_LIBRARY\library\testing\testing.ecf"/>
 		<cluster name="test" location=".\testing\" recursive="true"/>
 	</target>

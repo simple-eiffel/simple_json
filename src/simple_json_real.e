@@ -59,6 +59,14 @@ feature -- Conversion
 			Result := json_number.representation
 		end
 
+feature -- Output
+
+	to_pretty_string (a_indent_level: INTEGER): STRING
+			-- <Precursor>
+		do
+			Result := value.out
+		end
+
 feature {NONE} -- Implementation
 
 	json_number: JSON_NUMBER

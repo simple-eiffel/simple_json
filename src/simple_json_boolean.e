@@ -57,6 +57,18 @@ feature -- Conversion
 			Result := json_boolean.representation
 		end
 
+feature -- Output
+
+	to_pretty_string (a_indent_level: INTEGER): STRING
+			-- <Precursor>
+		do
+			if value then
+				Result := "true"
+			else
+				Result := "false"
+			end
+		end
+
 feature {NONE} -- Implementation
 
 	json_boolean: JSON_BOOLEAN

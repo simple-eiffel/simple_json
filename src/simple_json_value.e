@@ -58,4 +58,38 @@ feature -- Conversion
 			result_not_void: Result /= Void
 		end
 
+feature -- Output
+
+	to_pretty_string (a_indent_level: INTEGER): STRING
+			-- Pretty-printed JSON string with `a_indent_level' indentation.
+			-- Each indent level adds one tab character.
+		require
+			non_negative_indent: a_indent_level >= 0
+		deferred
+		ensure
+			has_result: not Result.is_empty
+		end
+
+feature {NONE} -- Implementation
+
+	indent_string (a_level: INTEGER): STRING
+			-- Create indentation string with `a_level' tabs
+		require
+			non_negative: a_level >= 0
+		local
+			l_index: INTEGER
+		do
+			create Result.make_empty
+			from
+				l_index := 1
+			until
+				l_index > a_level
+			loop
+				Result.append_character ('%T')
+				l_index := l_index + 1
+			end
+		ensure
+			correct_length: Result.count = a_level
+		end
+		
 end

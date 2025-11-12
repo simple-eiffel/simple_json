@@ -295,7 +295,7 @@ feature -- Modification (Advanced)
 			l_json_string := to_json_string
 			create l_parser.make_with_string (l_json_string)
 			l_parser.parse_content
-			
+
 			if l_parser.is_parsed and then l_parser.is_valid then
 				if attached {JSON_OBJECT} l_parser.parsed_json_value as l_obj then
 					create Result.make_from_json (l_obj)
@@ -329,6 +329,85 @@ feature -- Conversion
 			-- Convert to JSON string representation
 		do
 			Result := json_object.representation
+		end
+
+feature -- Output
+
+	to_pretty_string (a_indent_level: INTEGER): STRING
+			-- <Precursor>
+		local
+			l_first: BOOLEAN
+			l_keys: ARRAY [JSON_STRING]
+			l_key: JSON_STRING
+			l_key_string: STRING
+			l_wrapper: SIMPLE_JSON_VALUE
+		do
+			if json_object.is_empty then
+				Result := "{}"
+			else
+				create Result.make_empty
+				Result.append_character ('{')
+				Result.append_character ('%N')
+
+				l_keys := json_object.current_keys
+				l_first := True
+				across l_keys as ic_key loop
+					if not l_first then
+						Result.append_character (',')
+						Result.append_character ('%N')
+					end
+					Result.append (indent_string (a_indent_level + 1))
+					Result.append_character ('%"')
+					l_key := ic_key.item
+					l_key_string := l_key.item
+					Result.append (l_key_string)
+					Result.append_character ('%"')
+					Result.append_character (':')
+					Result.append_character (' ')
+
+					if attached json_object.item (l_key) as l_json_value then
+						l_wrapper := wrap_json_value (l_json_value)
+						Result.append (l_wrapper.to_pretty_string (a_indent_level + 1))
+					end
+
+					l_first := False
+				end
+
+				Result.append_character ('%N')
+				Result.append (indent_string (a_indent_level))
+				Result.append_character ('}')
+			end
+		end
+
+feature {NONE} -- Implementation
+
+	wrap_json_value (a_json_value: JSON_VALUE): SIMPLE_JSON_VALUE
+			-- Wrap a JSON_VALUE in appropriate SIMPLE_JSON_* type
+		require
+			valid_value: attached a_json_value
+		do
+			if attached {JSON_OBJECT} a_json_value as l_obj then
+				create {SIMPLE_JSON_OBJECT} Result.make_from_json (l_obj)
+			elseif attached {JSON_ARRAY} a_json_value as l_arr then
+				create {SIMPLE_JSON_ARRAY} Result.make_from_json (l_arr)
+			elseif attached {JSON_STRING} a_json_value as l_str then
+				create {SIMPLE_JSON_STRING} Result.make (l_str.unescaped_string_8)
+			elseif attached {JSON_NUMBER} a_json_value as l_num then
+				if l_num.is_integer then
+					create {SIMPLE_JSON_INTEGER} Result.make (l_num.integer_64_item.to_integer_32)
+				else
+					create {SIMPLE_JSON_REAL} Result.make (l_num.real_64_item)
+				end
+			elseif attached {JSON_BOOLEAN} a_json_value as l_bool then
+				create {SIMPLE_JSON_BOOLEAN} Result.make (l_bool.item)
+			elseif attached {JSON_NULL} a_json_value then
+				create {SIMPLE_JSON_NULL} Result.make
+			else
+				-- Fallback to null
+				create {SIMPLE_JSON_NULL} Result.make
+			end
+		ensure
+			result_exists: attached Result
 		end
 
 feature {SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY, JSON_BUILDER} -- Implementation Access
