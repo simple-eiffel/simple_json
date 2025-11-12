@@ -15,6 +15,8 @@ feature -- Test: Conditional Building
 
 	test_put_string_if_true
 			-- Test conditional string addition when condition is true
+		note
+			testing: "covers/{JSON_BUILDER}.put_string_if"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -29,6 +31,8 @@ feature -- Test: Conditional Building
 
 	test_put_string_if_false
 			-- Test conditional string addition when condition is false
+		note
+			testing: "covers/{JSON_BUILDER}.put_string_if"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -43,6 +47,8 @@ feature -- Test: Conditional Building
 
 	test_put_integer_if
 			-- Test conditional integer addition
+		note
+			testing: "covers/{JSON_BUILDER}.put_integer_if"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -60,6 +66,8 @@ feature -- Test: Conditional Building
 
 	test_put_boolean_if
 			-- Test conditional boolean addition
+		note
+			testing: "covers/{JSON_BUILDER}.put_boolean_if"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -76,6 +84,8 @@ feature -- Test: Conditional Building
 
 	test_put_real_if
 			-- Test conditional real addition
+		note
+			testing: "covers/{JSON_BUILDER}.put_real_if"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -92,6 +102,10 @@ feature -- Test: Conditional Building
 
 	test_conditional_building_pattern
 			-- Test real-world conditional building pattern
+		note
+			testing: "covers/{JSON_BUILDER}.put_string"
+			testing: "covers/{JSON_BUILDER}.put_integer"
+			testing: "covers/{JSON_BUILDER}.put_string_if"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -120,6 +134,8 @@ feature -- Test: Merge Operations
 
 	test_merge_empty_objects
 			-- Test merging two empty objects
+		note
+			testing: "covers/{JSON_BUILDER}.merge"
 		local
 			l_builder: JSON_BUILDER
 			l_other: SIMPLE_JSON_OBJECT
@@ -136,6 +152,8 @@ feature -- Test: Merge Operations
 
 	test_merge_non_overlapping
 			-- Test merging objects with non-overlapping keys
+		note
+			testing: "covers/{JSON_BUILDER}.merge"
 		local
 			l_builder: JSON_BUILDER
 			l_other: SIMPLE_JSON_OBJECT
@@ -157,6 +175,8 @@ feature -- Test: Merge Operations
 
 	test_merge_overlapping_keys
 			-- Test merging with overlapping keys (other wins)
+		note
+			testing: "covers/{JSON_BUILDER}.merge"
 		local
 			l_builder: JSON_BUILDER
 			l_other: SIMPLE_JSON_OBJECT
@@ -176,6 +196,8 @@ feature -- Test: Merge Operations
 
 	test_merge_complex_objects
 			-- Test merging complex objects with multiple types
+		note
+			testing: "covers/{JSON_BUILDER}.merge"
 		local
 			l_builder: JSON_BUILDER
 			l_other: SIMPLE_JSON_OBJECT
@@ -204,6 +226,8 @@ feature -- Test: Remove Operations
 
 	test_remove_existing_key
 			-- Test removing an existing key
+		note
+			testing: "covers/{JSON_BUILDER}.remove"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -222,6 +246,8 @@ feature -- Test: Remove Operations
 
 	test_remove_non_existing_key
 			-- Test removing a key that doesn't exist (should not error)
+		note
+			testing: "covers/{JSON_BUILDER}.remove"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -237,6 +263,8 @@ feature -- Test: Remove Operations
 
 	test_remove_fluent_chain
 			-- Test remove in fluent chain
+		note
+			testing: "covers/{JSON_BUILDER}.remove"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -261,6 +289,8 @@ feature -- Test: Rename Operations
 
 	test_rename_key
 			-- Test renaming a key
+		note
+			testing: "covers/{JSON_BUILDER}.rename_key"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -278,6 +308,8 @@ feature -- Test: Rename Operations
 
 	test_rename_preserves_value_type
 			-- Test that rename preserves the value and its type
+		note
+			testing: "covers/{JSON_BUILDER}.rename_key"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -297,6 +329,8 @@ feature -- Test: Clear Operations
 
 	test_clear_empty
 			-- Test clearing empty builder
+		note
+			testing: "covers/{JSON_BUILDER}.clear"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -310,6 +344,8 @@ feature -- Test: Clear Operations
 
 	test_clear_populated
 			-- Test clearing populated builder
+		note
+			testing: "covers/{JSON_BUILDER}.clear"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -327,6 +363,8 @@ feature -- Test: Clear Operations
 
 	test_clear_and_rebuild
 			-- Test clearing and then rebuilding
+		note
+			testing: "covers/{JSON_BUILDER}.clear"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -347,6 +385,8 @@ feature -- Test: Clone Operations
 
 	test_clone_empty_object
 			-- Test cloning empty object
+		note
+			testing: "covers/{JSON_BUILDER}.clone_object"
 		local
 			l_builder: JSON_BUILDER
 			l_clone: SIMPLE_JSON_OBJECT
@@ -361,6 +401,8 @@ feature -- Test: Clone Operations
 
 	test_clone_simple_object
 			-- Test cloning simple object
+		note
+			testing: "covers/{JSON_BUILDER}.clone_object"
 		local
 			l_builder: JSON_BUILDER
 			l_clone: SIMPLE_JSON_OBJECT
@@ -381,6 +423,8 @@ feature -- Test: Clone Operations
 
 	test_clone_independence
 			-- Test that clone is independent of original
+		note
+			testing: "covers/{JSON_BUILDER}.clone_object"
 		local
 			l_builder: JSON_BUILDER
 			l_clone: SIMPLE_JSON_OBJECT
@@ -404,6 +448,8 @@ feature -- Test: Make from Object
 
 	test_make_from_object
 			-- Test creating builder from existing object
+		note
+			testing: "covers/{JSON_BUILDER}.make_from_object"
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 			l_builder: JSON_BUILDER
@@ -423,6 +469,8 @@ feature -- Test: Make from Object
 
 	test_make_from_object_and_modify
 			-- Test creating from object and continuing to build
+		note
+			testing: "covers/{JSON_BUILDER}.make_from_object"
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 			l_builder: JSON_BUILDER
@@ -445,6 +493,8 @@ feature -- Test: Nested Object/Array Support
 
 	test_put_nested_object
 			-- Test adding nested object
+		note
+			testing: "covers/{JSON_BUILDER}.put_object"
 		local
 			l_builder: JSON_BUILDER
 			l_nested: SIMPLE_JSON_OBJECT
@@ -474,6 +524,8 @@ feature -- Test: Nested Object/Array Support
 
 	test_put_array
 			-- Test adding array
+		note
+			testing: "covers/{JSON_BUILDER}.put_array"
 		local
 			l_builder: JSON_BUILDER
 			l_array: SIMPLE_JSON_ARRAY
@@ -504,6 +556,12 @@ feature -- Test: Integration
 
 	test_complex_builder_pattern
 			-- Test complex real-world builder pattern
+		note
+			testing: "covers/{JSON_BUILDER}.put_string"
+			testing: "covers/{JSON_BUILDER}.put_integer"
+			testing: "covers/{JSON_BUILDER}.put_boolean"
+			testing: "covers/{JSON_BUILDER}.put_string_if"
+			testing: "covers/{JSON_BUILDER}.put_real"
 		local
 			l_builder: JSON_BUILDER
 			l_include_optional: BOOLEAN
@@ -537,6 +595,8 @@ feature -- Test: Integration
 
 	test_builder_reuse
 			-- Test reusing builder after getting result
+		note
+			testing: "covers/{JSON_BUILDER}.build"
 		local
 			l_builder: JSON_BUILDER
 			l_result1, l_result2: SIMPLE_JSON_OBJECT

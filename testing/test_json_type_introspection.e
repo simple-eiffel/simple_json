@@ -14,6 +14,15 @@ feature -- Test routines: Object Type Checks
 
 	test_object_is_object
 			-- Test that SIMPLE_JSON_OBJECT correctly identifies as object
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_object"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_string"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_number"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_integer"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_real"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_boolean"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_null"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_array"
 		local
 			obj: SIMPLE_JSON_OBJECT
 		do
@@ -32,6 +41,15 @@ feature -- Test routines: Array Type Checks
 
 	test_array_is_array
 			-- Test that SIMPLE_JSON_ARRAY correctly identifies as array
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_array"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_string"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_number"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_integer"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_real"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_boolean"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_null"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_object"
 		local
 			arr: SIMPLE_JSON_ARRAY
 		do
@@ -50,6 +68,15 @@ feature -- Test routines: String Type Checks
 
 	test_string_is_string
 			-- Test that SIMPLE_JSON_STRING correctly identifies as string
+		note
+			testing: "covers/{SIMPLE_JSON_STRING}.is_string"
+			testing: "covers/{SIMPLE_JSON_STRING}.is_number"
+			testing: "covers/{SIMPLE_JSON_STRING}.is_integer"
+			testing: "covers/{SIMPLE_JSON_STRING}.is_real"
+			testing: "covers/{SIMPLE_JSON_STRING}.is_boolean"
+			testing: "covers/{SIMPLE_JSON_STRING}.is_null"
+			testing: "covers/{SIMPLE_JSON_STRING}.is_object"
+			testing: "covers/{SIMPLE_JSON_STRING}.is_array"
 		local
 			str: SIMPLE_JSON_STRING
 		do
@@ -68,6 +95,15 @@ feature -- Test routines: Integer Type Checks
 
 	test_integer_is_integer_and_number
 			-- Test that SIMPLE_JSON_INTEGER correctly identifies as integer and number
+		note
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_integer"
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_number"
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_string"
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_real"
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_boolean"
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_null"
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_object"
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_array"
 		local
 			int: SIMPLE_JSON_INTEGER
 		do
@@ -86,6 +122,15 @@ feature -- Test routines: Real Type Checks
 
 	test_real_is_real_and_number
 			-- Test that SIMPLE_JSON_REAL correctly identifies as real and number
+		note
+			testing: "covers/{SIMPLE_JSON_REAL}.is_real"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_number"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_string"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_integer"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_boolean"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_null"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_object"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_array"
 		local
 			real: SIMPLE_JSON_REAL
 		do
@@ -104,6 +149,15 @@ feature -- Test routines: Boolean Type Checks
 
 	test_boolean_is_boolean
 			-- Test that SIMPLE_JSON_BOOLEAN correctly identifies as boolean
+		note
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.is_boolean"
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.is_string"
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.is_number"
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.is_integer"
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.is_real"
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.is_null"
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.is_object"
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.is_array"
 		local
 			bool: SIMPLE_JSON_BOOLEAN
 		do
@@ -122,6 +176,15 @@ feature -- Test routines: Null Type Checks
 
 	test_null_is_null
 			-- Test that SIMPLE_JSON_NULL correctly identifies as null
+		note
+			testing: "covers/{SIMPLE_JSON_NULL}.is_null"
+			testing: "covers/{SIMPLE_JSON_NULL}.is_string"
+			testing: "covers/{SIMPLE_JSON_NULL}.is_number"
+			testing: "covers/{SIMPLE_JSON_NULL}.is_integer"
+			testing: "covers/{SIMPLE_JSON_NULL}.is_real"
+			testing: "covers/{SIMPLE_JSON_NULL}.is_boolean"
+			testing: "covers/{SIMPLE_JSON_NULL}.is_object"
+			testing: "covers/{SIMPLE_JSON_NULL}.is_array"
 		local
 			null_val: SIMPLE_JSON_NULL
 		do
@@ -140,6 +203,8 @@ feature -- Test routines: Practical Usage
 
 	test_type_checking_before_extraction
 			-- Test using type checking to safely extract values
+		note
+			testing: "covers/{JSON}.parse"
 		local
 			json: JSON
 			obj: detachable SIMPLE_JSON_OBJECT
@@ -159,6 +224,13 @@ feature -- Test routines: Practical Usage
 
 	test_integer_vs_real_distinction
 			-- Test that integers and reals can be distinguished
+		note
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_number"
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_integer"
+			testing: "covers/{SIMPLE_JSON_INTEGER}.is_real"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_number"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_real"
+			testing: "covers/{SIMPLE_JSON_REAL}.is_integer"
 		local
 			int: SIMPLE_JSON_INTEGER
 			real: SIMPLE_JSON_REAL
@@ -179,6 +251,8 @@ feature -- Test routines: Practical Usage
 
 	test_type_checking_defensive_programming
 			-- Test defensive programming pattern with type checking
+		note
+			testing: "covers/{SIMPLE_JSON_VALUE}.is_object"
 		local
 			obj: SIMPLE_JSON_OBJECT
 			val: SIMPLE_JSON_VALUE

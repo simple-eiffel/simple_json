@@ -15,6 +15,9 @@ feature -- Generation Tests
 
 	test_generate_json
 			-- Test generating JSON from objects
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.to_json_string"
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 			l_json_string: STRING
@@ -47,6 +50,9 @@ feature -- Generation Tests
 
 	test_round_trip_simple
 			-- Test creating object, serializing, and parsing back
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.to_json_string"
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_obj1: SIMPLE_JSON_OBJECT
 			l_json_string: STRING
@@ -77,6 +83,9 @@ feature -- Generation Tests
 
 	test_round_trip_all_types
 			-- Test round-trip with all data types
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.to_json_string"
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_obj1: SIMPLE_JSON_OBJECT
 			l_json_string: STRING
@@ -108,6 +117,8 @@ feature -- Generation Tests
 
 	test_modify_existing_key
 			-- Test updating existing key value
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.put_string"
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 		do
@@ -124,6 +135,10 @@ feature -- Generation Tests
 
 	test_build_object_incrementally
 			-- Test building JSON object step by step
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.put_string"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.put_integer"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.put_boolean"
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 		do
@@ -148,6 +163,9 @@ feature -- Generation Tests
 
 	test_empty_object_serialization
 			-- Test serializing empty object
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.to_json_string"
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 			l_json_string: STRING

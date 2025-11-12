@@ -15,6 +15,9 @@ feature -- Numeric Tests
 
 	test_extreme_integers
 			-- Test parsing extreme integer values
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.integer"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -33,6 +36,10 @@ feature -- Numeric Tests
 
 	test_negative_numbers
 			-- Test negative integers and reals
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.integer"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.real"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -67,6 +74,10 @@ feature -- Numeric Tests
 
 	test_zero_values
 			-- Test various representations of zero
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.integer"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.real"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -105,6 +116,9 @@ feature -- Numeric Tests
 
 	test_scientific_notation
 			-- Test scientific notation if supported
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.real"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT

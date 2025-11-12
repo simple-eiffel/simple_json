@@ -15,6 +15,8 @@ feature -- Test: Append Operations
 
 	test_append_string
 			-- Test appending string values
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_string"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -29,6 +31,8 @@ feature -- Test: Append Operations
 
 	test_append_integer
 			-- Test appending integer values
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_integer"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -45,6 +49,8 @@ feature -- Test: Append Operations
 
 	test_append_real
 			-- Test appending real values
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_real"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -59,6 +65,8 @@ feature -- Test: Append Operations
 
 	test_append_boolean
 			-- Test appending boolean values
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_boolean"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -75,6 +83,8 @@ feature -- Test: Append Operations
 
 	test_append_object
 			-- Test appending object values
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_object"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 			l_obj1, l_obj2: SIMPLE_JSON_OBJECT
@@ -107,6 +117,8 @@ feature -- Test: Append Operations
 
 	test_append_nested_array
 			-- Test appending array values
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_array"
 		local
 			l_array, l_nested1, l_nested2: SIMPLE_JSON_ARRAY
 		do
@@ -134,6 +146,11 @@ feature -- Test: Append Operations
 
 	test_append_mixed_types
 			-- Test appending different types to same array
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_string"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_integer"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_boolean"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_real"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -154,6 +171,8 @@ feature -- Test: Insert Operations
 
 	test_insert_string_at_beginning
 			-- Test inserting at index 1
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.insert_string_at"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -168,6 +187,8 @@ feature -- Test: Insert Operations
 
 	test_insert_string_at_end
 			-- Test inserting at end position
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.insert_string_at"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -181,6 +202,8 @@ feature -- Test: Insert Operations
 
 	test_insert_integer_middle
 			-- Test inserting in middle of array
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.insert_integer_at"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -199,6 +222,8 @@ feature -- Test: Remove Operations
 
 	test_remove_at_beginning
 			-- Test removing first element
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.remove_at"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -216,6 +241,8 @@ feature -- Test: Remove Operations
 
 	test_remove_at_middle
 			-- Test removing middle element
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.remove_at"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -233,6 +260,8 @@ feature -- Test: Remove Operations
 
 	test_remove_at_end
 			-- Test removing last element
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.remove_at"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -248,6 +277,8 @@ feature -- Test: Remove Operations
 
 	test_remove_all_elements
 			-- Test removing all elements one by one
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.remove_at"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -267,6 +298,8 @@ feature -- Test: Clear Operations
 
 	test_clear_empty_array
 			-- Test clearing already empty array
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.clear"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -279,6 +312,8 @@ feature -- Test: Clear Operations
 
 	test_clear_populated_array
 			-- Test clearing populated array
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.clear"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -295,6 +330,8 @@ feature -- Test: Clear Operations
 
 	test_clear_and_reuse
 			-- Test clearing and then adding new elements
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.clear"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -311,6 +348,8 @@ feature -- Test: Clone Operations
 
 	test_clone_empty_array
 			-- Test cloning empty array
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.json_clone"
 		local
 			l_array, l_clone: SIMPLE_JSON_ARRAY
 		do
@@ -324,6 +363,8 @@ feature -- Test: Clone Operations
 
 	test_clone_simple_array
 			-- Test cloning simple array
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.json_clone"
 		local
 			l_array, l_clone: SIMPLE_JSON_ARRAY
 		do
@@ -343,6 +384,8 @@ feature -- Test: Clone Operations
 
 	test_clone_independence
 			-- Test that clone is independent of original
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.json_clone"
 		local
 			l_array, l_clone: SIMPLE_JSON_ARRAY
 		do
@@ -361,6 +404,8 @@ feature -- Test: Clone Operations
 
 	test_clone_nested_structures
 			-- Test cloning array with nested objects
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.json_clone"
 		local
 			l_array, l_clone: SIMPLE_JSON_ARRAY
 			l_obj: SIMPLE_JSON_OBJECT
@@ -389,6 +434,12 @@ feature -- Test: Integration
 
 	test_build_array_fluently
 			-- Test building array with multiple operations
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_string"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_integer"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_boolean"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_real"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.remove_at"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 		do
@@ -407,6 +458,9 @@ feature -- Test: Integration
 
 	test_array_round_trip
 			-- Test array to JSON and back
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.to_json_string"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.make_from_json"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 			l_json_string: STRING
@@ -431,6 +485,9 @@ feature -- Test: Integration
 
 	test_complex_array_manipulation
 			-- Test complex real-world array manipulation
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_object"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.append_string"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 			l_obj: SIMPLE_JSON_OBJECT

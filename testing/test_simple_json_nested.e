@@ -15,6 +15,10 @@ feature -- Nested Structure Tests
 
 	test_array_of_objects
 			-- Test parsing array containing objects
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.array"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.object_at"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -53,6 +57,9 @@ feature -- Nested Structure Tests
 
 	test_deeply_nested_objects
 			-- Test parsing deeply nested object structures
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.object"
 		local
 			l_json: SIMPLE_JSON
 			l_obj, l_user, l_address, l_location: detachable SIMPLE_JSON_OBJECT
@@ -84,6 +91,10 @@ feature -- Nested Structure Tests
 
 	test_nested_arrays
 			-- Test array containing arrays
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.array"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.array_at"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT

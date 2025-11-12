@@ -15,6 +15,10 @@ feature -- Status Query Tests
 
 	test_object_status_queries
 			-- Test has_key, count, is_empty on objects
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.has_key"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.count"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_empty"
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 		do
@@ -39,6 +43,8 @@ feature -- Status Query Tests
 
 	test_array_valid_index
 			-- Test valid_index query on arrays
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.valid_index"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -66,6 +72,9 @@ feature -- Status Query Tests
 
 	test_array_status_queries
 			-- Test count and is_empty on arrays
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.count"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_empty"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -94,6 +103,8 @@ feature -- Status Query Tests
 
 	test_is_valid_json
 			-- Test JSON validation
+		note
+			testing: "covers/{SIMPLE_JSON}.is_valid_json"
 		local
 			l_json: SIMPLE_JSON
 		do
@@ -115,6 +126,8 @@ feature -- Status Query Tests
 
 	test_has_key_after_parsing
 			-- Test has_key on parsed objects
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.has_key"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -134,6 +147,9 @@ feature -- Status Query Tests
 
 	test_count_matches_keys
 			-- Test that count matches actual number of keys
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.count"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.has_key"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -153,6 +169,9 @@ feature -- Status Query Tests
 
 	test_parse_status_tracking
 			-- Test last_parse_successful and last_error_message
+		note
+			testing: "covers/{SIMPLE_JSON}.last_parse_successful"
+			testing: "covers/{SIMPLE_JSON}.last_error_message"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -177,6 +196,13 @@ feature -- Status Query Tests
 
 	test_empty_key_queries
 			-- Test querying empty objects and arrays
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.is_empty"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.count"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.has_key"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.is_empty"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.count"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.valid_index"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT

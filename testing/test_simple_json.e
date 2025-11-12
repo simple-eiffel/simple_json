@@ -15,6 +15,8 @@ feature -- Test routines
 
 	test_parse_simple_object
 			-- Test parsing a simple JSON object
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -35,6 +37,8 @@ feature -- Test routines
 
 	test_parse_boolean
 			-- Test parsing boolean values
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -55,6 +59,8 @@ feature -- Test routines
 
 	test_parse_real
 			-- Test parsing real/double values
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -75,6 +81,9 @@ feature -- Test routines
 
 	test_parse_array
 			-- Test parsing arrays
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.array"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -113,6 +122,9 @@ feature -- Test routines
 
 	test_parse_nested_object
 			-- Test parsing nested objects
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.object"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -140,6 +152,9 @@ feature -- Test routines
 
 	test_generate_json
 			-- Test generating JSON from objects
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.to_json_string"
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 			l_json_string: STRING
@@ -172,6 +187,10 @@ feature -- Test routines
 
 	test_parse_invalid_json
 			-- Test parsing invalid JSON fails gracefully
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON}.last_parse_successful"
+			testing: "covers/{SIMPLE_JSON}.last_error_message"
 		local
 			l_json: SIMPLE_JSON
 			l_result: detachable SIMPLE_JSON_OBJECT
@@ -195,6 +214,8 @@ feature -- Test routines
 
 	test_parse_empty_object
 			-- Test parsing empty JSON object
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -211,6 +232,9 @@ feature -- Test routines
 
 	test_parse_empty_array
 			-- Test parsing empty array
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.array"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT

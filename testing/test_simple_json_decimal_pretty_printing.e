@@ -15,6 +15,8 @@ feature -- Test routines
 
 	test_decimal_3_14_pretty
 			-- Test that 3.14 is represented exactly
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_expected: STRING
@@ -28,6 +30,9 @@ feature -- Test routines
 
 	test_decimal_integer_pretty
 			-- Test integer representation
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.make_from_integer"
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_expected: STRING
@@ -41,6 +46,8 @@ feature -- Test routines
 
 	test_decimal_zero_pretty
 			-- Test zero representation
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_expected: STRING
@@ -54,6 +61,8 @@ feature -- Test routines
 
 	test_decimal_negative_pretty
 			-- Test negative number representation
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_expected: STRING
@@ -67,6 +76,8 @@ feature -- Test routines
 
 	test_decimal_scientific_pretty
 			-- Test scientific notation
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_actual: STRING
@@ -79,6 +90,8 @@ feature -- Test routines
 
 	test_decimal_high_precision_pretty
 			-- Test high precision number
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_expected: STRING
@@ -92,6 +105,8 @@ feature -- Test routines
 
 	test_decimal_trailing_zeros_pretty
 			-- Test that trailing zeros are preserved as DECIMAL outputs them
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_expected: STRING
@@ -105,6 +120,9 @@ feature -- Test routines
 
 	test_decimal_from_real_conversion
 			-- Test conversion from REAL_64 maintains reasonable precision
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.make_from_real"
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_actual: STRING
@@ -120,6 +138,8 @@ feature -- Test routines
 
 	test_decimal_large_number_pretty
 			-- Test large number representation
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_expected: STRING
@@ -133,6 +153,8 @@ feature -- Test routines
 
 	test_decimal_small_number_pretty
 			-- Test very small number representation
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_pretty_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_expected: STRING
@@ -148,6 +170,8 @@ feature -- Test routines
 
 	test_decimal_to_json_string
 			-- Test JSON string conversion
+		note
+			testing: "covers/{SIMPLE_JSON_DECIMAL}.to_json_string"
 		local
 			l_decimal: SIMPLE_JSON_DECIMAL
 			l_expected: STRING

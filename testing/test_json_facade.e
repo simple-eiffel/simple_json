@@ -25,6 +25,8 @@ feature -- JSON One-Liner Tests
 
 	test_json_one_liner_string
 			-- Test JSON.string one-liner access
+		note
+			testing: "covers/{JSON}.string"
 		local
 			l_json_string: STRING
 		do
@@ -37,6 +39,8 @@ feature -- JSON One-Liner Tests
 
 	test_json_one_liner_integer
 			-- Test JSON.integer one-liner access
+		note
+			testing: "covers/{JSON}.integer"
 		local
 			l_json_string: STRING
 		do
@@ -49,6 +53,8 @@ feature -- JSON One-Liner Tests
 
 	test_json_one_liner_boolean
 			-- Test JSON.boolean one-liner access
+		note
+			testing: "covers/{JSON}.boolean"
 		local
 			l_json_string: STRING
 		do
@@ -61,6 +67,8 @@ feature -- JSON One-Liner Tests
 
 	test_json_one_liner_real
 			-- Test JSON.real one-liner access
+		note
+			testing: "covers/{JSON}.real"
 		local
 			l_json_string: STRING
 		do
@@ -75,6 +83,8 @@ feature -- JSON Path Navigation Tests
 
 	test_json_path_string
 			-- Test JSON.path_string for nested navigation
+		note
+			testing: "covers/{JSON}.path_string"
 		local
 			l_json_string: STRING
 		do
@@ -87,6 +97,8 @@ feature -- JSON Path Navigation Tests
 
 	test_json_path_integer
 			-- Test JSON.path_integer for nested navigation
+		note
+			testing: "covers/{JSON}.path_integer"
 		local
 			l_json_string: STRING
 		do
@@ -98,6 +110,8 @@ feature -- JSON Path Navigation Tests
 
 	test_json_path_boolean
 			-- Test JSON.path_boolean for nested navigation
+		note
+			testing: "covers/{JSON}.path_boolean"
 		local
 			l_json_string: STRING
 		do
@@ -108,6 +122,8 @@ feature -- JSON Path Navigation Tests
 
 	test_json_path_real
 			-- Test JSON.path_real for nested navigation
+		note
+			testing: "covers/{JSON}.path_real"
 		local
 			l_json_string: STRING
 		do
@@ -118,6 +134,8 @@ feature -- JSON Path Navigation Tests
 
 	test_json_path_exists
 			-- Test JSON.path_exists for checking nested paths
+		note
+			testing: "covers/{JSON}.path_exists"
 		local
 			l_json_string: STRING
 		do
@@ -133,6 +151,8 @@ feature -- JSON Validation Tests
 
 	test_json_is_valid
 			-- Test JSON.is_valid for validation
+		note
+			testing: "covers/{JSON}.is_valid"
 		do
 			assert ("valid_simple", JSON.is_valid ("{%"key%": %"value%"}"))
 			assert ("valid_nested", JSON.is_valid ("{%"a%": {%"b%": 1}}"))
@@ -145,6 +165,8 @@ feature -- JSON Validation Tests
 
 	test_json_validate
 			-- Test JSON.validate for detailed validation
+		note
+			testing: "covers/{JSON}.validate"
 		local
 			l_result: TUPLE[valid: BOOLEAN; error: detachable STRING]
 		do
@@ -163,6 +185,9 @@ feature -- JSON_BUILDER Tests
 
 	test_json_builder_fluent
 			-- Test JSON_BUILDER fluent interface
+		note
+			testing: "covers/{JSON}.build"
+			testing: "covers/{JSON_BUILDER}.to_string"
 		local
 			l_builder: JSON_BUILDER
 			l_json_string: STRING
@@ -192,6 +217,8 @@ feature -- JSON_BUILDER Tests
 
 	test_json_builder_build
 			-- Test JSON_BUILDER.build returns object
+		note
+			testing: "covers/{JSON_BUILDER}.build"
 		local
 			l_builder: JSON_BUILDER
 			l_obj: SIMPLE_JSON_OBJECT
@@ -210,6 +237,8 @@ feature -- JSON_BUILDER Tests
 
 	test_json_builder_empty
 			-- Test building empty JSON object
+		note
+			testing: "covers/{JSON_BUILDER}.to_string"
 		local
 			l_builder: JSON_BUILDER
 			l_json_string: STRING
@@ -227,6 +256,12 @@ feature -- JSON_QUERY Tests
 
 	test_json_query_basic
 			-- Test JSON_QUERY basic access
+		note
+			testing: "covers/{JSON}.query"
+			testing: "covers/{JSON_QUERY}.string"
+			testing: "covers/{JSON_QUERY}.integer"
+			testing: "covers/{JSON_QUERY}.boolean"
+			testing: "covers/{JSON_QUERY}.real"
 		local
 			l_query: JSON_QUERY
 			l_json_string: STRING
@@ -242,6 +277,8 @@ feature -- JSON_QUERY Tests
 
 	test_json_query_exists
 			-- Test JSON_QUERY.exists
+		note
+			testing: "covers/{JSON_QUERY}.exists"
 		local
 			l_query: JSON_QUERY
 			l_json_string: STRING
@@ -256,6 +293,8 @@ feature -- JSON_QUERY Tests
 
 	test_json_query_nested
 			-- Test JSON_QUERY with nested objects
+		note
+			testing: "covers/{JSON_QUERY}.object"
 		local
 			l_query: JSON_QUERY
 			l_json_string: STRING
@@ -275,6 +314,8 @@ feature -- JSON_QUERY Tests
 
 	test_json_query_array
 			-- Test JSON_QUERY with arrays
+		note
+			testing: "covers/{JSON_QUERY}.array"
 		local
 			l_query: JSON_QUERY
 			l_json_string: STRING
@@ -297,6 +338,8 @@ feature -- Integration Tests
 
 	test_json_object_creation
 			-- Test JSON.object for manual construction
+		note
+			testing: "covers/{JSON}.object"
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 		do
@@ -310,6 +353,8 @@ feature -- Integration Tests
 
 	test_json_array_creation
 			-- Test JSON.array creation
+		note
+			testing: "covers/{JSON}.array"
 		local
 			l_arr: SIMPLE_JSON_ARRAY
 		do
@@ -320,6 +365,8 @@ feature -- Integration Tests
 
 	test_json_parse_full_api
 			-- Test JSON.parse for full API access
+		note
+			testing: "covers/{JSON}.parse"
 		local
 			l_json_string: STRING
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -337,6 +384,9 @@ feature -- Integration Tests
 
 	test_builder_and_query_integration
 			-- Test building with JSON_BUILDER and querying with JSON_QUERY
+		note
+			testing: "covers/{JSON}.build"
+			testing: "covers/{JSON}.query"
 		local
 			l_json_string: STRING
 			l_query: JSON_QUERY

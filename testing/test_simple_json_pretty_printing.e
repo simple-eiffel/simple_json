@@ -14,6 +14,8 @@ feature -- Test - Primitives
 
 	test_null_pretty
 			-- Test NULL pretty printing
+		note
+			testing: "covers/{SIMPLE_JSON_NULL}.to_pretty_string"
 		local
 			l_null: SIMPLE_JSON_NULL
 			l_expected: STRING
@@ -27,6 +29,8 @@ feature -- Test - Primitives
 
 	test_boolean_true_pretty
 			-- Test BOOLEAN true pretty printing
+		note
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.to_pretty_string"
 		local
 			l_bool: SIMPLE_JSON_BOOLEAN
 			l_expected: STRING
@@ -40,6 +44,8 @@ feature -- Test - Primitives
 
 	test_boolean_false_pretty
 			-- Test BOOLEAN false pretty printing
+		note
+			testing: "covers/{SIMPLE_JSON_BOOLEAN}.to_pretty_string"
 		local
 			l_bool: SIMPLE_JSON_BOOLEAN
 			l_expected: STRING
@@ -53,6 +59,8 @@ feature -- Test - Primitives
 
 	test_integer_pretty
 			-- Test INTEGER pretty printing
+		note
+			testing: "covers/{SIMPLE_JSON_INTEGER}.to_pretty_string"
 		local
 			l_int: SIMPLE_JSON_INTEGER
 			l_expected: STRING
@@ -66,6 +74,8 @@ feature -- Test - Primitives
 
 	test_real_pretty
 		-- Test REAL pretty printing
+		note
+			testing: "covers/{SIMPLE_JSON_REAL}.to_pretty_string"
 		local
 			l_real: SIMPLE_JSON_REAL
 			l_actual: STRING
@@ -79,6 +89,8 @@ feature -- Test - Primitives
 
 	test_string_pretty
 			-- Test STRING pretty printing
+		note
+			testing: "covers/{SIMPLE_JSON_STRING}.to_pretty_string"
 		local
 			l_string: SIMPLE_JSON_STRING
 			l_expected: STRING

@@ -15,6 +15,10 @@ feature -- Error Handling Tests
 
 	test_parse_invalid_json
 			-- Test parsing invalid JSON fails gracefully
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON}.last_parse_successful"
+			testing: "covers/{SIMPLE_JSON}.last_error_message"
 		local
 			l_json: SIMPLE_JSON
 			l_result: detachable SIMPLE_JSON_OBJECT
@@ -38,6 +42,8 @@ feature -- Error Handling Tests
 
 	test_parse_empty_object
 			-- Test parsing empty JSON object
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -54,6 +60,9 @@ feature -- Error Handling Tests
 
 	test_parse_empty_array
 			-- Test parsing empty array
+		note
+			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.array"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -75,6 +84,11 @@ feature -- Error Handling Tests
 
 	test_missing_key_returns_default
 			-- Test accessing non-existent keys returns void/default values
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.string"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.integer"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.boolean"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.real"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
@@ -95,6 +109,10 @@ feature -- Error Handling Tests
 
 	test_wrong_type_access
 			-- Test accessing value with wrong type returns default
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.integer"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.string"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.boolean"
 		local
 			l_json: SIMPLE_JSON
 			l_obj: detachable SIMPLE_JSON_OBJECT
