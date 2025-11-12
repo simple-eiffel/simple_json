@@ -14,6 +14,12 @@ feature  -- Initialization
 	make
 			-- Run application.
 		do
+			check can_do: attached create {REAL_VS_DECIMAL_COMPARISON}.make as al_obj then
+				do_nothing
+			end
+			check can_do_2: attached create {TYPE_INTROSPECTION_EXAMPLES}.make as al_obj then
+				do_nothing
+			end
 		end
 
 note
