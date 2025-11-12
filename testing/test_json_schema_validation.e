@@ -982,7 +982,6 @@ feature -- Test routines: Logical Combinators
 			create l_value.make (50)
 			create l_validator.make
 			l_result := l_validator.validate (l_value, l_schema)
-			-- assert ("validates_against_all", l_result.is_valid)
 			check validates_against_all: l_result.is_valid end
 		end
 
