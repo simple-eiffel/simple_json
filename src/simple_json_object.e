@@ -2,10 +2,13 @@ note
 	description: "Wrapper for JSON objects - provides simple access to JSON data"
 	author: "Larry Rix"
 	date: "November 11, 2025"
-	revision: "1"
+	revision: "2"
 
 class
 	SIMPLE_JSON_OBJECT
+
+inherit
+	SIMPLE_JSON_VALUE
 
 create
 	make_empty,
@@ -195,14 +198,23 @@ feature -- Modification
 			key_exists: has_key (a_key)
 		end
 
+feature -- Type checking
+
+	is_string: BOOLEAN = False
+	is_number: BOOLEAN = False
+	is_integer: BOOLEAN = False
+	is_real: BOOLEAN = False
+	is_boolean: BOOLEAN = False
+	is_null: BOOLEAN = False
+	is_object: BOOLEAN = True
+	is_array: BOOLEAN = False
+
 feature -- Conversion
 
 	to_json_string: STRING
 			-- Convert to JSON string representation
 		do
 			Result := json_object.representation
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature {NONE} -- Implementation

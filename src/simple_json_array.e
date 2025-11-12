@@ -2,10 +2,13 @@ note
 	description: "Wrapper for JSON arrays - provides simple access to array elements"
 	author: "Larry Rix"
 	date: "November 11, 2025"
-	revision: "1"
+	revision: "2"
 
 class
 	SIMPLE_JSON_ARRAY
+
+inherit
+	SIMPLE_JSON_VALUE
 
 create
 	make_empty,
@@ -135,6 +138,25 @@ feature -- Access - Nested Structures
 					create Result.make_from_json (l_arr)
 				end
 			end
+		end
+
+feature -- Type checking
+
+	is_string: BOOLEAN = False
+	is_number: BOOLEAN = False
+	is_integer: BOOLEAN = False
+	is_real: BOOLEAN = False
+	is_boolean: BOOLEAN = False
+	is_null: BOOLEAN = False
+	is_object: BOOLEAN = False
+	is_array: BOOLEAN = True
+
+feature -- Conversion
+
+	to_json_string: STRING
+			-- Convert to JSON string representation
+		do
+			Result := json_array.representation
 		end
 
 feature {NONE} -- Implementation
