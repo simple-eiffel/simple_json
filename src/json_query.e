@@ -3,6 +3,10 @@ note
 	author: "Larry Rix"
 	date: "November 11, 2025"
 	revision: "1"
+	EIS: "name=Use Case: Query Interface for Multiple Extractions",
+		 "src=file:///${SYSTEM_PATH}/docs/use-cases/query-interface.html",
+		 "protocol=uri",
+		 "tag=documentation, query, use-case, performance"
 
 class
 	JSON_QUERY

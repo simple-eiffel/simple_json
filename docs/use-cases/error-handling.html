@@ -140,14 +140,14 @@
     <p>The library is designed with <strong>graceful degradation</strong> in mind:</p>
     
     <ul>
-        <li>✅ No exceptions thrown for missing keys or wrong types</li>
-        <li>✅ Returns safe defaults (Void, 0, False, 0.0)</li>
-        <li>✅ Parse failures return Void with error messages available</li>
-        <li>✅ Void-safe design prevents null pointer issues</li>
+        <li>âœ… No exceptions thrown for missing keys or wrong types</li>
+        <li>âœ… Returns safe defaults (Void, 0, False, 0.0)</li>
+        <li>âœ… Parse failures return Void with error messages available</li>
+        <li>âœ… Void-safe design prevents null pointer issues</li>
     </ul>
     
     <div class="tip">
-        <strong>💡 Design Principle:</strong> SIMPLE_JSON never crashes your application. It returns safe defaults and provides error information when requested.
+        <strong>ðŸ’¡ Design Principle:</strong> SIMPLE_JSON never crashes your application. It returns safe defaults and provides error information when requested.
     </div>
     
     <h2 id="error-scenarios">Common Error Scenarios</h2>
@@ -579,7 +579,7 @@ process_user_list (users_array: SIMPLE_JSON_ARRAY): INTEGER
     end</code></pre>
     
     <div class="warning">
-        <strong>⚠️ Production Tip:</strong> Always log JSON errors in production with enough context to diagnose issues, but don't expose raw JSON to end users (might contain sensitive data).
+        <strong>âš ï¸ Production Tip:</strong> Always log JSON errors in production with enough context to diagnose issues, but don't expose raw JSON to end users (might contain sensitive data).
     </div>
     
     <h2 id="testing">Testing Error Handling</h2>
@@ -618,7 +618,7 @@ test_handles_missing_keys
     </ul>
     
     <div class="back-link">
-        <a href="index.html">← Back to Use Cases</a>
+        <a href="index.html">â† Back to Use Cases</a>
     </div>
 </body>
 </html>

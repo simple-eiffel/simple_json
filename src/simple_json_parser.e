@@ -3,6 +3,10 @@ note
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
+	EIS: "name=Use Case: Error Handling",
+		 "src=file:///${SYSTEM_PATH}/docs/use-cases/error-handling.html",
+		 "protocol=uri",
+		 "tag=documentation, parsing, error-handling, use-case"
 
 class
 	SIMPLE_JSON_PARSER

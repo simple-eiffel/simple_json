@@ -3,6 +3,10 @@ note
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
+	EIS: "name=Use Case: JSON Schema Validation",
+		 "src=file:///${SYSTEM_PATH}/docs/use-cases/validation.html",
+		 "protocol=uri",
+		 "tag=documentation, validation, schema, use-case"
 
 class
 	JSON_SCHEMA

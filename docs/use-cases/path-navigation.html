@@ -238,7 +238,7 @@ end</code></pre>
     </table>
     
     <div class="tip">
-        <strong>💡 Tip:</strong> Use <code>path_exists</code> to check if a path is valid before extracting values, especially for optional fields.
+        <strong>ðŸ’¡ Tip:</strong> Use <code>path_exists</code> to check if a path is valid before extracting values, especially for optional fields.
     </div>
     
     <h2 id="complete-example">Complete Example: API Response Processing</h2>
@@ -315,7 +315,7 @@ feature {NONE} -- Implementation
             if attached a_name as name then
                 print ("Name: " + name)
                 if a_verified then
-                    print (" ✓ Verified")
+                    print (" âœ“ Verified")
                 end
                 print ("%N")
             end
@@ -386,7 +386,7 @@ end</code></pre>
     </table>
     
     <div class="note">
-        <strong>⚠️ Performance Note:</strong> Each path method re-parses the JSON. For multiple paths in the same document, consider the <a href="query-interface.html">Query Interface</a>.
+        <strong>âš ï¸ Performance Note:</strong> Each path method re-parses the JSON. For multiple paths in the same document, consider the <a href="query-interface.html">Query Interface</a>.
     </div>
     
     <h2 id="edge-cases">Handling Edge Cases</h2>
@@ -415,7 +415,7 @@ email := json.path_string (json_text, "user.profile.email")  -- Returns Void, no
     </ul>
     
     <div class="back-link">
-        <a href="index.html">← Back to Use Cases</a>
+        <a href="index.html">â† Back to Use Cases</a>
     </div>
 </body>
 </html>

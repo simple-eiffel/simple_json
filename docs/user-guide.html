@@ -114,7 +114,7 @@
 
     <p><em>Comprehensive documentation for the SIMPLE_JSON library</em></p>
 
-    <h2>📖 Table of Contents</h2>
+    <h2>ðŸ“– Table of Contents</h2>
 
     <div class="section">
         <h3>Getting Started</h3>
@@ -214,7 +214,7 @@
     <h3>Performance Tips</h3>
     
     <div class="tip">
-        <strong>✅ DO:</strong>
+        <strong>âœ… DO:</strong>
         <ul>
             <li>Use query interface for multiple extractions</li>
             <li>Validate complex JSON before parsing in production</li>
@@ -224,7 +224,7 @@
     </div>
 
     <div class="warning">
-        <strong>❌ AVOID:</strong>
+        <strong>âŒ AVOID:</strong>
         <ul>
             <li>Repeated one-liner calls on the same JSON string</li>
             <li>Parsing JSON in tight loops without caching</li>
@@ -250,7 +250,7 @@ email := query.string ("email")
 verified := query.boolean ("verified")</pre>
 
     <div class="tip">
-        <strong>💡 Rule of Thumb:</strong> Query interface is 5-10x faster than repeated one-liners for 5+ extractions.
+        <strong>ðŸ’¡ Rule of Thumb:</strong> Query interface is 5-10x faster than repeated one-liners for 5+ extractions.
     </div>
 
     <h2 id="best-practices">Best Practices</h2>
@@ -324,12 +324,12 @@ end</pre>
 
     <h3>5. Build JSON Programmatically</h3>
     <pre>-- DON'T manually concatenate
-json_string := "{\"name\":\"" + name + "\"}"  -- ❌ Error-prone
+json_string := "{\"name\":\"" + name + "\"}"  -- âŒ Error-prone
 
 -- DO use the builder
 json_string := json.build
     .put_string ("name", name)
-    .to_string  -- ✅ Correct</pre>
+    .to_string  -- âœ… Correct</pre>
 
     <h3>6. Test with Edge Cases</h3>
     <ul>
@@ -387,10 +387,10 @@ end
 -- Save to file
 json.to_file (data_object, "output.json")</pre>
 
-    <h2>📚 Explore by Use Case</h2>
+    <h2>ðŸ“š Explore by Use Case</h2>
     <p>For practical examples and patterns, visit the <a href="use-cases/index.html">Use Cases Library</a>.</p>
 
-    <h2>🔗 Related Resources</h2>
+    <h2>ðŸ”— Related Resources</h2>
     <ul>
         <li><a href="quick-start.html">Quick Start Guide</a> - Get started in 5 minutes</li>
         <li><a href="use-cases/index.html">Use Cases Library</a> - Real-world examples</li>

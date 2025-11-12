@@ -3,6 +3,10 @@ note
     author: "Larry Rix"
     date: "November 12, 2025"
     revision: "5"
+	EIS: "name=SIMPLE_JSON User Guide",
+		 "src=file:///${SYSTEM_PATH}/docs/user-guide.html",
+		 "protocol=uri",
+		 "tag=documentation, user-guide, api"
 
 class
     SIMPLE_JSON_OBJECT

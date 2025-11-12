@@ -3,10 +3,10 @@ note
 	author: "Larry Rix"
 	date: "November 12, 2025"
 	revision: "3"
-	EIS: "name=Builder Enhancements Documentation",
-		 "src=file:///${SYSTEM_PATH}/docs/markdown/builder-enhancements.md",
+	EIS: "name=Use Case: Building JSON Programmatically",
+		 "src=file:///${SYSTEM_PATH}/docs/use-cases/building-json.html",
 		 "protocol=uri",
-		 "tag=documentation, builder, enhancements"
+		 "tag=documentation, builder, use-case, construction"
 
 class
 	JSON_BUILDER

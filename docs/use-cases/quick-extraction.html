@@ -171,7 +171,7 @@ do
     -- Use the values
     if attached city as c then
         print ("City: " + c + "%N")
-        print ("Temperature: " + temperature.out + "°F%N")
+        print ("Temperature: " + temperature.out + "Â°F%N")
         print ("Humidity: " + humidity.out + "%%%N")
     end
 end</code></pre>
@@ -225,11 +225,11 @@ end</code></pre>
     </table>
     
     <div class="tip">
-        <strong>💡 Tip:</strong> Strings return <code>Void</code> when the key is missing, so always use <code>attached</code> checks. Numeric types return default values (0, 0.0, False) which are safe to use directly.
+        <strong>ðŸ’¡ Tip:</strong> Strings return <code>Void</code> when the key is missing, so always use <code>attached</code> checks. Numeric types return default values (0, 0.0, False) which are safe to use directly.
     </div>
     
     <div class="note">
-        <strong>⚠️ Performance Note:</strong> Each method call re-parses the JSON string. If you need multiple values, consider using <a href="query-interface.html">Use Case 2: Query Interface</a> instead.
+        <strong>âš ï¸ Performance Note:</strong> Each method call re-parses the JSON string. If you need multiple values, consider using <a href="query-interface.html">Use Case 2: Query Interface</a> instead.
     </div>
     
     <h2 id="complete-example">Complete Example</h2>
@@ -286,7 +286,7 @@ feature {NONE} -- Implementation
                 print ("Location: " + city + "%N")
             end
             
-            print ("Temperature: " + a_temp.out + "°F%N")
+            print ("Temperature: " + a_temp.out + "Â°F%N")
             
             if attached a_conditions as cond then
                 print ("Conditions: " + cond + "%N")
@@ -336,7 +336,7 @@ debug_mode := json.boolean (config_json, "debug")
     </ul>
     
     <div class="back-link">
-        <a href="index.html">← Back to Use Cases</a>
+        <a href="index.html">â† Back to Use Cases</a>
     </div>
 </body>
 </html>
