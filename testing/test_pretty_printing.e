@@ -14,14 +14,16 @@ feature -- Test routines: Basic types
 		local
 			json: SIMPLE_JSON
 			value: detachable SIMPLE_JSON_VALUE
-			pretty: STRING_32
+			l_expected, pretty: STRING_32
 		do
+			l_expected := "%"Hello, World!%""
 			create json
-			value := json.parse ("%"Hello, World!%"")
+			value := json.parse (l_expected)
 			assert_attached ("value_parsed", value)
 			if attached value as v then
 				pretty := v.to_pretty_json
 				assert ("contains_hello", pretty.has_substring ("Hello, World!"))
+				assert_strings_equal_diff ("hello_diffed", l_expected, pretty)
 			end
 		end
 

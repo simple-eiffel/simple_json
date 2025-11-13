@@ -340,4 +340,186 @@ feature -- String assertions
 			assert (msg, not a_string.is_empty)
 		end
 
+	assert_strings_equal_diff (a_tag: READABLE_STRING_GENERAL; a_expected, a_actual: READABLE_STRING_GENERAL)
+			-- Assert strings are equal with detailed character-by-character diff
+			-- Shows special characters, position of first difference, and metrics
+		require
+			a_tag_not_void: a_tag /= Void
+			a_expected_attached: a_expected /= Void
+			a_actual_attached: a_actual /= Void
+		local
+			msg: STRING_32
+		do
+			if not a_expected.same_string (a_actual) then
+				msg := build_string_diff (a_tag, a_expected, a_actual)
+				assert (msg, False)
+			end
+		end
+
+feature {NONE} -- String diff implementation
+
+	build_string_diff (a_tag: READABLE_STRING_GENERAL; a_expected, a_actual: READABLE_STRING_GENERAL): STRING_32
+			-- Build detailed diff message showing character differences
+		local
+			i, first_diff: INTEGER
+			exp_len, act_len: INTEGER
+			c_exp, c_act: CHARACTER_32
+		do
+			create Result.make (200)
+			
+			-- Header
+			Result.append_string_general (a_tag)
+			Result.append_string_general ("%N")
+			Result.append_string_general ("================================================================================")
+			Result.append_string_general ("%N")
+			
+			-- Metrics
+			exp_len := a_expected.count
+			act_len := a_actual.count
+			Result.append_string_general ("Expected length: ")
+			Result.append_integer (exp_len)
+			Result.append_string_general ("%N")
+			Result.append_string_general ("Actual length:   ")
+			Result.append_integer (act_len)
+			Result.append_string_general ("%N")
+			
+			-- Find first difference
+			first_diff := 0
+			from
+				i := 1
+			until
+				i > exp_len.min (act_len) or first_diff > 0
+			loop
+				if a_expected.item (i) /= a_actual.item (i) then
+					first_diff := i
+				end
+				i := i + 1
+			end
+			
+			if first_diff = 0 and exp_len /= act_len then
+				first_diff := exp_len.min (act_len) + 1
+			end
+			
+			Result.append_string_general ("First diff at:   position ")
+			Result.append_integer (first_diff)
+			Result.append_string_general ("%N")
+			Result.append_string_general ("================================================================================")
+			Result.append_string_general ("%N")
+			
+			-- Expected string with special chars
+			Result.append_string_general ("EXPECTED:%N  ")
+			Result.append_string_general (printable_string (a_expected))
+			Result.append_string_general ("%N")
+			
+			-- Actual string with special chars
+			Result.append_string_general ("ACTUAL:%N  ")
+			Result.append_string_general (printable_string (a_actual))
+			Result.append_string_general ("%N")
+			
+			-- Character-by-character comparison around first difference
+			if first_diff > 0 then
+				Result.append_string_general ("================================================================================")
+				Result.append_string_general ("%N")
+				Result.append_string_general ("Character-by-character at difference position ")
+				Result.append_integer (first_diff)
+				Result.append_string_general (":%N")
+				
+				from
+					i := (first_diff - 2).max (1)
+				until
+					i > (first_diff + 2).min (exp_len.max (act_len))
+				loop
+					Result.append_string_general ("  Position ")
+					Result.append_integer (i)
+					Result.append_string_general (": ")
+					
+					if i <= exp_len then
+						c_exp := a_expected.item (i)
+						Result.append_string_general ("Expected=")
+						Result.append_string_general (printable_char (c_exp))
+						Result.append_string_general (" (")
+						Result.append_integer (c_exp.code)
+						Result.append_string_general (")")
+					else
+						Result.append_string_general ("Expected=<END>")
+					end
+					
+					Result.append_string_general ("  ")
+					
+					if i <= act_len then
+						c_act := a_actual.item (i)
+						Result.append_string_general ("Actual=")
+						Result.append_string_general (printable_char (c_act))
+						Result.append_string_general (" (")
+						Result.append_integer (c_act.code)
+						Result.append_string_general (")")
+					else
+						Result.append_string_general ("Actual=<END>")
+					end
+					
+					if i = first_diff then
+						Result.append_string_general (" <-- FIRST DIFFERENCE")
+					end
+					
+					Result.append_string_general ("%N")
+					i := i + 1
+				end
+			end
+			
+			Result.append_string_general ("================================================================================")
+		end
+
+	printable_string (a_string: READABLE_STRING_GENERAL): STRING_32
+			-- Convert string to printable form showing special characters
+		local
+			i: INTEGER
+		do
+			create Result.make (a_string.count * 2)
+			from
+				i := 1
+			until
+				i > a_string.count
+			loop
+				Result.append_string_general (printable_char (a_string.item (i)))
+				i := i + 1
+			end
+		end
+
+	printable_char (c: CHARACTER_32): STRING_32
+			-- Convert character to printable representation
+		do
+			create Result.make (6)
+			inspect c
+			when '%N' then
+				Result.append_string_general ("\n")
+			when '%R' then
+				Result.append_string_general ("\r")
+			when '%T' then
+				Result.append_string_general ("\t")
+			when '%B' then
+				Result.append_string_general ("\b")
+			when '%F' then
+				Result.append_string_general ("\f")
+			when '%'' then
+				Result.append_string_general ("\'")
+			when '%"' then
+				Result.append_string_general ("\%"")
+			when '%%' then
+				Result.append_string_general ("\\")
+			else
+				if c.code >= 32 and c.code <= 126 then
+					-- Printable ASCII
+					Result.append_character (c)
+				elseif c.code < 32 then
+					-- Control character
+					Result.append_string_general ("\x")
+					Result.append_string_general (c.code.to_hex_string)
+				else
+					-- Unicode
+					Result.append_string_general ("\u")
+					Result.append_string_general (c.code.to_hex_string)
+				end
+			end
+		end
+
 end
