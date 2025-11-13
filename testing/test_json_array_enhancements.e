@@ -23,7 +23,7 @@ feature -- Test: Append Operations
 			create l_array.make_empty
 			l_array.append_string ("value1")
 			l_array.append_string ("value2")
-
+			
 			assert ("count_is_2", l_array.count = 2)
 			assert ("first_correct", attached l_array.string_at (1) as s and then s.is_equal ("value1"))
 			assert ("second_correct", attached l_array.string_at (2) as s and then s.is_equal ("value2"))
@@ -40,7 +40,7 @@ feature -- Test: Append Operations
 			l_array.append_integer (10)
 			l_array.append_integer (20)
 			l_array.append_integer (30)
-
+			
 			assert ("count_is_3", l_array.count = 3)
 			assert ("first_is_10", l_array.integer_at (1) = 10)
 			assert ("second_is_20", l_array.integer_at (2) = 20)
@@ -57,7 +57,7 @@ feature -- Test: Append Operations
 			create l_array.make_empty
 			l_array.append_real (1.5)
 			l_array.append_real (2.5)
-
+			
 			assert ("count_is_2", l_array.count = 2)
 			assert ("first_correct", (l_array.real_at (1) - 1.5).abs < 0.001)
 			assert ("second_correct", (l_array.real_at (2) - 2.5).abs < 0.001)
@@ -74,7 +74,7 @@ feature -- Test: Append Operations
 			l_array.append_boolean (True)
 			l_array.append_boolean (False)
 			l_array.append_boolean (True)
-
+			
 			assert ("count_is_3", l_array.count = 3)
 			assert ("first_is_true", l_array.boolean_at (1) = True)
 			assert ("second_is_false", l_array.boolean_at (2) = False)
@@ -90,24 +90,24 @@ feature -- Test: Append Operations
 			l_obj1, l_obj2: SIMPLE_JSON_OBJECT
 		do
 			create l_array.make_empty
-
+			
 			create l_obj1.make_empty
 			l_obj1.put_string ("name", "Alice")
-
+			
 			create l_obj2.make_empty
 			l_obj2.put_string ("name", "Bob")
-
+			
 			l_array.append_object (l_obj1)
 			l_array.append_object (l_obj2)
-
+			
 			assert ("count_is_2", l_array.count = 2)
-
+			
 			if attached l_array.object_at (1) as obj1 then
 				assert ("first_name_alice", attached obj1.string ("name") as n and then n.is_equal ("Alice"))
 			else
 				assert ("first_should_exist", False)
 			end
-
+			
 			if attached l_array.object_at (2) as obj2 then
 				assert ("second_name_bob", attached obj2.string ("name") as n and then n.is_equal ("Bob"))
 			else
@@ -123,20 +123,20 @@ feature -- Test: Append Operations
 			l_array, l_nested1, l_nested2: SIMPLE_JSON_ARRAY
 		do
 			create l_array.make_empty
-
+			
 			create l_nested1.make_empty
 			l_nested1.append_integer (1)
 			l_nested1.append_integer (2)
-
+			
 			create l_nested2.make_empty
 			l_nested2.append_integer (3)
 			l_nested2.append_integer (4)
-
+			
 			l_array.append_array (l_nested1)
 			l_array.append_array (l_nested2)
-
+			
 			assert ("count_is_2", l_array.count = 2)
-
+			
 			if attached l_array.array_at (1) as arr1 then
 				assert ("first_array_count", arr1.count = 2)
 			else
@@ -159,7 +159,7 @@ feature -- Test: Append Operations
 			l_array.append_integer (42)
 			l_array.append_boolean (True)
 			l_array.append_real (3.14)
-
+			
 			assert ("count_is_4", l_array.count = 4)
 			assert ("string_correct", attached l_array.string_at (1) as s and then s.is_equal ("text"))
 			assert ("integer_correct", l_array.integer_at (2) = 42)
@@ -179,7 +179,7 @@ feature -- Test: Insert Operations
 			create l_array.make_empty
 			l_array.append_string ("second")
 			l_array.insert_string_at (1, "first")
-
+			
 			assert ("count_is_2", l_array.count = 2)
 			assert ("first_correct", attached l_array.string_at (1) as s and then s.is_equal ("first"))
 			assert ("second_correct", attached l_array.string_at (2) as s and then s.is_equal ("second"))
@@ -195,7 +195,7 @@ feature -- Test: Insert Operations
 			create l_array.make_empty
 			l_array.append_string ("first")
 			l_array.insert_string_at (2, "second")
-
+			
 			assert ("count_is_2", l_array.count = 2)
 			assert ("second_correct", attached l_array.string_at (2) as s and then s.is_equal ("second"))
 		end
@@ -211,7 +211,7 @@ feature -- Test: Insert Operations
 			l_array.append_integer (1)
 			l_array.append_integer (3)
 			l_array.insert_integer_at (2, 2)
-
+			
 			assert ("count_is_3", l_array.count = 3)
 			assert ("first_is_1", l_array.integer_at (1) = 1)
 			assert ("second_is_2", l_array.integer_at (2) = 2)
@@ -231,9 +231,9 @@ feature -- Test: Remove Operations
 			l_array.append_string ("first")
 			l_array.append_string ("second")
 			l_array.append_string ("third")
-
+			
 			l_array.remove_at (1)
-
+			
 			assert ("count_is_2", l_array.count = 2)
 			assert ("first_now_second", attached l_array.string_at (1) as s and then s.is_equal ("second"))
 			assert ("second_now_third", attached l_array.string_at (2) as s and then s.is_equal ("third"))
@@ -250,9 +250,9 @@ feature -- Test: Remove Operations
 			l_array.append_integer (1)
 			l_array.append_integer (2)
 			l_array.append_integer (3)
-
+			
 			l_array.remove_at (2)
-
+			
 			assert ("count_is_2", l_array.count = 2)
 			assert ("first_unchanged", l_array.integer_at (1) = 1)
 			assert ("second_now_3", l_array.integer_at (2) = 3)
@@ -268,9 +268,9 @@ feature -- Test: Remove Operations
 			create l_array.make_empty
 			l_array.append_string ("first")
 			l_array.append_string ("second")
-
+			
 			l_array.remove_at (2)
-
+			
 			assert ("count_is_1", l_array.count = 1)
 			assert ("only_first_remains", attached l_array.string_at (1) as s and then s.is_equal ("first"))
 		end
@@ -285,10 +285,10 @@ feature -- Test: Remove Operations
 			create l_array.make_empty
 			l_array.append_integer (1)
 			l_array.append_integer (2)
-
+			
 			l_array.remove_at (1)
 			assert ("count_is_1", l_array.count = 1)
-
+			
 			l_array.remove_at (1)
 			assert ("count_is_0", l_array.count = 0)
 			assert ("is_empty", l_array.is_empty)
@@ -305,7 +305,7 @@ feature -- Test: Clear Operations
 		do
 			create l_array.make_empty
 			l_array.clear
-
+			
 			assert ("still_empty", l_array.is_empty)
 			assert ("count_zero", l_array.count = 0)
 		end
@@ -321,9 +321,9 @@ feature -- Test: Clear Operations
 			l_array.append_string ("value1")
 			l_array.append_integer (42)
 			l_array.append_boolean (True)
-
+			
 			l_array.clear
-
+			
 			assert ("is_empty", l_array.is_empty)
 			assert ("count_zero", l_array.count = 0)
 		end
@@ -339,7 +339,7 @@ feature -- Test: Clear Operations
 			l_array.append_string ("old_value")
 			l_array.clear
 			l_array.append_string ("new_value")
-
+			
 			assert ("count_is_1", l_array.count = 1)
 			assert ("has_new_value", attached l_array.string_at (1) as s and then s.is_equal ("new_value"))
 		end
@@ -355,7 +355,7 @@ feature -- Test: Clone Operations
 		do
 			create l_array.make_empty
 			l_clone := l_array.json_clone
-
+			
 			assert ("clone_exists", l_clone /= Void)
 			assert ("clone_empty", l_clone.is_empty)
 			assert ("independent", l_clone /= l_array)
@@ -372,9 +372,9 @@ feature -- Test: Clone Operations
 			l_array.append_string ("value1")
 			l_array.append_integer (42)
 			l_array.append_boolean (True)
-
+			
 			l_clone := l_array.json_clone
-
+			
 			assert ("clone_same_count", l_clone.count = l_array.count)
 			assert ("clone_has_string", attached l_clone.string_at (1) as s and then s.is_equal ("value1"))
 			assert ("clone_has_integer", l_clone.integer_at (2) = 42)
@@ -391,12 +391,12 @@ feature -- Test: Clone Operations
 		do
 			create l_array.make_empty
 			l_array.append_string ("original")
-
+			
 			l_clone := l_array.json_clone
-
+			
 			-- Modify original
 			l_array.append_string ("modified")
-
+			
 			-- Clone should be unchanged
 			assert ("clone_count_1", l_clone.count = 1)
 			assert ("original_count_2", l_array.count = 2)
@@ -411,13 +411,13 @@ feature -- Test: Clone Operations
 			l_obj: SIMPLE_JSON_OBJECT
 		do
 			create l_array.make_empty
-
+			
 			create l_obj.make_empty
 			l_obj.put_string ("key", "value")
-
+			
 			l_array.append_object (l_obj)
 			l_clone := l_array.json_clone
-
+			
 			-- Both should have the nested object
 			if attached l_array.object_at (1) as orig_obj and then
 			   attached l_clone.object_at (1) as clone_obj then
@@ -449,7 +449,7 @@ feature -- Test: Integration
 			l_array.append_boolean (True)
 			l_array.remove_at (2)  -- Remove integer
 			l_array.append_real (3.14)
-
+			
 			assert ("count_is_3", l_array.count = 3)
 			assert ("has_string", attached l_array.string_at (1))
 			assert ("has_boolean", l_array.boolean_at (2) = True)
@@ -460,7 +460,7 @@ feature -- Test: Integration
 			-- Test array to JSON and back
 		note
 			testing: "covers/{SIMPLE_JSON_ARRAY}.to_json_string"
-			testing: "covers/{SIMPLE_JSON_ARRAY}.make_from_json"
+			testing: "covers/{SIMPLE_JSON_ARRAY}.make_from_json_array"
 		local
 			l_array: SIMPLE_JSON_ARRAY
 			l_json_string: STRING
@@ -469,12 +469,12 @@ feature -- Test: Integration
 			create l_array.make_empty
 			l_array.append_string ("test")
 			l_array.append_integer (123)
-
+			
 			l_json_string := l_array.to_json_string
-
+			
 			create l_parser.make_with_string (l_json_string)
 			l_parser.parse_content
-
+			
 			if l_parser.is_parsed and l_parser.is_valid then
 				if attached {JSON_ARRAY} l_parser.parsed_json_value as parsed_arr then
 					create l_array.make_from_json_array (parsed_arr)
@@ -493,21 +493,21 @@ feature -- Test: Integration
 			l_obj: SIMPLE_JSON_OBJECT
 		do
 			create l_array.make_empty
-
+			
 			-- Build array of objects
 			create l_obj.make_empty
 			l_obj.put_string ("name", "Alice")
 			l_obj.put_integer ("age", 30)
 			l_array.append_object (l_obj)
-
+			
 			create l_obj.make_empty
 			l_obj.put_string ("name", "Bob")
 			l_obj.put_integer ("age", 25)
 			l_array.append_object (l_obj)
-
+			
 			-- Add more data
 			l_array.append_string ("Extra info")
-
+			
 			assert ("count_is_3", l_array.count = 3)
 			assert ("first_is_object", attached l_array.object_at (1))
 			assert ("second_is_object", attached l_array.object_at (2))
