@@ -1,511 +1,535 @@
-# Simple JSON
+# SIMPLE_JSON
 
-A lightweight, easy-to-use JSON parsing and generation library for Eiffel with arbitrary precision decimal support.
-
-AI NOTE: Most code was generated interactively using Claude Sonnet 4.5 with minor mods applied by hand. Additional pushes forward with this library will use the same method.
+A simple, Unicode-first JSON library for Eiffel with an intuitive API.
 
 [![Language](https://img.shields.io/badge/language-Eiffel-blue.svg)](https://www.eiffel.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ## Overview
 
-Simple JSON provides a clean, intuitive interface for working with JSON data in Eiffel applications. Whether you need to parse JSON strings, query nested data structures, or build JSON programmatically, Simple JSON offers a straightforward API that follows Eiffel's design principles.
+SIMPLE_JSON provides a clean, high-level API for working with JSON in Eiffel applications. Built on top of the standard Eiffel JSON library, it offers a simple interface with full Unicode/UTF-8 support using STRING_32 throughout.
+
+**AI NOTE:** Most code was generated interactively using Claude Sonnet 4.5 with minor modifications applied by hand. Additional development will use the same method.
 
 ## Key Features
 
-- **🔍 Easy Parsing**: Parse JSON strings with simple, expressive syntax
-- **🔎 Path-Based Queries**: Navigate nested JSON structures using intuitive path notation  
-- **🗃️ Enhanced Building**: Construct JSON with fluent builder including conditional fields
-- **✅ Robust Validation**: Comprehensive error handling and validation
-- **🧪 Well-Tested**: Extensive test suite with 100% coverage (216 tests across 11 test classes)
-- **📚 Full Documentation**: Complete user guide, API docs, and EIS integration
-- **🎯 Type Safety**: Leverages Eiffel's strong typing for safe JSON operations
-- **🔢 Precise Numbers**: Support for integers, floating-point, and arbitrary precision decimals
-- **🔬 Type Introspection**: Check value types with `is_string`, `is_number`, `is_decimal`, etc.
-- **⚡ Conditional Building**: Add fields conditionally with `put_*_if` methods
-- **📝 Array Manipulation**: Full CRUD operations (append, insert, remove, clear)
-- **🔀 Object Operations**: Merge, clone, rename keys, and more
-- **💰 Financial Precision**: SIMPLE_JSON_DECIMAL for exact decimal arithmetic
-- **📍 Position Tracking**: Parse errors include line and column numbers for easy debugging
+- **🌍 Unicode First**: All strings are STRING_32 - full Unicode/UTF-8 support out of the box
+- **🚫 No STRING_8**: Completely eliminates STRING_8 from the public API
+- **⛓️ Fluent API**: Chainable methods for building JSON structures
+- **✅ Type-Safe**: Strong typing with proper preconditions and postconditions
+- **📝 Easy Parsing**: Parse JSON with a single method call
+- **🔨 Easy Building**: Build JSON structures with intuitive methods
+- **🧪 Well-Tested**: Comprehensive test suite covering all features
+- **🎯 Design by Contract**: Full DbC with preconditions, postconditions, and invariants
 
-## What's New
+## What Makes This Special
 
-### Major Refactoring (November 2025) ⭐
+### Unicode/UTF-8 Everywhere
+```eiffel
+-- All strings are STRING_32 - Unicode just works!
+obj := json.new_object
+    .put_string ("Hello, 世界! 🌍", "greeting")
+    .put_string ("Здравствуй", "russian")
+    .put_string ("مرحبا", "arabic")
+```
 
-**Architectural Improvements:**
-- **Advanced Type System**: Leveraged Eiffel's generics with type constraints via `SIMPLE_JSON_PRIMITIVE [G, J]`
-- **Multiple Inheritance**: Strategic use of multiple inheritance with 8 type indicator mixins
-- **Code Reduction**: Eliminated ~420 lines of duplicate code through proper abstraction
-- **Container Base**: Created `SIMPLE_JSON_CONTAINER` for shared OBJECT/ARRAY functionality
-- **Numeric Mixin**: `SIMPLE_JSON_NUMERIC` provides unified numeric type behavior
-- **Zero Breaking Changes**: 100% backward compatibility maintained - all 216 tests pass
-- **Enhanced API**: Added helper methods like `put_or_replace` and `insert_json_value_at`
+### Simple Over Complex
+```eiffel
+-- One line to parse
+value := json.parse ('{"name": "Alice", "age": 30}')
 
-This refactoring demonstrates advanced Eiffel patterns: generic classes with constraints, strategic multiple inheritance, and feature joining - while maintaining the library's simplicity and reliability.
+-- One line to build
+obj := json.new_object.put_string ("Bob", "name").put_integer (25, "age")
+```
 
-### Recently Added Features
-
-- **Position Tracking**: Parse errors now include exact line and column numbers (e.g., "Error at line 15, column 23: Expected ','") for instant debugging
-- **Arbitrary Precision Decimals**: New `SIMPLE_JSON_DECIMAL` class using DECIMAL library for exact decimal representation (no more "3.1400000000000001"!)
-- **Type Introspection**: All JSON value types now support `is_string`, `is_number`, `is_integer`, `is_real`, `is_decimal`, `is_boolean`, `is_null`, `is_object`, `is_array` queries
-- **Builder Enhancements**: Conditional `put_*_if` methods, merge, remove, rename, clear, and clone operations
-- **Array Enhancements**: Full modification support with append, insert, remove, and clear operations
-- **Comprehensive Documentation**: New markdown docs with EIS integration for F1 help in EiffelStudio
-
-See [docs/markdown/Part_1_-_Step_2_-_Builder_and_Array_Enhancements.md](docs/markdown/Part_1_-_Step_2_-_Builder_and_Array_Enhancements.md) for details.
+### No Encoding Headaches
+- Public API only uses STRING_32
+- All UTF-8 conversion handled internally
+- Never think about encodings
 
 ## Installation
 
 ### Using EiffelStudio
 
-1. Clone the repository:
+1. Clone or download the repository:
 ```bash
 git clone https://github.com/ljr1981/simple_json.git
 ```
 
 2. Add the library to your project's `.ecf` file:
 ```xml
-<library name="simple_json" location="$SIMPLE_JSON\simple_json.ecf"/>
+<library name="simple_json" location="$SIMPLE_JSON/simple_json.ecf"/>
 ```
 
 3. Set the `SIMPLE_JSON` environment variable to point to your clone location, or use an absolute path.
 
-### Optional: DECIMAL Library
-
-For arbitrary precision decimal support, ensure the DECIMAL library is available in your EiffelStudio installation or project. See [docs/DECIMAL_SUPPORT_GUIDE.md](docs/DECIMAL_SUPPORT_GUIDE.md) for details.
-
 ## Quick Start
 
 ### Parsing JSON
+
 ```eiffel
 local
-    json: JSON
-    name: STRING
-    age: INTEGER
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
 do
-    create json.make_from_string ("{%"name%": %"Alice%", %"age%": 30}")
+    create json
+    value := json.parse ('{"name": "Alice", "age": 30}')
     
-    if json.is_valid then
-        name := json.string_value_at ("name")
-        age := json.integer_value_at ("age")
-        print ("Name: " + name + ", Age: " + age.out)
+    if attached value and then value.is_object then
+        print (value.as_object.string_item ("name"))  -- Prints: Alice
+        print (value.as_object.integer_item ("age"))  -- Prints: 30
     end
 end
 ```
 
-### Error Handling with Position Tracking
+### Building JSON Objects
+
 ```eiffel
 local
-    json: JSON
+    json: SIMPLE_JSON
+    obj: SIMPLE_JSON_OBJECT
 do
-    create json.make_from_string ("{%"name%": %"Alice%", invalid}")
+    create json
+    obj := json.new_object
+        .put_string ("Bob", "name")
+        .put_integer (25, "age")
+        .put_boolean (True, "active")
     
-    if not json.is_valid then
-        -- Prints: "Error at line 1, column 23: Expected property name, got 'i'"
-        print (json.error_message)
-    end
+    print (obj.to_json_string)
+    -- Output: {"name":"Bob","age":25,"active":true}
 end
 ```
 
-### Using Arbitrary Precision Decimals
-```eiffel
-local
-    price: SIMPLE_JSON_DECIMAL
-    json_output: STRING
-do
-    -- Exact precision - no floating-point errors!
-    create price.make_from_string ("19.99")
-    json_output := price.to_json_string  -- "19.99" (exact!)
-    
-    -- Perfect for financial calculations
-    print ("Price: $" + json_output)
-end
-```
+### Building JSON Arrays
 
-### Building JSON with Enhancements
 ```eiffel
 local
-    builder: JSON_BUILDER
-    json_string: STRING
-    has_email: BOOLEAN
-    has_phone: BOOLEAN
-do
-    has_email := True
-    has_phone := False
-    
-    create builder.make
-    builder.put_string ("name", "Bob")
-           .put_integer ("age", 25)
-           .put_string_if (has_email, "email", "bob@example.com")
-           .put_string_if (has_phone, "phone", "555-1234")
-    
-    json_string := builder.to_string
-    -- Output: {"name":"Bob","age":25,"email":"bob@example.com"}
-end
-```
-
-### Working with Arrays
-```eiffel
-local
+    json: SIMPLE_JSON
     arr: SIMPLE_JSON_ARRAY
 do
-    create arr.make_empty
-    arr.append_string ("Alice")
-    arr.append_string ("Bob")
-    arr.append_string ("Carol")
-    arr.insert_string_at (2, "Betty")  -- Insert between Alice and Bob
+    create json
+    arr := json.new_array
+        .add_string ("apple")
+        .add_string ("banana")
+        .add_integer (42)
+        .add_boolean (True)
     
-    -- Result: ["Alice","Betty","Bob","Carol"]
-    print ("Count: " + arr.count.out)
+    print (arr.to_json_string)
+    -- Output: ["apple","banana",42,true]
+end
+```
+
+### Nested Structures
+
+```eiffel
+local
+    json: SIMPLE_JSON
+    person: SIMPLE_JSON_OBJECT
+    address: SIMPLE_JSON_OBJECT
+    hobbies: SIMPLE_JSON_ARRAY
+do
+    create json
+    
+    -- Create address object
+    address := json.new_object
+        .put_string ("123 Main St", "street")
+        .put_string ("Springfield", "city")
+    
+    -- Create hobbies array
+    hobbies := json.new_array
+        .add_string ("reading")
+        .add_string ("coding")
+    
+    -- Create person with nested structures
+    person := json.new_object
+        .put_string ("Charlie", "name")
+        .put_integer (35, "age")
+        .put_object (address, "address")
+        .put_array (hobbies, "hobbies")
+    
+    print (person.to_json_string)
+end
+```
+
+### Accessing Values
+
+```eiffel
+local
+    json: SIMPLE_JSON
+    obj: SIMPLE_JSON_OBJECT
+do
+    create json
+    
+    if attached json.parse ('{"name": "Diana", "age": 28}') as value
+       and then value.is_object then
+        obj := value.as_object
+        
+        -- Check if key exists
+        if obj.has_key ("name") then
+            -- Get string value (returns Void if wrong type)
+            if attached obj.string_item ("name") as name then
+                print ("Name: " + name)
+            end
+        end
+        
+        -- Get integer value (returns 0 if wrong type or missing)
+        print ("Age: " + obj.integer_item ("age").out)
+        
+        -- Get count of keys
+        print ("Keys: " + obj.count.out)
+    end
 end
 ```
 
 ### Type Checking
+
 ```eiffel
 local
-    json: JSON
+    json: SIMPLE_JSON
     value: SIMPLE_JSON_VALUE
 do
-    create json.make_from_string ("{%"count%": 42}")
-    value := json.value_at ("count")
+    create json
     
-    if value.is_integer then
-        print ("It's an integer: " + json.integer_value_at ("count").out)
-    elseif value.is_string then
-        print ("It's a string: " + json.string_value_at ("count"))
-    elseif value.is_decimal then
-        print ("It's a decimal with arbitrary precision")
+    if attached json.parse ('{"count": 42}') as v then
+        value := v.as_object.item ("count")
+        
+        if value.is_integer then
+            print ("Integer: " + value.as_integer.out)
+        elseif value.is_string then
+            print ("String: " + value.as_string_32)
+        elseif value.is_boolean then
+            print ("Boolean: " + value.as_boolean.out)
+        end
     end
 end
 ```
 
 ## Core Components
 
-### JSON
-The main facade class providing the primary interface for parsing and querying JSON data.
+### SIMPLE_JSON (Main Facade)
 
-**Key Features:**
-- Parse JSON strings
-- Query values by path
-- Type-safe value extraction
-- Validation and error reporting with line/column positions
+The main entry point providing parsing and building functionality.
 
-### JSON_BUILDER
-Fluent interface for constructing JSON structures programmatically.
+**Parsing:**
+- `parse (json_text: STRING_32): detachable SIMPLE_JSON_VALUE`
+- `parse_file (file_path: STRING_32): detachable SIMPLE_JSON_VALUE`
+- `is_valid_json (json_text: STRING_32): BOOLEAN`
 
-**Key Features:**
-- Build objects and arrays
-- Add typed fields and elements
-- Conditional field addition with `put_*_if`
-- Merge, remove, rename operations
-- Generate formatted JSON strings
-- Clone for template reuse
+**Building:**
+- `new_object: SIMPLE_JSON_OBJECT`
+- `new_array: SIMPLE_JSON_ARRAY`
+- `string_value (STRING_32): SIMPLE_JSON_VALUE`
+- `number_value (DOUBLE): SIMPLE_JSON_VALUE`
+- `integer_value (INTEGER_64): SIMPLE_JSON_VALUE`
+- `boolean_value (BOOLEAN): SIMPLE_JSON_VALUE`
+- `null_value: SIMPLE_JSON_VALUE`
 
-### SIMPLE_JSON_DECIMAL
-Arbitrary precision decimal numbers for financial and scientific applications.
+### SIMPLE_JSON_VALUE
 
-**Key Features:**
-- Exact decimal representation (no floating-point errors)
-- Financial-grade arithmetic
-- IEEE 754R compliant
-- Perfect for money, prices, and precise measurements
-- See [docs/DECIMAL_SUPPORT_GUIDE.md](docs/DECIMAL_SUPPORT_GUIDE.md)
+Base wrapper around JSON values with type checking and conversion.
 
-### SIMPLE_JSON_ARRAY
-Dynamic array with full modification support.
+**Type Checking:**
+- `is_string: BOOLEAN`
+- `is_number: BOOLEAN`
+- `is_integer: BOOLEAN`
+- `is_boolean: BOOLEAN`
+- `is_null: BOOLEAN`
+- `is_object: BOOLEAN`
+- `is_array: BOOLEAN`
 
-**Key Features:**
-- Append elements (all types)
-- Insert elements at any position
-- Remove elements
-- Clear array
-- Clone for independent copies
-- Type-safe element access
+**Type Conversion:**
+- `as_string_32: STRING_32` (or `string_value`)
+- `as_integer: INTEGER_64` (or `integer_value`)
+- `as_real: DOUBLE` (or `real_value`)
+- `as_natural: NATURAL_64`
+- `as_boolean: BOOLEAN` (or `boolean_value`)
+- `as_object: SIMPLE_JSON_OBJECT` (or `object_value`)
+- `as_array: SIMPLE_JSON_ARRAY` (or `array_value`)
+- `to_json_string: STRING_32` (or `representation`)
 
 ### SIMPLE_JSON_OBJECT
-Object representation with enhanced operations.
 
-**Key Features:**
-- Direct manipulation of JSON structures
-- Merge objects
-- Rename and remove keys
-- Clone for independent copies
+JSON object with fluent builder API.
 
-### JSON_QUERY
-Advanced querying capabilities for complex JSON navigation.
+**Status:**
+- `count: INTEGER`
+- `is_empty: BOOLEAN`
+- `has_key (key: STRING_32): BOOLEAN`
 
-**Key Features:**
-- Path-based navigation
-- Type checking with introspection
-- Existence verification
-- Deep object traversal
+**Access:**
+- `item (key: STRING_32): detachable SIMPLE_JSON_VALUE`
+- `string_item (key: STRING_32): detachable STRING_32`
+- `integer_item (key: STRING_32): INTEGER_64`
+- `real_item (key: STRING_32): DOUBLE`
+- `boolean_item (key: STRING_32): BOOLEAN`
+- `object_item (key: STRING_32): detachable SIMPLE_JSON_OBJECT`
+- `array_item (key: STRING_32): detachable SIMPLE_JSON_ARRAY`
+
+**Building (Fluent):**
+- `put_string (value, key: STRING_32): SIMPLE_JSON_OBJECT`
+- `put_integer (value: INTEGER_64; key: STRING_32): SIMPLE_JSON_OBJECT`
+- `put_real (value: DOUBLE; key: STRING_32): SIMPLE_JSON_OBJECT`
+- `put_boolean (value: BOOLEAN; key: STRING_32): SIMPLE_JSON_OBJECT`
+- `put_null (key: STRING_32): SIMPLE_JSON_OBJECT`
+- `put_object (value: SIMPLE_JSON_OBJECT; key: STRING_32): SIMPLE_JSON_OBJECT`
+- `put_array (value: SIMPLE_JSON_ARRAY; key: STRING_32): SIMPLE_JSON_OBJECT`
+- `put_value (value: SIMPLE_JSON_VALUE; key: STRING_32): SIMPLE_JSON_OBJECT`
+
+**Removal:**
+- `remove (key: STRING_32)`
+- `wipe_out`
+
+**Iteration:**
+- `keys: ARRAY [STRING_32]`
+
+### SIMPLE_JSON_ARRAY
+
+JSON array with fluent builder API.
+
+**Status:**
+- `count: INTEGER`
+- `is_empty: BOOLEAN`
+- `valid_index (i: INTEGER): BOOLEAN`
+
+**Access:**
+- `item alias "[]" (i: INTEGER): SIMPLE_JSON_VALUE`
+- `string_item (i: INTEGER): detachable STRING_32`
+- `integer_item (i: INTEGER): INTEGER_64`
+- `real_item (i: INTEGER): DOUBLE`
+- `boolean_item (i: INTEGER): BOOLEAN`
+- `object_item (i: INTEGER): detachable SIMPLE_JSON_OBJECT`
+- `array_item (i: INTEGER): detachable SIMPLE_JSON_ARRAY`
+
+**Building (Fluent):**
+- `add_string (value: STRING_32): SIMPLE_JSON_ARRAY`
+- `add_integer (value: INTEGER_64): SIMPLE_JSON_ARRAY`
+- `add_real (value: DOUBLE): SIMPLE_JSON_ARRAY`
+- `add_boolean (value: BOOLEAN): SIMPLE_JSON_ARRAY`
+- `add_null: SIMPLE_JSON_ARRAY`
+- `add_object (value: SIMPLE_JSON_OBJECT): SIMPLE_JSON_ARRAY`
+- `add_array (value: SIMPLE_JSON_ARRAY): SIMPLE_JSON_ARRAY`
+- `add_value (value: SIMPLE_JSON_VALUE): SIMPLE_JSON_ARRAY`
+
+**Removal:**
+- `wipe_out`
 
 ## Architecture
 
-Simple JSON demonstrates advanced Eiffel design patterns rarely seen in open-source libraries:
+### Type Covariance
 
-### Generic Classes with Type Constraints
-
-The `SIMPLE_JSON_PRIMITIVE [G, J]` generic class provides a unified base for all primitive JSON types (STRING, INTEGER, BOOLEAN, etc.):
+The library uses Eiffel's covariance feature properly:
 
 ```eiffel
-class SIMPLE_JSON_PRIMITIVE [G, J -> JSON_VALUE create default_create end]
-    -- G: The Eiffel value type (STRING, INTEGER, etc.)
-    -- J: The JSON library's corresponding type (JSON_STRING, JSON_NUMBER, etc.)
+class SIMPLE_JSON_VALUE
+    json_value: JSON_VALUE
+
+class SIMPLE_JSON_OBJECT inherit SIMPLE_JSON_VALUE
+    redefine json_value, make_value
+    json_value: JSON_OBJECT  -- Covariant redefinition
 ```
 
-This eliminates code duplication while maintaining type safety - each primitive type inherits common behavior while retaining its unique characteristics.
+### Multiple Inheritance
 
-### Strategic Multiple Inheritance
-
-Simple JSON uses multiple inheritance to compose behavior from orthogonal concerns:
+Strategic use of multiple inheritance for shared functionality:
 
 ```eiffel
-class SIMPLE_JSON_STRING
+class TEST_SET_BASE
 inherit
-    SIMPLE_JSON_PRIMITIVE [STRING, JSON_STRING]
-    SIMPLE_JSON_STRING_TYPE    -- Type indicator mixin
+    EQA_TEST_SET
+    
+    EQA_COMMONLY_USED_ASSERTIONS
+        undefine default_create
+        end
+end
 ```
 
-**Benefits:**
-- Type indicators (`SIMPLE_JSON_STRING_TYPE`, `SIMPLE_JSON_INTEGER_TYPE`, etc.) as mixins
-- Numeric types compose `SIMPLE_JSON_NUMERIC` for shared numeric behavior  
-- Container types (`OBJECT`, `ARRAY`) share `SIMPLE_JSON_CONTAINER` base
-- Each class gets exactly the features it needs, no more, no less
+### Design by Contract
 
-### Feature Joining Through Inheritance
-
-Deferred features in parent classes are joined with effective implementations from multiple ancestors:
+Full DbC implementation throughout:
 
 ```eiffel
--- SIMPLE_JSON_VALUE (deferred parent)
-is_string: BOOLEAN deferred end
-
--- SIMPLE_JSON_STRING_TYPE (mixin)
-is_string: BOOLEAN do Result := True end
-
--- SIMPLE_JSON_STRING (inherits both)
--- Gets effective implementation from mixin automatically!
+feature -- Access
+    string_item (a_key: STRING_32): detachable STRING_32
+        require
+            key_not_empty: not a_key.is_empty
+        do
+            -- Implementation
+        end
 ```
-
-### Type System Benefits
-
-**Before Refactoring:** ~420 lines of duplicate code across 9 value types  
-**After Refactoring:** Shared implementations through generics and inheritance  
-**Result:** More maintainable, extensible, and elegant code
-
-**Backward Compatibility:** Zero breaking changes - all 216 existing tests pass unchanged
-
-This architecture makes Simple JSON an excellent example of:
-- Modern Eiffel's generic programming capabilities
-- Proper use of multiple inheritance (avoiding the diamond problem)
-- Design by Contract throughout the inheritance hierarchy
-- How to eliminate code duplication without sacrificing type safety
-
-## Documentation
-
-Comprehensive documentation is available:
-
-- **[Quick Start](docs/quick-start.html)** - Get started quickly
-- **[User Guide](docs/user-guide.html)** - Complete usage documentation
-- **[DECIMAL Support](docs/DECIMAL_SUPPORT_GUIDE.md)** - Arbitrary precision guide
-- **[Use Cases](docs/use-cases/)** - Detailed examples for common scenarios
-  - [Building JSON](docs/use-cases/building-json.html)
-  - [Error Handling](docs/use-cases/error-handling.html)
-  - [Path Navigation](docs/use-cases/path-navigation.html)
-  - [Query Interface](docs/use-cases/query-interface.html)
-  - [Quick Extraction](docs/use-cases/quick-extraction.html)
-  - [Validation](docs/use-cases/validation.html)
-- **[Type Introspection Guide](docs/markdown/Part_1_-_Step_1_-_Introspection.md)**
-- **[Builder Enhancements](docs/markdown/builder-enhancements.md)**
-- **[Array Enhancements](docs/markdown/array-enhancements.md)**
-
-### EIS Integration
-
-All documentation is integrated with EiffelStudio's EIS system. Press F1 on any feature to access context-sensitive help.
 
 ## Testing
 
-The library includes a comprehensive test suite with 100% coverage:
+The library includes a comprehensive test suite using EiffelStudio's AutoTest framework.
 
-- **216 tests** across 11 test classes
-- **Path and Integer Tests** (`TEST_JSON_FACADE`)
-- **Type Introspection** (`TEST_JSON_TYPE_INTROSPECTION`)
-- **Builder Enhancements** (`TEST_JSON_BUILDER_ENHANCEMENTS`)
-- **Array Enhancements** (`TEST_JSON_ARRAY_ENHANCEMENTS`)
-- **DECIMAL Precision** (`TEST_SIMPLE_JSON_DECIMAL_PRETTY_PRINTING`) ⭐
-- **Basic Parsing** (`TEST_SIMPLE_JSON`)
-- **Error Conditions** (`TEST_SIMPLE_JSON_ERRORS`)
-- **JSON Generation** (`TEST_SIMPLE_JSON_GENERATION`)
-- **Nested Structures** (`TEST_SIMPLE_JSON_NESTED`)
-- **Number Formats** (`TEST_SIMPLE_JSON_NUMBERS`)
-- **Query Interface** (`TEST_SIMPLE_JSON_QUERIES`)
+### Test Coverage
+
+**Test Class:** `TEST_SIMPLE_JSON`
+
+**Categories:**
+- Parsing (objects, arrays, primitives)
+- Building (objects, arrays, nested structures)
+- Type checking (all JSON types)
+- Unicode handling
+- Edge cases (empty, null, zero, negative)
+- Fluent API
+- Array/object access
 
 ### Running Tests
 
 1. Open `simple_json.ecf` in EiffelStudio
-2. Set the testing configuration as the active target
-3. Compile and run tests
-4. All 216 tests should pass ✅
+2. Set testing target as active
+3. Compile and execute
+4. All tests should pass ✅
 
-## API Reference
+### Test Base Class
 
-### JSON Class
+The library provides `TEST_SET_BASE` for convenient test writing:
 
-| Method | Description |
-|--------|-------------|
-| `make_from_string (json_string: STRING)` | Parse JSON from string |
-| `is_valid: BOOLEAN` | Check if parsing succeeded |
-| `string_value_at (path: STRING): STRING` | Extract string value |
-| `integer_value_at (path: STRING): INTEGER` | Extract integer value |
-| `real_value_at (path: STRING): REAL` | Extract real number value |
-| `boolean_value_at (path: STRING): BOOLEAN` | Extract boolean value |
-| `value_at (path: STRING): SIMPLE_JSON_VALUE` | Get value for type checking |
-| `has_key (path: STRING): BOOLEAN` | Check if key exists |
-| `error_message: STRING` | Get parse error description |
+```eiffel
+class MY_TEST
+inherit
+    TEST_SET_BASE
+    
+feature
+    test_something
+        do
+            assert_strings_equal ("tag", "expected", "actual")
+            assert_integers_equal ("tag", 42, result)
+            assert_attached ("tag", some_object)
+        end
+end
+```
 
-### JSON_BUILDER Class
+## Use Cases
 
-| Method | Description |
-|--------|-------------|
-| `put_string (key, value: STRING)` | Add string field |
-| `put_integer (key: STRING; value: INTEGER)` | Add integer field |
-| `put_real (key: STRING; value: REAL)` | Add real field |
-| `put_boolean (key: STRING; value: BOOLEAN)` | Add boolean field |
-| `put_string_if (condition: BOOLEAN; key, value: STRING)` | Add string if condition true |
-| `put_integer_if (condition: BOOLEAN; key: STRING; value: INTEGER)` | Add integer if condition true |
-| `put_boolean_if (condition: BOOLEAN; key: STRING; value: BOOLEAN)` | Add boolean if condition true |
-| `put_real_if (condition: BOOLEAN; key: STRING; value: REAL)` | Add real if condition true |
-| `merge (other: SIMPLE_JSON_OBJECT)` | Merge another object |
-| `remove (key: STRING)` | Remove a key |
-| `rename_key (old_key, new_key: STRING)` | Rename a key |
-| `clear` | Clear all entries |
-| `to_string: STRING` | Generate JSON string |
-| `build: SIMPLE_JSON_OBJECT` | Get underlying object |
-| `clone_object: SIMPLE_JSON_OBJECT` | Get independent copy |
+### API Integration
+```eiffel
+-- Parse JSON from REST API
+response_json := http_client.get ("/api/users/123")
+if attached json.parse (response_json) as user then
+    name := user.as_object.string_item ("name")
+end
+```
 
-### SIMPLE_JSON_DECIMAL Class ⭐ NEW
+### Configuration Files
+```eiffel
+-- Read application config
+if attached json.parse_file ("config.json") as config then
+    port := config.as_object.integer_item ("port")
+    debug_mode := config.as_object.boolean_item ("debug")
+end
+```
 
-| Method | Description |
-|--------|-------------|
-| `make_from_string (value: STRING)` | Create from string (recommended) |
-| `make_from_integer (value: INTEGER)` | Create from integer |
-| `make_from_real (value: REAL_64)` | Create from real (use cautiously) |
-| `make_from_decimal (value: DECIMAL)` | Create from existing DECIMAL |
-| `decimal_value: DECIMAL` | Get underlying DECIMAL |
-| `to_json_string: STRING` | Convert to JSON representation |
-| `to_pretty_string (indent: INTEGER): STRING` | Pretty print |
-| `is_decimal: BOOLEAN` | Type check (always True) |
-| `is_number: BOOLEAN` | Type check (always True) |
+### Data Serialization
+```eiffel
+-- Serialize data to JSON
+user := json.new_object
+    .put_string (person.name, "name")
+    .put_integer (person.age, "age")
+    .put_string (person.email, "email")
 
-### SIMPLE_JSON_ARRAY Class
+save_to_file (user.to_json_string)
+```
 
-| Method | Description |
-|--------|-------------|
-| `append_string (value: STRING)` | Append string to end |
-| `append_integer (value: INTEGER)` | Append integer to end |
-| `append_real (value: REAL_64)` | Append real to end |
-| `append_boolean (value: BOOLEAN)` | Append boolean to end |
-| `append_object (value: SIMPLE_JSON_OBJECT)` | Append object to end |
-| `append_array (value: SIMPLE_JSON_ARRAY)` | Append array to end |
-| `insert_string_at (index: INTEGER; value: STRING)` | Insert string at position |
-| `insert_integer_at (index: INTEGER; value: INTEGER)` | Insert integer at position |
-| `remove_at (index: INTEGER)` | Remove element at position |
-| `clear` | Remove all elements |
-| `json_clone: SIMPLE_JSON_ARRAY` | Create independent copy |
-| `count: INTEGER` | Number of elements |
-| `string_at (index: INTEGER): STRING` | Get string at position |
-| `integer_at (index: INTEGER): INTEGER` | Get integer at position |
-| `object_at (index: INTEGER): SIMPLE_JSON_OBJECT` | Get object at position |
-
-### SIMPLE_JSON_VALUE Type Checking
-
-| Method | Description |
-|--------|-------------|
-| `is_string: BOOLEAN` | Is this a string value? |
-| `is_number: BOOLEAN` | Is this any numeric value? |
-| `is_integer: BOOLEAN` | Is this an integer value? |
-| `is_real: BOOLEAN` | Is this a real/decimal value? |
-| `is_decimal: BOOLEAN` | Is this an arbitrary precision decimal? ⭐ NEW |
-| `is_boolean: BOOLEAN` | Is this a boolean value? |
-| `is_null: BOOLEAN` | Is this a null value? |
-| `is_object: BOOLEAN` | Is this an object? |
-| `is_array: BOOLEAN` | Is this an array? |
+### International Applications
+```eiffel
+-- Full Unicode support
+translations := json.new_object
+    .put_string ("Welcome", "en")
+    .put_string ("Bienvenue", "fr")
+    .put_string ("欢迎", "zh")
+    .put_string ("Willkommen", "de")
+```
 
 ## Requirements
 
-- **EiffelStudio**: Version 19.05 or later recommended
+- **EiffelStudio**: 19.05 or later (void-safe)
 - **Platform**: Windows, macOS, Linux
-- **Dependencies**: EiffelBase (standard library)
-- **Optional**: DECIMAL library (for SIMPLE_JSON_DECIMAL support)
+- **Dependencies**: 
+  - Eiffel base library
+  - Eiffel encoding library
+  - Eiffel JSON library (included with EiffelStudio)
 
 ## Design Principles
 
-Simple JSON follows these key principles:
+1. **Simple over complex** - Easy API for common use cases
+2. **Unicode-first** - STRING_32 everywhere in public API
+3. **Type-safe** - Proper contracts and preconditions
+4. **Fluent** - Method chaining for builders
+5. **Void-safe** - Full void-safety compliance
+6. **Testable** - Comprehensive test coverage
 
-1. **Simplicity First**: API designed for ease of use without sacrificing power
-2. **Type Safety**: Leverage Eiffel's type system for compile-time safety
-3. **Precision Options**: Choose between fast floating-point or exact decimal arithmetic
-4. **Error Clarity**: Clear, actionable error messages with line and column positions
-5. **Performance**: Efficient parsing and querying
-6. **Testability**: 100% test coverage for reliability
-7. **Design by Contract**: Comprehensive preconditions, postconditions, and invariants
+## Comparison: Raw JSON vs SIMPLE_JSON
+
+### Raw Eiffel JSON Library
+```eiffel
+local
+    parser: JSON_PARSER
+    obj: JSON_OBJECT
+    key: JSON_STRING
+    value: JSON_STRING
+do
+    create parser.make_with_string (utf8_string)
+    parser.parse_content
+    if parser.is_valid and then 
+       attached {JSON_OBJECT} parser.parsed_json_value as jo then
+        create key.make_from_string_32 (u32_key)
+        if attached {JSON_STRING} jo.item (key) as js then
+            result := js.unescaped_string_32
+        end
+    end
+end
+```
+
+### SIMPLE_JSON
+```eiffel
+local
+    json: SIMPLE_JSON
+do
+    create json
+    if attached json.parse (text) as value and then value.is_object then
+        result := value.as_object.string_item (key)
+    end
+end
+```
 
 ## Contributing
 
-Contributions are welcome! Here's how you can help:
+Contributions are welcome! 
 
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new features
+4. Ensure all tests pass
+5. Submit a pull request
 
 ### Coding Standards
 
 - Follow Eiffel coding conventions
-- Add tests for new features (maintain 100% coverage)
-- Update documentation as needed
-- Ensure all tests pass before submitting PR
+- Maintain 100% STRING_32 in public API
+- Add comprehensive tests
 - Include Design by Contract assertions
+- Update documentation
 
 ## Roadmap
 
 ### Completed ✅
-- **Major architectural refactoring** using generics and multiple inheritance
-- **Code reduction** of ~420 lines through proper abstraction
-- Position tracking for parse errors (line and column numbers)
-- Type introspection methods
-- Builder conditional methods
-- Builder operations (merge, remove, rename, clear, clone)
-- Array modification operations
-- Arbitrary precision decimal support (SIMPLE_JSON_DECIMAL)
-- Comprehensive documentation with EIS integration
+- Core parsing and building
+- Unicode/UTF-8 support
+- Fluent API
+- Type checking
+- Comprehensive tests
+- Type covariance fixes
+- Primitive value parsing
 
 ### Future Enhancements 🚀
+- [ ] Pretty printing with indentation
 - [ ] JSON Schema validation
-- [ ] Pretty-printing with custom formatting
+- [ ] Path-based queries (JSONPath-like)
 - [ ] Streaming parser for large files
-- [ ] JSON Pointer (RFC 6901) support
 - [ ] JSON Patch (RFC 6902) support
 - [ ] Performance optimizations
-- [ ] Extended Unicode support
-
-## Number Precision Guide
-
-### When to Use REAL_64
-- Graphics and game coordinates (speed matters)
-- Physics simulations (approximate values OK)
-- Statistical calculations
-- Performance-critical code
-
-### When to Use SIMPLE_JSON_DECIMAL
-- 💰 Financial calculations (invoices, accounting)
-- 📊 Scientific measurements (exact precision required)
-- 👤 User-facing displays ("3.14" not "3.1400000000000001")
-- 🔄 Data interchange (preserve exact decimal values)
-
-See [docs/DECIMAL_SUPPORT_GUIDE.md](docs/DECIMAL_SUPPORT_GUIDE.md) for complete details.
+- [ ] Error position tracking
 
 ## License
 
@@ -520,22 +544,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Built with [EiffelStudio](https://www.eiffel.com/)
-- Inspired by the need for simple, elegant JSON handling in Eiffel
+- AI-assisted development using Claude Sonnet 4.5
 - Thanks to the Eiffel community for feedback and support
-- AI-assisted development using Claude Sonnet 4.5 (original implementation and major refactoring)
-- DECIMAL library for arbitrary precision arithmetic
-- Special thanks to the Eiffel type system for making safe, elegant refactoring possible
+- Based on the standard Eiffel JSON library
 
 ## Support
 
-- **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/ljr1981/simple_json/issues)
-- **Discussions**: Join the conversation in [GitHub Discussions](https://github.com/ljr1981/simple_json/discussions)
+- **Issues**: [GitHub Issues](https://github.com/ljr1981/simple_json/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ljr1981/simple_json/discussions)
 - **Email**: rix.larry@gmail.com
-
-## Related Projects
-
-Looking for more Eiffel libraries? Check out:
-- [Other ljr1981 projects](https://github.com/ljr1981)
 
 ---
 
