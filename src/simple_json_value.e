@@ -226,6 +226,60 @@ feature -- Conversion
 			Result := to_json_string
 		end
 
+feature -- Pretty Printing
+
+	to_pretty_json: STRING_32
+			-- Convert to pretty-printed JSON with 2-space indentation
+		local
+			l_printer: SIMPLE_JSON_PRETTY_PRINTER
+		do
+			create l_printer.make
+			Result := l_printer.print_json_value (json_value)
+		ensure
+			result_not_void: Result /= Void
+		end
+
+	to_pretty_json_with_indent (a_indent: STRING_32): STRING_32
+			-- Convert to pretty-printed JSON with custom indentation
+		require
+			indent_not_void: a_indent /= Void
+			indent_not_empty: not a_indent.is_empty
+		local
+			l_printer: SIMPLE_JSON_PRETTY_PRINTER
+		do
+			create l_printer.make_with_options (a_indent)
+			Result := l_printer.print_json_value (json_value)
+		ensure
+			result_not_void: Result /= Void
+		end
+
+	to_pretty_json_with_tabs: STRING_32
+			-- Convert to pretty-printed JSON with tab indentation
+		local
+			l_printer: SIMPLE_JSON_PRETTY_PRINTER
+		do
+			create l_printer.make
+			l_printer.use_tabs
+			Result := l_printer.print_json_value (json_value)
+		ensure
+			result_not_void: Result /= Void
+		end
+
+	to_pretty_json_with_spaces (a_count: INTEGER): STRING_32
+			-- Convert to pretty-printed JSON with specified number of spaces
+		require
+			positive_count: a_count > 0
+			reasonable_count: a_count <= 8
+		local
+			l_printer: SIMPLE_JSON_PRETTY_PRINTER
+		do
+			create l_printer.make
+			l_printer.use_spaces (a_count)
+			Result := l_printer.print_json_value (json_value)
+		ensure
+			result_not_void: Result /= Void
+		end
+
 feature {NONE} -- Implementation
 
 	utf_converter: UTF_CONVERTER
