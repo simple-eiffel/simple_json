@@ -19,6 +19,7 @@ SIMPLE_JSON provides a clean, high-level API for working with JSON in Eiffel app
 - **✅ Type-Safe**: Strong typing with proper preconditions and postconditions
 - **📝 Easy Parsing**: Parse JSON with a single method call
 - **🔨 Easy Building**: Build JSON structures with intuitive methods
+- **🎨 Pretty Printing**: Format JSON with indentation for human readability
 - **🧪 Well-Tested**: Comprehensive test suite covering all features
 - **🎯 Design by Contract**: Full DbC with preconditions, postconditions, and invariants
 
@@ -151,6 +152,79 @@ do
 end
 ```
 
+### Pretty Printing
+
+```eiffel
+local
+    json: SIMPLE_JSON
+    person: SIMPLE_JSON_OBJECT
+    address: SIMPLE_JSON_OBJECT
+do
+    create json
+    
+    address := json.new_object
+        .put_string ("123 Main St", "street")
+        .put_string ("Springfield", "city")
+    
+    person := json.new_object
+        .put_string ("Eve", "name")
+        .put_integer (32, "age")
+        .put_object (address, "address")
+    
+    -- Compact JSON (single line)
+    print (person.to_json_string)
+    -- Output: {"name":"Eve","age":32,"address":{"street":"123 Main St","city":"Springfield"}}
+    
+    -- Pretty JSON with 2-space indentation (default)
+    print (person.to_pretty_json)
+    -- Output:
+    -- {
+    --   "name": "Eve",
+    --   "age": 32,
+    --   "address": {
+    --     "street": "123 Main St",
+    --     "city": "Springfield"
+    --   }
+    -- }
+    
+    -- Pretty JSON with 4 spaces
+    print (person.to_pretty_json_with_spaces (4))
+    
+    -- Pretty JSON with tabs
+    print (person.to_pretty_json_with_tabs)
+    
+    -- Pretty JSON with custom indentation
+    print (person.to_pretty_json_with_indent ("  "))  -- 2 spaces
+end
+```
+
+#### Unicode in Pretty Printing
+
+Pretty printing properly displays Unicode characters:
+
+```eiffel
+local
+    json: SIMPLE_JSON
+    greetings: SIMPLE_JSON_OBJECT
+do
+    create json
+    greetings := json.new_object
+        .put_string ("Hello", "english")
+        .put_string ("你好", "chinese")
+        .put_string ("Здравствуй", "russian")
+        .put_string ("مرحبا", "arabic")
+    
+    print (greetings.to_pretty_json)
+    -- Output shows actual Unicode characters:
+    -- {
+    --   "english": "Hello",
+    --   "chinese": "你好",
+    --   "russian": "Здравствуй",
+    --   "arabic": "مرحبا"
+    -- }
+end
+```
+
 ### Accessing Values
 
 ```eiffel
@@ -247,6 +321,12 @@ Base wrapper around JSON values with type checking and conversion.
 - `as_array: SIMPLE_JSON_ARRAY` (or `array_value`)
 - `to_json_string: STRING_32` (or `representation`)
 
+**Pretty Printing:**
+- `to_pretty_json: STRING_32` - Pretty print with 2-space indentation (default)
+- `to_pretty_json_with_spaces (count: INTEGER): STRING_32` - Custom number of spaces (1-8)
+- `to_pretty_json_with_tabs: STRING_32` - Use tab characters for indentation
+- `to_pretty_json_with_indent (indent: STRING_32): STRING_32` - Custom indentation string
+
 ### SIMPLE_JSON_OBJECT
 
 JSON object with fluent builder API.
@@ -313,6 +393,28 @@ JSON array with fluent builder API.
 **Removal:**
 - `wipe_out`
 
+### SIMPLE_JSON_PRETTY_PRINTER
+
+JSON pretty printer with configurable indentation (used internally by `to_pretty_json` methods).
+
+**Configuration:**
+- `make` - Initialize with default 2-space indentation
+- `make_with_options (indent: STRING_32)` - Initialize with custom indentation
+- `set_indent_string (indent: STRING_32)` - Change indentation string
+- `use_tabs` - Configure to use tab characters
+- `use_spaces (count: INTEGER)` - Configure number of spaces (1-8)
+
+**Printing:**
+- `print_json_value (value: JSON_VALUE): STRING_32` - Pretty print a value
+
+**Features:**
+- Visitor pattern implementation for clean traversal
+- Proper nesting and indentation
+- Empty structures display compactly: `{}` and `[]`
+- Unicode characters displayed literally (not as escape codes)
+- Special characters properly escaped
+- Valid JSON output (can be re-parsed)
+
 ## Architecture
 
 ### Type Covariance
@@ -363,13 +465,16 @@ The library includes a comprehensive test suite using EiffelStudio's AutoTest fr
 
 ### Test Coverage
 
-**Test Class:** `TEST_SIMPLE_JSON`
+**Test Classes:** 
+- `TEST_SIMPLE_JSON` - Core functionality tests
+- `TEST_PRETTY_PRINTING` - Pretty printing tests (35 tests)
 
 **Categories:**
 - Parsing (objects, arrays, primitives)
 - Building (objects, arrays, nested structures)
 - Type checking (all JSON types)
 - Unicode handling
+- Pretty printing (basic, nested, custom indentation, Unicode)
 - Edge cases (empty, null, zero, negative)
 - Fluent API
 - Array/object access
@@ -418,6 +523,21 @@ if attached json.parse_file ("config.json") as config then
     port := config.as_object.integer_item ("port")
     debug_mode := config.as_object.boolean_item ("debug")
 end
+
+-- Write pretty configuration file
+config := json.new_object
+    .put_integer (8080, "port")
+    .put_boolean (False, "debug")
+    .put_string ("localhost", "host")
+
+-- Save with pretty formatting for human editing
+file.put_string (config.to_pretty_json)
+-- Produces readable config file:
+-- {
+--   "port": 8080,
+--   "debug": false,
+--   "host": "localhost"
+-- }
 ```
 
 ### Data Serialization
@@ -521,9 +641,10 @@ Contributions are welcome!
 - Comprehensive tests
 - Type covariance fixes
 - Primitive value parsing
+- Pretty printing with indentation (2-space, 4-space, tabs, custom)
+- Unicode display in pretty output
 
 ### Future Enhancements 🚀
-- [ ] Pretty printing with indentation
 - [ ] JSON Schema validation
 - [ ] Path-based queries (JSONPath-like)
 - [ ] Streaming parser for large files
