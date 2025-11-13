@@ -645,12 +645,18 @@ Contributions are welcome!
 - Unicode display in pretty output
 
 ### Future Enhancements 🚀
-- [ ] JSON Schema validation
-- [ ] Path-based queries (JSONPath-like)
-- [ ] Streaming parser for large files
-- [ ] JSON Patch (RFC 6902) support
-- [ ] Performance optimizations
-- [ ] Error position tracking
+
+#### Quick Wins (High Impact, Low Effort)
+- [ ] **Error position tracking** (2-3 hours) - Better error messages with line/column information
+- [ ] **Path-based queries** (5-8 hours) - JSONPath support (e.g., `$.store.book[*].author`)
+
+#### Standard Features (Medium Effort, High Value)
+- [ ] **JSON Patch (RFC 6902)** (10-15 hours) - Standard document modification operations
+- [ ] **JSON Schema validation** (15-20 hours) - Validate JSON against schemas (unique differentiator!)
+
+#### Optional Enhancements (User-Driven)
+- [ ] **Performance optimizations** (variable effort) - Profile-driven improvements as needed
+- [ ] **Streaming parser** (20-30 hours) - For very large files (>100MB), only if requested
 
 ## License
 
