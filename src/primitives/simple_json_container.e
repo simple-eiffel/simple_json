@@ -96,9 +96,9 @@ feature {SIMPLE_JSON_VALUE, JSON_BUILDER, JSON_SCHEMA_VALIDATOR} -- Implementati
             valid_value: attached a_json_value
         do
             if attached {JSON_OBJECT} a_json_value as l_obj then
-                create {SIMPLE_JSON_OBJECT} Result.make_from_json (l_obj)
+                create {SIMPLE_JSON_OBJECT} Result.make_from_json_object (l_obj)
             elseif attached {JSON_ARRAY} a_json_value as l_arr then
-                create {SIMPLE_JSON_ARRAY} Result.make_from_json (l_arr)
+                create {SIMPLE_JSON_ARRAY} Result.make_from_json_array (l_arr)
             elseif attached {JSON_STRING} a_json_value as l_str then
                 create {SIMPLE_JSON_STRING} Result.make (l_str.unescaped_string_8)
             elseif attached {JSON_NUMBER} a_json_value as l_num then

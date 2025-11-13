@@ -18,7 +18,7 @@ inherit
 
 create
     make_empty,
-    make_from_json
+    make_from_json_object
 
 feature {NONE} -- Initialization
 
@@ -28,7 +28,7 @@ feature {NONE} -- Initialization
             create json_object.make_with_capacity (10)
         end
 
-    make_from_json (a_json_object: JSON_OBJECT)
+    make_from_json_object (a_json_object: JSON_OBJECT)
             -- Create from an eJSON JSON_OBJECT
         require
             valid_object: a_json_object /= Void
@@ -121,7 +121,7 @@ feature -- Access
         do
             if attached json_object.item (a_key) as l_value then
                 if attached {JSON_ARRAY} l_value as l_arr then
-                    create Result.make_from_json (l_arr)
+                    create Result.make_from_json_array (l_arr)
                 end
             end
         end
@@ -133,7 +133,7 @@ feature -- Access
         do
             if attached json_object.item (a_key) as l_value then
                 if attached {JSON_OBJECT} l_value as l_obj then
-                    create Result.make_from_json (l_obj)
+                    create Result.make_from_json_object (l_obj)
                 end
             end
         end
@@ -336,7 +336,7 @@ feature {NONE} -- Factory Implementation (from SIMPLE_JSON_CONTAINER)
             -- Factory method to create object from parsed JSON
         do
             if attached {JSON_OBJECT} a_parsed as l_obj then
-                create Result.make_from_json (l_obj)
+                create Result.make_from_json_object (l_obj)
             else
                 create Result.make_empty
             end

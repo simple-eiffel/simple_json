@@ -14,7 +14,7 @@ inherit
 
 create
     make_empty,
-    make_from_json
+    make_from_json_array
 
 feature {NONE} -- Initialization
 
@@ -24,7 +24,7 @@ feature {NONE} -- Initialization
             create json_array.make_empty
         end
 
-    make_from_json (a_json_array: JSON_ARRAY)
+    make_from_json_array (a_json_array: JSON_ARRAY)
             -- Create from an eJSON JSON_ARRAY
         do
             json_array := a_json_array
@@ -115,7 +115,7 @@ feature -- Access - Nested Structures
         do
             if attached json_array.i_th (a_index) as l_value then
                 if attached {JSON_OBJECT} l_value as l_obj then
-                    create Result.make_from_json (l_obj)
+                    create Result.make_from_json_object (l_obj)
                 end
             end
         end
@@ -127,7 +127,7 @@ feature -- Access - Nested Structures
         do
             if attached json_array.i_th (a_index) as l_value then
                 if attached {JSON_ARRAY} l_value as l_arr then
-                    create Result.make_from_json (l_arr)
+                    create Result.make_from_json_array (l_arr)
                 end
             end
         end
@@ -317,7 +317,7 @@ feature {NONE} -- Factory Implementation (from SIMPLE_JSON_CONTAINER)
             -- Factory method to create array from parsed JSON
         do
             if attached {JSON_ARRAY} a_parsed as l_arr then
-                create Result.make_from_json (l_arr)
+                create Result.make_from_json_array (l_arr)
             else
                 create Result.make_empty
             end
