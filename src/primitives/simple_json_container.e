@@ -65,6 +65,29 @@ feature {NONE} -- Factory (Deferred)
             result_exists: attached Result
         end
 
+feature -- Iteration
+
+    do_all (action: PROCEDURE [SIMPLE_JSON_VALUE])
+            -- Apply action to all items
+        deferred
+        end
+
+    do_if (action: PROCEDURE [SIMPLE_JSON_VALUE];
+           test: FUNCTION [SIMPLE_JSON_VALUE, BOOLEAN])
+            -- Apply action to items matching test
+        deferred
+        end
+
+    for_all (test: FUNCTION [SIMPLE_JSON_VALUE, BOOLEAN]): BOOLEAN
+            -- Do all items satisfy test?
+        deferred
+        end
+
+    there_exists (test: FUNCTION [SIMPLE_JSON_VALUE, BOOLEAN]): BOOLEAN
+            -- Does at least one item satisfy test?
+        deferred
+        end
+
 feature {SIMPLE_JSON_VALUE, JSON_BUILDER, JSON_SCHEMA_VALIDATOR} -- Implementation
 
     wrap_json_value (a_json_value: JSON_VALUE): SIMPLE_JSON_VALUE

@@ -365,7 +365,90 @@ feature {SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY, SIMPLE_JSON_CONTAINER, JSON_BUIL
             Result := json_array
         end
 
-feature {NONE} -- Implementation
+feature -- Iteration (Agent-based traversal)
+
+	do_all (action: PROCEDURE [SIMPLE_JSON_VALUE])
+			-- Apply action to all items in this array
+		require else
+			action_exists: action /= Void
+		local
+			i: INTEGER
+		do
+			from
+				i := 1
+			until
+				i > count
+			loop
+				if attached item_at (i) as al_item then
+					action.call ([al_item])
+				end
+				i := i + 1
+			end
+		end
+
+	do_if (action: PROCEDURE [SIMPLE_JSON_VALUE];
+	       test: FUNCTION [SIMPLE_JSON_VALUE, BOOLEAN])
+			-- Apply action to items that satisfy test
+		require else
+			action_exists: action /= Void
+			test_exists: test /= Void
+		local
+			i: INTEGER
+		do
+			from
+				i := 1
+			until
+				i > count
+			loop
+				if attached item_at (i) as al_item then
+					if test.item ([al_item]) then
+						action.call ([al_item])
+					end
+				end
+				i := i + 1
+			end
+		end
+
+	for_all (test: FUNCTION [SIMPLE_JSON_VALUE, BOOLEAN]): BOOLEAN
+			-- Do all items satisfy test?
+		require else
+			test_exists: test /= Void
+		local
+			i: INTEGER
+		do
+			Result := True
+			from
+				i := 1
+			until
+				i > count or not Result
+			loop
+				if attached item_at (i) as al_item then
+					Result := test.item ([al_item])
+				end
+				i := i + 1
+			end
+		end
+
+	there_exists (test: FUNCTION [SIMPLE_JSON_VALUE, BOOLEAN]): BOOLEAN
+			-- Does at least one item satisfy test?
+		require else
+			test_exists: test /= Void
+		local
+			i: INTEGER
+		do
+			Result := False
+			from
+				i := 1
+			until
+				i > count or Result
+			loop
+				if attached item_at (i) as al_item then
+					Result := test.item ([al_item])
+				end
+				i := i + 1
+			end
+		end
+
 
     json_array: JSON_ARRAY
             -- Underlying eJSON array

@@ -19,7 +19,7 @@ inherit
 create
     make_empty,
     make_from_json
-    
+
 feature {NONE} -- Initialization
 
     make_empty
@@ -373,7 +373,108 @@ feature {SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY, SIMPLE_JSON_CONTAINER, JSON_BUIL
             Result := json_object
         end
 
-feature {NONE} -- Implementation
+feature -- Iteration (Agent-based traversal)
+
+	do_all (action: PROCEDURE [SIMPLE_JSON_VALUE])
+			-- Apply action to all values in this object
+		require else
+			action_exists: action /= Void
+		local
+			l_keys: ARRAY [JSON_STRING]
+			l_key: STRING
+		do
+			l_keys := json_object.current_keys
+			across l_keys as ic_key loop
+				l_key := ic_key.item  -- JSON_STRING.item gives the STRING
+				if attached item_at_key (l_key) as al_value then
+					action.call ([al_value])
+				end
+			end
+		end
+
+	do_if (action: PROCEDURE [SIMPLE_JSON_VALUE];
+	       test: FUNCTION [SIMPLE_JSON_VALUE, BOOLEAN])
+			-- Apply action to values that satisfy test
+		require else
+			action_exists: action /= Void
+			test_exists: test /= Void
+		local
+			l_keys: ARRAY [JSON_STRING]
+			l_key: STRING
+		do
+			l_keys := json_object.current_keys
+			across l_keys as ic_key loop
+				l_key := ic_key.item  -- JSON_STRING.item gives the STRING
+				if attached item_at_key (l_key) as al_value then
+					if test.item ([al_value]) then
+						action.call ([al_value])
+					end
+				end
+			end
+		end
+
+	for_all (test: FUNCTION [SIMPLE_JSON_VALUE, BOOLEAN]): BOOLEAN
+			-- Do all values satisfy test?
+		require else
+			test_exists: test /= Void
+		local
+			l_keys: ARRAY [JSON_STRING]
+			l_key: STRING
+		do
+			Result := True
+			l_keys := json_object.current_keys
+			across l_keys as ic_key loop
+				l_key := ic_key.item
+				if attached item_at_key (l_key) as al_value then
+					if not test.item ([al_value]) then
+						Result := False
+					end
+				end
+			end
+		ensure then
+--			definition: Result implies (across current_keys as ic loop
+--				attached item_at_key (ic.item) as al_v implies test.item ([al_v]) end)
+		end
+
+	there_exists (test: FUNCTION [SIMPLE_JSON_VALUE, BOOLEAN]): BOOLEAN
+			-- Does at least one value satisfy test?
+		require else
+			test_exists: test /= Void
+		local
+			l_keys: ARRAY [JSON_STRING]
+			l_key: STRING
+		do
+			Result := False
+			l_keys := json_object.current_keys
+			across l_keys as ic_key loop
+				l_key := ic_key.item
+				if attached item_at_key (l_key) as al_value then
+					if test.item ([al_value]) then
+						Result := True
+					end
+				end
+			end
+		end
+
+feature -- Access (helpers for traversal)
+
+	current_keys: ARRAY [STRING]
+			-- All keys in this object as strings
+		local
+			l_json_keys: ARRAY [JSON_STRING]
+			l_result: ARRAYED_LIST [STRING]
+		do
+			l_json_keys := json_object.current_keys
+			create l_result.make (l_json_keys.count)
+			across l_json_keys as ic_key loop
+				l_result.extend (ic_key.item)
+			end
+			Result := l_result.to_array
+		ensure
+			result_exists: Result /= Void
+			count_matches: Result.count = count
+		end
+
 
     json_object: JSON_OBJECT
             -- Underlying eJSON object
