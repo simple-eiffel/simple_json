@@ -36,6 +36,7 @@
 	<target name="simple_json_benchmark" extends="simple_json_tests">
 		<description>benchmarking code</description>
 		<root class="BENCHMARK_APP" feature="make"/>
+		<option profile="true"/>
 		<cluster name="benchmark" location="D:\prod\simple_json\testing_benchmark\" recursive="true"/>
 	</target>
 </system>

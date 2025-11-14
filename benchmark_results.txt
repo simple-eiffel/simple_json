@@ -1,7 +1,7 @@
 ======================================================================
 SIMPLE_JSON Performance Benchmarks
 Date: 11/14/2025
-Time: 16:41:44
+Time: 16:52:58
 ======================================================================
 
 
@@ -11,18 +11,18 @@ Parse Benchmarks
 ----------------------------------------------------------------------
 Benchmark: Parse Small Object
 Iterations: 10000
-Duration: 1149 ms
-Operations/sec: 8,703
+Duration: 46 ms
+Operations/sec: 217,391
 
 Benchmark: Parse Medium Object
 Iterations: 5000
-Duration: 1625 ms
-Operations/sec: 3,076
+Duration: 60 ms
+Operations/sec: 83,333
 
 Benchmark: Parse Large Array (100 items)
 Iterations: 1000
-Duration: 6610 ms
-Operations/sec: 151
+Duration: 291 ms
+Operations/sec: 3,436
 
 
 ----------------------------------------------------------------------
@@ -30,23 +30,23 @@ Object Operation Benchmarks
 ----------------------------------------------------------------------
 Benchmark: Key Lookup (Same Key)
 Iterations: 100000
-Duration: 954 ms
-Operations/sec: 104,821
+Duration: 37 ms
+Operations/sec: 2,702,702
 
 Benchmark: Key Lookup (Varied Keys)
 Iterations: 250000
-Duration: 2429 ms
-Operations/sec: 102,923
+Duration: 87 ms
+Operations/sec: 2,873,563
 
 Benchmark: has_key Operations
 Iterations: 200000
-Duration: 1724 ms
-Operations/sec: 116,009
+Duration: 58 ms
+Operations/sec: 3,448,275
 
 Benchmark: Fluent API (Object Building)
 Iterations: 50000
-Duration: 616 ms
-Operations/sec: 81,168
+Duration: 27 ms
+Operations/sec: 1,851,851
 
 
 ----------------------------------------------------------------------
@@ -54,13 +54,13 @@ Query Operation Benchmarks
 ----------------------------------------------------------------------
 Benchmark: Query (Same Path)
 Iterations: 10000
-Duration: 567 ms
-Operations/sec: 17,636
+Duration: 18 ms
+Operations/sec: 555,555
 
 Benchmark: Query (Varied Paths)
 Iterations: 15000
-Duration: 1097 ms
-Operations/sec: 13,673
+Duration: 36 ms
+Operations/sec: 416,666
 
 
 ----------------------------------------------------------------------
@@ -68,8 +68,8 @@ Pretty Print Benchmarks
 ----------------------------------------------------------------------
 Benchmark: Pretty Print (Nested)
 Iterations: 1000
-Duration: 210 ms
-Operations/sec: 4,761
+Duration: 8 ms
+Operations/sec: 125,000
 
 
 
