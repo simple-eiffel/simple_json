@@ -69,8 +69,6 @@ feature -- Configuration
 		require
 			positive_count: a_count > 0
 			reasonable_count: a_count <= 8
-		local
-			i: INTEGER
 		do
 			create indent_string.make_filled (' ', a_count)
 		ensure
@@ -111,15 +109,15 @@ feature -- Visitor Pattern
 			l_first: BOOLEAN
 		do
 			l_json_array := a_json_array.array_representation
-			
+
 			if l_json_array.is_empty then
 				output.append ("[]")
 			else
 				output.append ("[")
 				output.append_character ('%N')
-				
+
 				increase_indent
-				
+
 				from
 					l_json_array.start
 					l_first := True
@@ -130,16 +128,16 @@ feature -- Visitor Pattern
 						output.append (",")
 						output.append_character ('%N')
 					end
-					
+
 					append_indent
 					l_json_array.item.accept (Current)
-					
+
 					l_json_array.forth
 					l_first := False
 				end
-				
+
 				decrease_indent
-				
+
 				output.append_character ('%N')
 				append_indent
 				output.append ("]")
@@ -175,15 +173,15 @@ feature -- Visitor Pattern
 			l_first: BOOLEAN
 		do
 			l_pairs := a_json_object.map_representation
-			
+
 			if l_pairs.is_empty then
 				output.append ("{}")
 			else
 				output.append ("{")
 				output.append_character ('%N')
-				
+
 				increase_indent
-				
+
 				from
 					l_pairs.start
 					l_first := True
@@ -194,18 +192,18 @@ feature -- Visitor Pattern
 						output.append (",")
 						output.append_character ('%N')
 					end
-					
+
 					append_indent
 					l_pairs.key_for_iteration.accept (Current)
 					output.append (": ")
 					l_pairs.item_for_iteration.accept (Current)
-					
+
 					l_pairs.forth
 					l_first := False
 				end
-				
+
 				decrease_indent
-				
+
 				output.append_character ('%N')
 				append_indent
 				output.append ("}")
@@ -218,13 +216,13 @@ feature -- Visitor Pattern
 			l_unescaped: STRING_32
 		do
 			output.append ("%"")
-			
+
 			-- Get unescaped Unicode string (converts \u4f60\u597d → 你好)
 			l_unescaped := a_json_string.unescaped_string_32
-			
+
 			-- Re-escape only special JSON characters, preserve Unicode
 			output.append (escape_json_string (l_unescaped))
-			
+
 			output.append ("%"")
 		end
 
