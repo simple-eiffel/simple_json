@@ -162,29 +162,38 @@ feature -- Operations
 		do
 			l_current := a_document
 			l_op_number := 1
-			
+
 			across
 				operations as ic
 			loop
+				check operation_not_void: ic /= Void end
+
 				l_result := ic.apply (l_current)
-				
+
+				check operation_result_not_void: l_result /= Void end
+				check result_has_status: l_result.is_success or l_result.is_failure end
+
 				if l_result.is_success and attached l_result.modified_document as l_doc then
+					check success_has_document: l_result.modified_document /= Void end
 					-- Continue with modified document
 					l_current := l_doc
 				else
+					check operation_failed: l_result.is_failure end
+					check failure_has_error: l_result.has_error end
 					-- Operation failed - abort patch
 					create Result.make_failure (
 						"Operation " + l_op_number.out + " (" + ic.op + ") failed: " + l_result.error_message
 					)
-					Result := l_result
+					check result_is_failure: Result.is_failure end
 				end
-				
+
 				l_op_number := l_op_number + 1
 			end
-			
+
 			-- All operations succeeded
 			if Result = Void then
 				create Result.make_success (l_current)
+				check all_succeeded: Result.is_success end
 			end
 		ensure
 			result_not_void: Result /= Void
@@ -199,7 +208,7 @@ feature -- Conversion
 		do
 			create l_json
 			Result := l_json.new_array
-			
+
 			across
 				operations as ic
 			loop

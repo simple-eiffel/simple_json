@@ -55,6 +55,9 @@ feature -- Operations
 
 	apply (a_document: SIMPLE_JSON_VALUE): SIMPLE_JSON_PATCH_RESULT
 			-- Remove value at path from document
+		require else
+			document_not_void: a_document /= Void
+			path_not_empty: not path.is_empty
 		local
 			l_pointer: SIMPLE_JSON_POINTER
 			l_parent: detachable SIMPLE_JSON_VALUE
@@ -63,59 +66,120 @@ feature -- Operations
 			l_modified: SIMPLE_JSON_VALUE
 		do
 			create l_pointer
-			
-			-- Parse path to get parent and target
-			if l_pointer.parse_path (path) then
-				-- Get parent container
-				l_parent := l_pointer.navigate_to_parent (a_document)
-				
-				if attached l_parent then
-					l_key := l_pointer.last_segment
-					
-					-- Handle object property removal
-					if l_parent.is_object and then not l_key.starts_with ("[") then
-						if l_parent.as_object.has_key (l_key) then
-							l_modified := clone_and_remove_from_object (a_document, path, l_key)
-							create Result.make_success (l_modified)
-						else
-							create Result.make_failure ("Property '" + l_key + "' not found at path: " + path)
-						end
-					-- Handle array element removal
-					elseif l_parent.is_array and then l_key.starts_with ("[") and l_key.ends_with ("]") then
-						l_index := extract_array_index (l_key)
-						if l_parent.as_array.valid_index (l_index + 1) then  -- Convert 0-based to 1-based
-							l_modified := clone_and_remove_from_array (a_document, path, l_index)
-							create Result.make_success (l_modified)
-						else
-							create Result.make_failure ("Index out of bounds at path: " + path)
-						end
-					else
-						create Result.make_failure ("Invalid target for remove at path: " + path)
-					end
-				else
-					create Result.make_failure ("Parent not found for path: " + path)
-				end
+
+			if not l_pointer.parse_path (path) then
+				create Result.make_failure ("Invalid JSON Pointer path: " + path)
 			else
-				create Result.make_failure ("Invalid path: " + path)
+				l_parent := l_pointer.navigate_to_parent (a_document)
+
+				check parent_navigation_succeeded: l_parent /= Void implies True end
+
+				if l_parent = Void then
+					create Result.make_failure ("Parent not found for path: " + path)
+				else
+					l_key := l_pointer.last_segment
+
+					check last_segment_extracted: not l_key.is_empty end
+
+					if l_parent.is_object then
+						check parent_confirmed_object: l_parent.is_object end
+
+						if l_parent.as_object.has_key (l_key) then
+							check key_exists_in_object: l_parent.as_object.has_key (l_key) end
+
+							l_modified := clone_and_remove_from_object (a_document, path, l_key)
+
+							check modified_document_created: l_modified /= Void end
+
+							-- Verify removal actually happened
+							if attached l_pointer.navigate_to_parent (l_modified) as l_modified_parent then
+								if l_modified_parent.is_object then
+									check key_was_removed: not l_modified_parent.as_object.has_key (l_key) end
+								end
+							end
+
+							create Result.make_success (l_modified)
+						else
+							check key_does_not_exist_in_object: not l_parent.as_object.has_key (l_key) end
+							create Result.make_failure ("Property '" + l_key + "' does not exist at path: " + path)
+						end
+
+					elseif l_parent.is_array then
+						check parent_confirmed_array: l_parent.is_array end
+
+						if l_key.is_integer then
+							l_index := l_key.to_integer
+
+							check valid_integer_extracted: l_index >= 0 or l_index < 0 end
+
+							if l_index >= 0 and l_index < l_parent.as_array.count then
+								check index_in_bounds: l_index >= 0 and l_index < l_parent.as_array.count end
+
+								l_modified := clone_and_remove_from_array (a_document, path, l_index)
+
+								-- Verify removal actually happened
+								if attached l_pointer.navigate_to_parent (l_modified) as l_modified_parent then
+									if l_modified_parent.is_array then
+										check array_item_removed: l_modified_parent.as_array.count = l_parent.as_array.count - 1 end
+									end
+								end
+
+								create Result.make_success (l_modified)
+							else
+								check index_out_of_bounds: l_index < 0 or l_index >= l_parent.as_array.count end
+								create Result.make_failure ("Array index " + l_index.out + " out of bounds at path: " + path)
+							end
+						else
+							check key_not_valid_integer: not l_key.is_integer end
+							create Result.make_failure ("Invalid array index '" + l_key + "' at path: " + path)
+						end
+
+					else
+						check parent_neither_object_nor_array: not l_parent.is_object and not l_parent.is_array end
+						create Result.make_failure ("Parent is neither object nor array at path: " + path)
+					end
+				end
 			end
+		ensure then
+			result_not_void: Result /= Void
+			success_means_modified: Result.is_success implies Result.modified_document /= Void
+			failure_means_error: Result.is_failure implies Result.has_error
 		end
 
 feature {NONE} -- Implementation
 
 	clone_and_remove_from_object (a_doc: SIMPLE_JSON_VALUE; a_path: STRING_32; a_key: STRING_32): SIMPLE_JSON_VALUE
-			-- Clone document and remove key from object at path
+			-- Clone document and remove property from object at path
 		require
 			doc_not_void: a_doc /= Void
+			key_not_void: a_key /= Void
+			key_not_empty: not a_key.is_empty
 		local
 			l_json_str: STRING_32
 			l_json: SIMPLE_JSON
+			l_pointer: SIMPLE_JSON_POINTER
+			l_parent: detachable SIMPLE_JSON_VALUE
 		do
-			-- For now, use JSON round-trip (will optimize later)
+			-- Clone the document
 			l_json_str := a_doc.to_json_string
 			create l_json
 			if attached l_json.parse (l_json_str) as l_cloned then
-				-- Navigate and remove
-				-- TODO: Implement efficient removal
+				-- Navigate to parent in cloned document
+				create l_pointer
+				if l_pointer.parse_path (a_path) then
+					l_parent := l_pointer.navigate_to_parent (l_cloned)
+
+					-- Actually remove the key
+					if attached l_parent and then l_parent.is_object then
+						check parent_is_object: l_parent.as_object /= Void end
+						check key_exists_before_removal: l_parent.as_object.has_key (a_key) end
+
+						l_parent.as_object.remove (a_key)
+
+						check key_removed_successfully: not l_parent.as_object.has_key (a_key) end
+					end
+				end
+
 				Result := l_cloned
 			else
 				Result := a_doc
