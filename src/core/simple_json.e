@@ -12,6 +12,12 @@ note
 class
 	SIMPLE_JSON
 
+inherit
+	SIMPLE_JSON_CONSTANTS
+		export
+			{NONE} all
+		end
+
 feature -- Parsing
 
 	parse (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE
@@ -396,7 +402,7 @@ feature {NONE} -- Implementation
 			-- Look for "(position: N)"
 			l_pos_start := a_error_text.substring_index ("(position: ", 1)
 			if l_pos_start > 0 then
-				l_pos_start := l_pos_start + 11  -- Length of "(position: "
+				l_pos_start := l_pos_start + Position_prefix_length  -- Length of "(position: "
 				l_pos_end := a_error_text.index_of (')', l_pos_start)
 				if l_pos_end > l_pos_start then
 					l_pos_string := a_error_text.substring (l_pos_start, l_pos_end - 1)
@@ -519,14 +525,14 @@ feature {NONE} -- Implementation
 			i: INTEGER
 			l_bracket_start: INTEGER
 		do
-			create l_segments.make (5)
+			create l_segments.make (Default_path_segments_capacity)
 			l_path := a_path.twin
 
 			-- Remove leading "$." if present
 			if l_path.starts_with ("$.") then
-				l_path := l_path.substring (3, l_path.count)
+				l_path := l_path.substring (Substring_skip_first_two_chars, l_path.count)
 			elseif l_path.starts_with ("$") then
-				l_path := l_path.substring (2, l_path.count)
+				l_path := l_path.substring (Substring_skip_first_char, l_path.count)
 			end
 
 			-- Split by dots and handle brackets
@@ -614,7 +620,7 @@ feature {NONE} -- Implementation
 		do
 			if a_segment.starts_with ("[") and a_segment.ends_with ("]") then
 				-- Array access: [0], [1], etc.
-				l_index_str := a_segment.substring (2, a_segment.count - 1)
+				l_index_str := a_segment.substring (Substring_skip_first_char, a_segment.count - 1)
 				if l_index_str.is_integer then
 					l_index := l_index_str.to_integer
 					if a_value.is_array then

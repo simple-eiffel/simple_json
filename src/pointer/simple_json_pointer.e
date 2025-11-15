@@ -12,6 +12,12 @@ note
 class
 	SIMPLE_JSON_POINTER
 
+inherit
+	SIMPLE_JSON_CONSTANTS
+		export
+			{NONE} all
+		end
+
 feature -- Access
 
 	segments: ARRAYED_LIST [STRING_32]
@@ -55,7 +61,7 @@ feature -- Parsing
 
 				-- Remove leading slash if present
 				if l_path.starts_with ("/") then
-					l_path := l_path.substring (2, l_path.count)
+					l_path := l_path.substring (Substring_skip_first_char, l_path.count)
 				end
 
 				-- Split by slash

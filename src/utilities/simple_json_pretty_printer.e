@@ -13,6 +13,11 @@ class
 inherit
 	JSON_VISITOR
 
+	SIMPLE_JSON_CONSTANTS
+		export
+			{NONE} all
+		end
+
 create
 	make,
 	make_with_options
@@ -22,11 +27,11 @@ feature {NONE} -- Initialization
 	make
 			-- Initialize with default options (2 spaces for indentation)
 		do
-			indent_string := "  "
+			indent_string := Default_two_space_indent
 			current_indent_level := 0
 			create output.make_empty
 		ensure
-			two_space_indent: indent_string.same_string ("  ")
+			two_space_indent: indent_string.same_string (Default_two_space_indent)
 			zero_level: current_indent_level = 0
 		end
 
@@ -69,7 +74,7 @@ feature -- Configuration
 			-- Configure to use specified number of spaces for indentation
 		require
 			positive_count: a_count > 0
-			reasonable_count: a_count <= 8
+			reasonable_count: a_count <= Max_reasonable_indent_count
 		do
 			create indent_string.make_filled (' ', a_count)
 		ensure
@@ -112,9 +117,9 @@ feature -- Visitor Pattern
 			l_json_array := a_json_array.array_representation
 
 			if l_json_array.is_empty then
-				output.append ("[]")
+				output.append (Json_empty_array)
 			else
-				output.append ("[")
+				output.append (Json_open_bracket)
 				output.append_character ('%N')
 
 				increase_indent
@@ -135,7 +140,7 @@ feature -- Visitor Pattern
 				l_json_array.off
 			loop
 				if not l_first then
-					output.append (",")
+					output.append (Json_comma)
 					output.append_character ('%N')
 				end
 
@@ -150,7 +155,7 @@ feature -- Visitor Pattern
 
 				output.append_character ('%N')
 				append_indent
-				output.append ("]")
+				output.append (Json_close_bracket)
 			end
 		end
 
@@ -158,16 +163,16 @@ feature -- Visitor Pattern
 			-- Visit `a_json_boolean'
 		do
 			if a_json_boolean.item then
-				output.append ("true")
+				output.append (Json_true)
 			else
-				output.append ("false")
+				output.append (Json_false)
 			end
 		end
 
 	visit_json_null (a_json_null: JSON_NULL)
 			-- Visit `a_json_null'
 		do
-			output.append ("null")
+			output.append (Json_null_literal)
 		end
 
 	visit_json_number (a_json_number: JSON_NUMBER)
@@ -185,9 +190,9 @@ feature -- Visitor Pattern
 			l_pairs := a_json_object.map_representation
 
 			if l_pairs.is_empty then
-				output.append ("{}")
+				output.append (Json_empty_object)
 			else
-				output.append ("{")
+				output.append (Json_open_brace)
 				output.append_character ('%N')
 
 				increase_indent
@@ -206,13 +211,13 @@ feature -- Visitor Pattern
 					l_pairs.off
 				loop
 					if not l_first then
-						output.append (",")
+						output.append (Json_comma)
 						output.append_character ('%N')
 					end
 
 					append_indent
 					l_pairs.key_for_iteration.accept (Current)
-					output.append (": ")
+					output.append (Json_colon_space)
 					l_pairs.item_for_iteration.accept (Current)
 
 					l_pairs.forth
@@ -223,7 +228,7 @@ feature -- Visitor Pattern
 
 				output.append_character ('%N')
 				append_indent
-				output.append ("}")
+				output.append (Json_close_brace)
 			end
 		end
 
@@ -232,7 +237,7 @@ feature -- Visitor Pattern
 		local
 			l_unescaped: STRING_32
 		do
-			output.append ("%"")
+			output.append (Json_quote)
 
 			-- Get unescaped Unicode string (converts \u4f60\u597d → 你好)
 			l_unescaped := a_json_string.unescaped_string_32
@@ -240,7 +245,7 @@ feature -- Visitor Pattern
 			-- Re-escape only special JSON characters, preserve Unicode
 			output.append (escape_json_string (l_unescaped))
 
-			output.append ("%"")
+			output.append (Json_quote)
 		end
 
 feature {NONE} -- Implementation
@@ -285,17 +290,17 @@ feature {NONE} -- Implementation
 					Result.append ("\b")
 				else
 					-- For control characters (0x00-0x1F), use \uXXXX
-					if c.code < 32 then
+					if c.code < Ascii_control_char_boundary then
 						Result.append ("\u")
 						hex := c.code.to_hex_string
 						-- Pad with zeros to get 4 digits
 						from
 						until
-							hex.count >= 4
+							hex.count >= Hex_digit_count
 						loop
-							hex.prepend ("0")
+							hex.prepend (Hex_padding_zero)
 						end
-						Result.append (hex.substring (hex.count - 3, hex.count))
+						Result.append (hex.substring (hex.count - Hex_last_four_offset, hex.count))
 					else
 						-- Preserve all other characters including Unicode
 						Result.append_character (c)

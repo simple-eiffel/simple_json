@@ -17,6 +17,12 @@ note
 class
 	SIMPLE_JSON_SCHEMA_VALIDATOR
 
+inherit
+	SIMPLE_JSON_CONSTANTS
+		export
+			{NONE} all
+		end
+
 create
 	make
 
@@ -40,7 +46,7 @@ feature -- Validation
 			l_array: ARRAY [SIMPLE_JSON_SCHEMA_VALIDATION_ERROR]
 			l_schema_type: detachable STRING_32
 		do
-			create l_errors.make (10)
+			create l_errors.make (Default_errors_capacity)
 
 			validate_type (a_instance, a_schema, "", l_errors)
 
@@ -51,19 +57,19 @@ feature -- Validation
 
 			-- Only validate type-specific constraints if types match or no type specified
 			if a_instance.is_string then
-				if l_schema_type = Void or else l_schema_type.same_string_general ("string") then
+				if l_schema_type = Void or else l_schema_type.same_string_general (Json_type_string) then
 					validate_string (a_instance, a_schema, "", l_errors)
 				end
 			elseif a_instance.is_number then
-				if l_schema_type = Void or else l_schema_type.same_string_general ("number") or else l_schema_type.same_string_general ("integer") then
+				if l_schema_type = Void or else l_schema_type.same_string_general (Json_type_number) or else l_schema_type.same_string_general (Json_type_integer) then
 					validate_number (a_instance, a_schema, "", l_errors)
 				end
 			elseif a_instance.is_object then
-				if l_schema_type = Void or else l_schema_type.same_string_general ("object") then
+				if l_schema_type = Void or else l_schema_type.same_string_general (Json_type_object) then
 					validate_object (a_instance, a_schema, "", l_errors)
 				end
 			elseif a_instance.is_array then
-				if l_schema_type = Void or else l_schema_type.same_string_general ("array") then
+				if l_schema_type = Void or else l_schema_type.same_string_general (Json_type_array) then
 					validate_array (a_instance, a_schema, "", l_errors)
 				end
 			end
@@ -107,7 +113,7 @@ feature {NONE} -- Type validation
 					l_actual := get_instance_type (a_instance)
 
 					if not types_match (al_type, a_instance) then
-						create l_msg.make (50)
+						create l_msg.make (Error_message_buffer_size)
 						l_msg.append_string_general ("Type mismatch: expected '")
 						l_msg.append (l_expected)
 						l_msg.append_string_general ("' but got '")
@@ -127,19 +133,19 @@ feature {NONE} -- Type validation
 			type_not_void: a_type /= Void
 			instance_not_void: a_instance /= Void
 		do
-			if a_type.same_string_general ("string") then
+			if a_type.same_string_general (Json_type_string) then
 				Result := a_instance.is_string
-			elseif a_type.same_string_general ("number") then
+			elseif a_type.same_string_general (Json_type_number) then
 				Result := a_instance.is_number
-			elseif a_type.same_string_general ("integer") then
+			elseif a_type.same_string_general (Json_type_integer) then
 				Result := a_instance.is_integer
-			elseif a_type.same_string_general ("object") then
+			elseif a_type.same_string_general (Json_type_object) then
 				Result := a_instance.is_object
-			elseif a_type.same_string_general ("array") then
+			elseif a_type.same_string_general (Json_type_array) then
 				Result := a_instance.is_array
 			elseif a_type.same_string_general ("boolean") then
 				Result := a_instance.is_boolean
-			elseif a_type.same_string_general ("null") then
+			elseif a_type.same_string_general (Json_type_null) then
 				Result := a_instance.is_null
 			end
 		end
@@ -192,7 +198,7 @@ feature {NONE} -- String validation
 			-- minLength
 			if a_schema.has_min_length then
 				if l_length < a_schema.min_length then
-					create l_msg.make (50)
+					create l_msg.make (Error_message_buffer_size)
 					l_msg.append_string_general ("String too short: length ")
 					l_msg.append_integer (l_length)
 					l_msg.append_string_general (" < minLength ")
@@ -206,7 +212,7 @@ feature {NONE} -- String validation
 			-- maxLength
 			if a_schema.has_max_length then
 				if l_length > a_schema.max_length then
-					create l_msg.make (50)
+					create l_msg.make (Error_message_buffer_size)
 					l_msg.append_string_general ("String too long: length ")
 					l_msg.append_integer (l_length)
 					l_msg.append_string_general (" > maxLength ")
@@ -242,7 +248,7 @@ feature {NONE} -- String validation
 
 			if l_regex.is_compiled then
 				if not l_regex.matches (a_string) then
-					create l_msg.make (50)
+					create l_msg.make (Error_message_buffer_size)
 					l_msg.append_string_general ("String does not match pattern: ")
 					l_msg.append (a_pattern)
 
@@ -251,7 +257,7 @@ feature {NONE} -- String validation
 				end
 			else
 				-- Invalid regex pattern in schema
-				create l_msg.make (50)
+				create l_msg.make (Error_message_buffer_size)
 				l_msg.append_string_general ("Invalid regex pattern in schema: ")
 				l_msg.append (a_pattern)
 
@@ -287,7 +293,7 @@ feature {NONE} -- Number validation
 			-- minimum
 			if a_schema.has_minimum then
 				if l_value < a_schema.minimum then
-					create l_msg.make (50)
+					create l_msg.make (Error_message_buffer_size)
 					l_msg.append_string_general ("Number too small: ")
 					l_msg.append_double (l_value)
 					l_msg.append_string_general (" < minimum ")
@@ -301,7 +307,7 @@ feature {NONE} -- Number validation
 			-- maximum
 			if a_schema.has_maximum then
 				if l_value > a_schema.maximum then
-					create l_msg.make (50)
+					create l_msg.make (Error_message_buffer_size)
 					l_msg.append_string_general ("Number too large: ")
 					l_msg.append_double (l_value)
 					l_msg.append_string_general (" > maximum ")
@@ -341,7 +347,7 @@ feature {NONE} -- Object validation
 						loop
 							if attached l_required.string_item (ic.item) as l_req_prop then
 								if not l_object.has_key (l_req_prop) then
-									create l_msg.make (50)
+									create l_msg.make (Error_message_buffer_size)
 									l_msg.append_string_general ("Required property missing: ")
 									l_msg.append (l_req_prop)
 
@@ -410,7 +416,7 @@ feature {NONE} -- Array validation
 				-- minItems
 				if a_schema.has_min_items then
 					if l_count < a_schema.min_items then
-						create l_msg.make (50)
+						create l_msg.make (Error_message_buffer_size)
 						l_msg.append_string_general ("Array too short: length ")
 						l_msg.append_integer (l_count)
 						l_msg.append_string_general (" < minItems ")
@@ -424,7 +430,7 @@ feature {NONE} -- Array validation
 				-- maxItems
 				if a_schema.has_max_items then
 					if l_count > a_schema.max_items then
-						create l_msg.make (50)
+						create l_msg.make (Error_message_buffer_size)
 						l_msg.append_string_general ("Array too long: length ")
 						l_msg.append_integer (l_count)
 						l_msg.append_string_general (" > maxItems ")
@@ -441,7 +447,7 @@ feature {NONE} -- Array validation
 						across
 							1 |..| l_count as ic
 						loop
-							create l_item_path.make (20)
+							create l_item_path.make (Item_path_buffer_size)
 							l_item_path.append_string_general (a_path)
 							l_item_path.append_character ('/')
 							l_item_path.append_integer (ic.item - 1)

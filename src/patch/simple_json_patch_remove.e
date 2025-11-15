@@ -218,7 +218,7 @@ feature {NONE} -- Implementation
 		local
 			l_index_str: STRING_32
 		do
-			l_index_str := a_segment.substring (2, a_segment.count - 1)
+			l_index_str := a_segment.substring (Substring_skip_first_char, a_segment.count - 1)
 			if l_index_str.is_integer then
 				Result := l_index_str.to_integer
 			end

@@ -11,6 +11,12 @@ note
 deferred class
 	SIMPLE_JSON_PATCH_OPERATION
 
+inherit
+	SIMPLE_JSON_CONSTANTS
+		export
+			{NONE} all
+		end
+
 feature -- Access
 
 	op: STRING_32

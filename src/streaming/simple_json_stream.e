@@ -15,6 +15,11 @@ class
 inherit
 	ITERABLE [SIMPLE_JSON_STREAM_ELEMENT]
 
+	SIMPLE_JSON_CONSTANTS
+		export
+			{NONE} all
+		end
+
 create
 	make_from_file,
 	make_from_string
@@ -29,8 +34,8 @@ feature {NONE} -- Initialization
 		do
 			file_path := a_file_path
 			is_from_file := True
-			create errors.make (5)
-			create {ARRAYED_LIST [SIMPLE_JSON_VALUE]} elements.make (10)
+			create errors.make (Default_error_list_size)
+			create {ARRAYED_LIST [SIMPLE_JSON_VALUE]} elements.make (Default_elements_capacity)
 		ensure
 			file_path_set: file_path ~ a_file_path
 			is_from_file: is_from_file
@@ -44,8 +49,8 @@ feature {NONE} -- Initialization
 		do
 			json_text := a_json_text
 			is_from_file := False
-			create errors.make (5)
-			create {ARRAYED_LIST [SIMPLE_JSON_VALUE]} elements.make (10)
+			create errors.make (Default_error_list_size)
+			create {ARRAYED_LIST [SIMPLE_JSON_VALUE]} elements.make (Default_elements_capacity)
 		ensure
 			json_text_set: json_text ~ a_json_text
 			not_from_file: not is_from_file
