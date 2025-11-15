@@ -78,10 +78,23 @@ feature -- Status report
 		end
 
 invariant
+	-- Core data integrity
 	merged_document_attached: merged_document /= Void
 	error_message_attached: error_message /= Void
-	consistency: is_success implies error_message.is_empty
+
+	-- Success state consistency
+	success_implies_no_error: is_success implies error_message.is_empty
+	success_excludes_has_error: is_success implies not has_error
+
+	-- Failure state consistency
+	failure_implies_error_message: not is_success implies not error_message.is_empty
 	failure_has_error: has_error implies not error_message.is_empty
+
+	-- Query definition consistency
+	has_error_definition: has_error = not is_success
+
+	-- State exclusivity
+	success_and_error_exclusive: is_success = error_message.is_empty
 
 note
 	copyright: "2025, Larry Rix"

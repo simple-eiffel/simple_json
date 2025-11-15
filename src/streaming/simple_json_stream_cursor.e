@@ -84,9 +84,21 @@ feature {NONE} -- Implementation
 			-- Current position in stream (1-based, 0 means not started)
 
 invariant
+	-- Core data integrity
 	stream_attached: stream /= Void
-	valid_index: current_index >= 0
 
+	-- Index validity
+	valid_index: current_index >= 0
+	reasonable_upper_bound: current_index <= stream.element_count + 1
+
+	-- After state consistency
+	after_definition: after = (current_index > stream.element_count or else stream.element_count = 0)
+
+	-- Cursor position semantics
+	-- current_index = 0: before first element
+	-- current_index in 1..element_count: valid element position
+	-- current_index > element_count: after last element
+	
 note
 	copyright: "Copyright (c) 2024, Larry Rix"
 	license: "MIT License"

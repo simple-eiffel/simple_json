@@ -51,7 +51,12 @@ feature -- Access
 		end
 
 invariant
+	-- Core data integrity
 	path_not_void: path /= Void
 	message_not_void: message /= Void
+
+	-- Message quality
+	-- Every validation error should describe what failed
+	message_not_empty: not message.is_empty
 
 end

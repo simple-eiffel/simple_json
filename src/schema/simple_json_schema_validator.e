@@ -479,4 +479,8 @@ feature {NONE} -- Path building
 			result_not_void: Result /= Void
 		end
 
+invariant
+	-- Validator is stateless - no instance data to protect
+	-- All validation is performed via pure functions on passed parameters
+
 end

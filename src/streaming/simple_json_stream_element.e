@@ -51,8 +51,14 @@ feature -- Conversion
 		end
 
 invariant
+	-- Core data integrity
 	value_attached: value /= Void
+
+	-- Index validity (1-based array indexing)
 	positive_index: index > 0
+
+	-- This is an immutable value object
+	-- Both value and index are set in make and never modified
 
 note
 	copyright: "Copyright (c) 2024, Larry Rix"

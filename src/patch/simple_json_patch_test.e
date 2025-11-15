@@ -66,15 +66,15 @@ feature -- Operations
 			l_match: BOOLEAN
 		do
 			create l_pointer
-			
+
 			if l_pointer.parse_path (path) and attached value as l_val then
 				-- Navigate to target
 				l_existing := l_pointer.navigate (a_document)
-				
+
 				if attached l_existing then
 					-- Compare values
 					l_match := values_equal (l_existing, l_val)
-					
+
 					if l_match then
 						-- Test passed - return unchanged document
 						create Result.make_success (a_document)
@@ -101,6 +101,14 @@ feature {NONE} -- Implementation
 			-- This handles all types uniformly
 			Result := a_val1.to_json_string.is_equal (a_val2.to_json_string)
 		end
+
+invariant
+	-- Operation identity
+	test_requires_value: requires_value
+	test_not_requires_from: not requires_from
+
+	-- Validation consistency
+	valid_definition: is_valid = (not path.is_empty and value /= Void)
 
 note
 	copyright: "2025, Larry Rix"

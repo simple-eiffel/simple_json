@@ -37,7 +37,7 @@ feature {NONE} -- Initialization
 		do
 			create l_json
 			l_parsed := l_json.parse (a_json_string)
-			
+
 			if attached l_parsed as al_parsed then
 				if al_parsed.is_object then
 					if attached {JSON_OBJECT} al_parsed.json_value as l_json_obj then
@@ -332,6 +332,67 @@ feature -- Schema properties
 		end
 
 invariant
+	-- Core data integrity
 	schema_object_not_void: schema_object /= Void
+
+	-- Type property consistency
+	has_type_implies_string: has_type implies
+		(schema_object.has_key ("type") and then
+		 attached schema_object.item ("type") as l_type and then
+		 l_type.is_string)
+
+	-- Properties consistency (object type schema properties)
+	has_properties_implies_object: has_properties implies
+		(schema_object.has_key ("properties") and then
+		 attached schema_object.item ("properties") as l_props and then
+		 l_props.is_object)
+
+	-- Required consistency (array of required property names)
+	has_required_implies_array: has_required implies
+		(schema_object.has_key ("required") and then
+		 attached schema_object.item ("required") as l_req and then
+		 l_req.is_array)
+
+	-- Number constraints consistency
+	has_minimum_implies_number: has_minimum implies
+		(schema_object.has_key ("minimum") and then
+		 attached schema_object.item ("minimum") as l_min and then
+		 l_min.is_number)
+	has_maximum_implies_number: has_maximum implies
+		(schema_object.has_key ("maximum") and then
+		 attached schema_object.item ("maximum") as l_max and then
+		 l_max.is_number)
+
+	-- String constraints consistency
+	has_min_length_implies_number: has_min_length implies
+		(schema_object.has_key ("minLength") and then
+		 attached schema_object.item ("minLength") as l_min and then
+		 l_min.is_number)
+	has_max_length_implies_number: has_max_length implies
+		(schema_object.has_key ("maxLength") and then
+		 attached schema_object.item ("maxLength") as l_max and then
+		 l_max.is_number)
+
+	-- Pattern consistency
+	has_pattern_implies_string: has_pattern implies
+		(schema_object.has_key ("pattern") and then
+		 attached schema_object.item ("pattern") as l_pattern and then
+		 l_pattern.is_string)
+
+	-- Array constraints consistency
+	has_min_items_implies_number: has_min_items implies
+		(schema_object.has_key ("minItems") and then
+		 attached schema_object.item ("minItems") as l_min and then
+		 l_min.is_number)
+	has_max_items_implies_number: has_max_items implies
+		(schema_object.has_key ("maxItems") and then
+		 attached schema_object.item ("maxItems") as l_max and then
+		 l_max.is_number)
+
+	-- Items schema consistency
+	has_items_implies_object: has_items implies
+		(schema_object.has_key ("items") and then
+		 attached schema_object.item ("items") as l_items and then
+		 l_items.is_object)
 
 end

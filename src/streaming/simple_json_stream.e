@@ -192,9 +192,30 @@ feature {NONE} -- Implementation
 		end
 
 invariant
+	-- Core data integrity
 	errors_attached: errors /= Void
 	elements_attached: elements /= Void
+
+	-- Source consistency (mutually exclusive)
 	either_file_or_string: is_from_file implies file_path /= Void
+	not_from_file_implies_text: not is_from_file implies json_text /= Void
+
+	-- Error state consistency
+	has_errors_definition: has_errors = not errors.is_empty
+
+	-- Error list quality
+	no_void_errors: across errors as ic_err all ic_err /= Void end
+
+	-- Element count consistency
+	element_count_definition: element_count = elements.count
+	count_non_negative: element_count >= 0
+
+	-- Element list quality (no void elements)
+	no_void_elements: across elements as ic_elem all ic_elem /= Void end
+
+	-- Parse state consistency
+	-- If parsed successfully, we should have elements (unless array was empty)
+	-- If has errors, parsing either failed or found non-array
 
 note
 	copyright: "Copyright (c) 2024, Larry Rix"

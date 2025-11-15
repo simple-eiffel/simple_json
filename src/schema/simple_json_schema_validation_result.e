@@ -78,7 +78,18 @@ feature -- Access
 		end
 
 invariant
+	-- Core data integrity
 	errors_not_void: errors /= Void
+
+	-- Validity state consistency
 	valid_implies_no_errors: is_valid implies errors.is_empty
+	invalid_implies_has_errors: not is_valid implies not errors.is_empty
+
+	-- Error count consistency
+	error_count_definition: error_count = errors.count
+	count_non_negative: error_count >= 0
+
+	-- Error array quality (no void errors)
+	no_void_errors: across errors as ic_err all ic_err /= Void end
 
 end

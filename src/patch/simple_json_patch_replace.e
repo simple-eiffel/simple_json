@@ -65,11 +65,11 @@ feature -- Operations
 			l_existing: detachable SIMPLE_JSON_VALUE
 		do
 			create l_pointer
-			
+
 			if l_pointer.parse_path (path) then
 				-- Check that target exists
 				l_existing := l_pointer.navigate (a_document)
-				
+
 				if attached l_existing and attached value as l_val then
 					-- Target exists, perform replacement (same as add)
 					-- Delegate to add operation
@@ -85,6 +85,14 @@ feature -- Operations
 				create Result.make_failure ("Invalid path: " + path)
 			end
 		end
+
+invariant
+	-- Operation identity
+	replace_requires_value: requires_value
+	replace_not_requires_from: not requires_from
+
+	-- Validation consistency
+	valid_definition: is_valid = (not path.is_empty and value /= Void)
 
 note
 	copyright: "2025, Larry Rix"

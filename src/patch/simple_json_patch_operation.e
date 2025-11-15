@@ -123,6 +123,17 @@ invariant
 	-- Core data integrity
 	path_attached: path /= Void
 
+	-- from_path quality (when present, never empty)
+	from_path_not_empty: attached from_path as l_from implies not l_from.is_empty
+
+	-- Operation identity consistency (RFC 6902 pattern)
+	-- No operation requires both value and from_path
+	not_both_requirements: not (requires_value and requires_from)
+
+	-- Validity consistency
+	-- Valid operation requires non-empty path at minimum
+	valid_implies_path_not_empty: is_valid implies not path.is_empty
+	
 note
 	copyright: "2025, Larry Rix"
 	license: "MIT License"

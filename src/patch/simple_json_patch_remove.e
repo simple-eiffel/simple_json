@@ -226,6 +226,14 @@ feature {NONE} -- Implementation
 			non_negative: Result >= 0
 		end
 
+invariant
+	-- Operation identity
+	remove_not_requires_value: not requires_value
+	remove_not_requires_from: not requires_from
+
+	-- Validation consistency
+	valid_definition: is_valid = not path.is_empty
+
 note
 	copyright: "2025, Larry Rix"
 	license: "MIT License"

@@ -72,12 +72,12 @@ feature -- Operations
 				create l_pointer
 				if l_pointer.parse_path (l_from) then
 					l_source_value := l_pointer.navigate (a_document)
-					
+
 					if attached l_source_value as l_val then
 						-- Remove from source
 						if attached {SIMPLE_JSON_PATCH_REMOVE} create {SIMPLE_JSON_PATCH_REMOVE}.make (l_from) as l_remove then
 							l_remove_result := l_remove.apply (a_document)
-							
+
 							if l_remove_result.is_success and attached l_remove_result.modified_document as l_doc_after_remove then
 								-- Add to destination
 								if attached {SIMPLE_JSON_PATCH_ADD} create {SIMPLE_JSON_PATCH_ADD}.make (path, l_val) as l_add then
@@ -102,6 +102,14 @@ feature -- Operations
 				create Result.make_failure ("No from path specified for move operation")
 			end
 		end
+
+invariant
+	-- Operation identity
+	move_not_requires_value: not requires_value
+	move_requires_from: requires_from
+
+	-- Validation consistency
+	valid_definition: is_valid = (not path.is_empty and attached from_path as l_from and then not l_from.is_empty)
 
 note
 	copyright: "2025, Larry Rix"
