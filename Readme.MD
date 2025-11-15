@@ -6,6 +6,7 @@
 [![Test Coverage](https://img.shields.io/badge/test_coverage-100%25-brightgreen.svg)]()
 [![Design by Contract](https://img.shields.io/badge/DbC-enforced-orange.svg)]()
 [![Documentation](https://img.shields.io/badge/docs-HTML-purple.svg)](docs/index.html)
+[![EIS](https://img.shields.io/badge/EIS-enabled-blue.svg)]()
 
 ---
 
@@ -13,7 +14,7 @@
 
 SIMPLE_JSON is a production-ready JSON library for Eiffel that builds on the standard eJSON library to provide modern features found in contemporary JSON ecosystems. It offers **JSON Schema validation** (Draft 7), **JSON Pointer** navigation (RFC 6901), **JSON Patch** operations (RFC 6902), **JSON Merge Patch** (RFC 7386), **JSONPath queries**, and comprehensive error tracking—all with full Unicode/UTF-8 support through STRING_32.
 
-The library includes **complete HTML documentation** (29 files) covering every class, feature, and test case, making it easy to learn and use. Documentation is accessible via F1 context-sensitive help in EiffelStudio.
+The library includes **complete HTML documentation** (29 files) covering every class, feature, and test case, making it easy to learn and use. **Every source and test file includes EIS (Eiffel Information System) links** that provide F1 context-sensitive help directly in EiffelStudio—press F1 on any class to instantly view its documentation.
 
 **Developed using AI-assisted methodology:** Built interactively with Claude Sonnet 4.5 following rigorous Design by Contract principles and maintaining 100% test coverage throughout development.
 
@@ -21,26 +22,39 @@ The library includes **complete HTML documentation** (29 files) covering every c
 
 ## 📚 Documentation
 
-The project includes comprehensive HTML documentation for all features:
-
-- **[Documentation Home](docs/index.html)** - Start here for complete library documentation
-- **Core Classes** - SIMPLE_JSON, SIMPLE_JSON_VALUE, SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY
-- **RFC Features** - JSON Pointer, JSON Patch, JSON Merge Patch
-- **Advanced Features** - JSON Schema validation, streaming parser, JSONPath queries
-- **Test Documentation** - Complete test suite documentation with examples
+The project includes comprehensive HTML documentation with **integrated EIS links** in all source files:
 
 ### Accessing Documentation
 
-1. **In Browser**: Open `docs/index.html` in your web browser
-2. **In EiffelStudio**: Press F1 on any SIMPLE_JSON class for context-sensitive help
-3. **Quick Reference**: See individual HTML files in `docs/` subfolders
+1. **In EiffelStudio (Recommended)**: Press **F1** on any SIMPLE_JSON class or feature for instant context-sensitive help
+   - All 38 source and test files include embedded EIS links
+   - Documentation opens automatically in your default browser
+   - Links are relative to `$(SYSTEM_PATH)` for portability
 
-All documentation includes:
-- Detailed class descriptions
+2. **In Browser**: Open `docs/index.html` in your web browser
+   - Complete library reference
+   - Feature-by-feature API documentation
+   - Code examples and use cases
+
+3. **Quick Reference**: Browse individual HTML files in `docs/` subfolders
+   - Core classes: `docs/core/`
+   - RFC features: `docs/pointer/`, `docs/patch/`, `docs/merge_patch/`
+   - Advanced: `docs/schema/`, `docs/streaming/`
+   - Tests: `docs/testing/`
+
+### Documentation Coverage
+
+**All documentation includes:**
+- Detailed class descriptions with EIS links
 - Feature-by-feature API reference
 - Code examples and use cases
 - Design by Contract specifications
 - Test case documentation
+
+**EIS-Enabled Files:**
+- **25 source files** (`src/` directory)
+- **13 test files** (`testing/` directory)
+- **29 HTML documentation files** (`docs/` directory)
 
 ---
 
@@ -68,6 +82,7 @@ All documentation includes:
 - **JSONPath Queries** - SQL-like queries for JSON data
 - **Unicode Support** - Full UTF-8/UTF-16 through STRING_32
 - **Position Tracking** - Precise error locations in source text
+- **EIS Integration** - F1 context-sensitive help throughout
 - **100% Test Coverage** - 216 tests across all features
 
 ---
@@ -115,6 +130,8 @@ feature
 
 end
 ```
+
+**Tip:** Press **F1** on `SIMPLE_JSON` or any other class name in EiffelStudio to view its documentation instantly.
 
 ---
 
@@ -375,6 +392,42 @@ optional_value: detachable SIMPLE_JSON_VALUE
 
 ---
 
+## EIS Documentation System
+
+### What is EIS?
+
+EIS (Eiffel Information System) provides **context-sensitive documentation** directly in EiffelStudio. Every class in SIMPLE_JSON includes embedded documentation links.
+
+### Using EIS
+
+1. **Open any SIMPLE_JSON class** in EiffelStudio
+2. **Press F1** on the class name or feature
+3. **Documentation opens automatically** in your browser
+
+### EIS Link Format
+
+All EIS links use the `$(SYSTEM_PATH)` variable for portability:
+
+```eiffel
+note
+    description: "Class description here"
+    EIS: "name=Documentation", 
+         "protocol=URI", 
+         "src=file://$(SYSTEM_PATH)/docs/docs/core/simple_json.html"
+```
+
+### Configuring EIS
+
+The `$(SYSTEM_PATH)` variable is defined in `simple_json.ecf`:
+
+```xml
+<variable name="SYSTEM_PATH" value="D:\prod\simple_json"/>
+```
+
+Update this path to match your local installation directory.
+
+---
+
 ## Project Structure
 
 ```
@@ -389,7 +442,7 @@ simple_json/
 │   ├── streaming/             # Streaming parser docs
 │   ├── utilities/             # Utility class docs
 │   └── testing/               # Test documentation
-├── src/                       # Source code
+├── src/                       # Source code (25 files with EIS)
 │   ├── core/                  # Core JSON types
 │   ├── pointer/               # JSON Pointer (RFC 6901)
 │   ├── patch/                 # JSON Patch (RFC 6902)
@@ -397,7 +450,7 @@ simple_json/
 │   ├── schema/                # Schema validation
 │   ├── streaming/             # Streaming parser
 │   └── utilities/             # Helper classes
-├── testing/                   # Test suites
+├── testing/                   # Test suites (13 files with EIS)
 ├── simple_json.ecf           # Library configuration
 ├── README.md                 # This file
 └── LICENSE                   # MIT License
@@ -424,12 +477,14 @@ SIMPLE_JSON was developed using an innovative AI-assisted methodology:
 - **Continuous Validation:** 100% test coverage maintained throughout
 - **Design by Contract:** All features include comprehensive contracts
 - **RFC Compliance:** Standards verified against official specifications
+- **EIS Integration:** Documentation embedded in source code for immediate access
 
 This approach enabled:
 - Rapid feature implementation with high quality
 - Comprehensive test coverage from the start
 - Clear documentation generated alongside code
 - Consistent design patterns across the library
+- Integrated context-sensitive help system
 
 ### Development Principles
 
@@ -438,6 +493,7 @@ This approach enabled:
 3. **Void-Safe:** All types properly declared
 4. **Unicode-First:** STRING_32 for all text handling
 5. **RFC-Compliant:** Standards strictly followed
+6. **EIS-Enabled:** Documentation accessible via F1
 
 ---
 
@@ -451,8 +507,9 @@ Contributions welcome! Please:
 4. Ensure 100% test coverage
 5. Follow Eiffel coding conventions
 6. Include Design by Contract assertions
-7. Update documentation
-8. Submit a pull request
+7. Add EIS documentation links
+8. Update HTML documentation
+9. Submit a pull request
 
 ---
 
@@ -466,6 +523,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ### Documentation
 - [HTML Documentation](docs/index.html) - Complete library reference
+- **EIS Links** - Press F1 in EiffelStudio on any SIMPLE_JSON class
 - [JSON Specification](https://www.json.org/) - JSON standard
 - [JSON Schema](https://json-schema.org/) - Schema validation spec
 - [RFC 6901](https://tools.ietf.org/html/rfc6901) - JSON Pointer
@@ -476,6 +534,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - [Eiffel Software](https://www.eiffel.org/) - Official Eiffel site
 - [EiffelStudio](https://www.eiffel.org/downloads) - Download IDE
 - [Eiffel Documentation](https://www.eiffel.org/doc/) - Language reference
+- [EIS Documentation](https://www.eiffel.org/doc/eiffelstudio/EIS) - Eiffel Information System
 
 ---
 
@@ -493,7 +552,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - Developed with Claude Sonnet 4.5 (Anthropic)
 - JSON Schema implementation follows Draft 7 specification
 - RFC compliance validated against official test suites
+- EIS documentation system for integrated help
 
 ---
 
-**Note:** This library demonstrates the potential of AI-assisted software development while maintaining professional quality standards through rigorous testing and Design by Contract principles.
+**Note:** This library demonstrates the potential of AI-assisted software development while maintaining professional quality standards through rigorous testing, Design by Contract principles, and integrated documentation via EIS.
