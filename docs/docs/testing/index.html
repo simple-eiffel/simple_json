@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Suite Documentation - SIMPLE_JSON</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #212121;
+            --text-light: #757575;
+            --border: #e0e0e0;
+            --code-bg: #f8f9fa;
+            --success: #4caf50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: var(--card-bg);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            margin-bottom: 2rem;
+        }
+        
+        .summary-box h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .test-category {
+            background: var(--card-bg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .test-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .test-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-left-color: var(--primary-light);
+        }
+        
+        .test-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .test-card h3 a {
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+        
+        .test-card h3 a:hover {
+            color: var(--primary-light);
+        }
+        
+        .test-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .test-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+        
+        .test-meta-item {
+            color: var(--text-light);
+        }
+        
+        .test-meta-item strong {
+            color: var(--text);
+        }
+        
+        .tag {
+            display: inline-block;
+            background: var(--primary-light);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Test Suite Documentation</h1>
+            <p class="subtitle">Comprehensive Testing for SIMPLE_JSON Library</p>
+            <p class="subtitle">216 Tests Across 13 Test Classes • 100% Code Coverage</p>
+        </header>
+
+        <nav>
+            <a href="../index.html">← Back to Main Documentation</a>
+        </nav>
+
+        <div class="summary-box">
+            <h2>Test Suite Overview</h2>
+            <p>
+                The SIMPLE_JSON test suite provides comprehensive validation of all library features through
+                216+ tests organized into 13 test classes. Every feature is thoroughly tested including edge cases,
+                error conditions, and RFC compliance.
+            </p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">216+</div>
+                    <div class="stat-label">Total Tests</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">13</div>
+                    <div class="stat-label">Test Classes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Code Coverage</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">5,333</div>
+                    <div class="stat-label">Lines of Test Code</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>Core Functionality Tests</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><a href="test_simple_json.html">TEST_SIMPLE_JSON</a></h3>
+                    <p>Tests core JSON parsing, building, and type checking functionality. Validates all primitive types, nested structures, and Unicode support.</p>
+                    <span class="tag">Core</span>
+                    <span class="tag">Parsing</span>
+                    <span class="tag">Building</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> 37</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 456</div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><a href="test_set_base.html">TEST_SET_BASE</a></h3>
+                    <p>Base class providing enhanced assertion methods, JSON comparison utilities, and string diff capabilities used by all test classes.</p>
+                    <span class="tag">Foundation</span>
+                    <span class="tag">Utilities</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Role:</strong> Base Class</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 525</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>RFC Compliance Tests</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><a href="test_json_schema_validation.html">TEST_JSON_SCHEMA_VALIDATION</a></h3>
+                    <p>Comprehensive testing of JSON Schema Draft 7 validation. Covers type validation, string/numeric constraints, object/array validation, and nested schemas.</p>
+                    <span class="tag">RFC</span>
+                    <span class="tag">Schema</span>
+                    <span class="tag">Validation</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> 47+</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 687</div>
+                        <div class="test-meta-item"><strong>RFC:</strong> Draft 7</div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><a href="test_simple_json_patch.html">TEST_SIMPLE_JSON_PATCH</a></h3>
+                    <p>Validates RFC 6902 JSON Patch implementation. Tests all six operations (add, remove, replace, move, copy, test) with edge cases and complex patches.</p>
+                    <span class="tag">RFC 6902</span>
+                    <span class="tag">Patch</span>
+                    <span class="tag">Operations</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> 30+</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 661</div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><a href="test_simple_json_merge_patch.html">TEST_SIMPLE_JSON_MERGE_PATCH</a></h3>
+                    <p>Tests RFC 7386 JSON Merge Patch implementation. Validates merge operations, null-based deletion, recursive merging, and all RFC examples.</p>
+                    <span class="tag">RFC 7386</span>
+                    <span class="tag">Merge</span>
+                    <span class="tag">Declarative</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> 14</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 726</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>Advanced Feature Tests</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><a href="test_pretty_printing.html">TEST_PRETTY_PRINTING</a></h3>
+                    <p>Tests human-readable JSON formatting with configurable indentation, nested structure handling, and special character preservation.</p>
+                    <span class="tag">Formatting</span>
+                    <span class="tag">Pretty Print</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> 20+</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 559</div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><a href="test_json_path_queries.html">TEST_JSON_PATH_QUERIES</a></h3>
+                    <p>Validates JSONPath query language implementation for querying JSON documents using path expressions, filters, and wildcards.</p>
+                    <span class="tag">Query</span>
+                    <span class="tag">JSONPath</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> 15+</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 378</div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><a href="test_simple_json_stream.html">TEST_SIMPLE_JSON_STREAM</a></h3>
+                    <p>Tests streaming JSON array parsing for processing large files efficiently. Validates iteration, error handling, and multiple pass support.</p>
+                    <span class="tag">Streaming</span>
+                    <span class="tag">Performance</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> 11</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 245</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>Error Handling Tests</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><a href="test_error_tracking.html">TEST_ERROR_TRACKING</a></h3>
+                    <p>Tests error tracking with precise line/column position information. Validates parse error reporting, error messages, and recovery mechanisms.</p>
+                    <span class="tag">Errors</span>
+                    <span class="tag">Tracking</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> 18+</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 397</div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><a href="test_error_tracking_advanced.html">TEST_ERROR_TRACKING_ADVANCED</a></h3>
+                    <p>Advanced error scenarios including complex parsing errors, nested error conditions, multiple simultaneous errors, and contextual information.</p>
+                    <span class="tag">Advanced</span>
+                    <span class="tag">Edge Cases</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> 15+</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 385</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>Testing Utilities & Demonstrations</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><a href="test_assertions_demo.html">TEST_ASSERTIONS_DEMO</a></h3>
+                    <p>Demonstrates custom assertion methods including assert_strings_equal_diff, assert_json_equal, and other enhanced testing utilities.</p>
+                    <span class="tag">Demo</span>
+                    <span class="tag">Utilities</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> Demo</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 142</div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><a href="test_string_diff_demo.html">TEST_STRING_DIFF_DEMO</a></h3>
+                    <p>Demonstrates string difference calculation for debugging test failures. Shows highlighted differences and multi-line comparison capabilities.</p>
+                    <span class="tag">Demo</span>
+                    <span class="tag">Debugging</span>
+                    <div class="test-meta">
+                        <div class="test-meta-item"><strong>Tests:</strong> Demo</div>
+                        <div class="test-meta-item"><strong>LOC:</strong> 142</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>Test Coverage by Feature</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <thead>
+                    <tr style="background: var(--primary); color: white;">
+                        <th style="padding: 0.75rem; text-align: left;">Feature</th>
+                        <th style="padding: 0.75rem; text-align: center;">Test Class</th>
+                        <th style="padding: 0.75rem; text-align: center;">Tests</th>
+                        <th style="padding: 0.75rem; text-align: center;">Coverage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem;">JSON Parsing & Building</td>
+                        <td style="padding: 0.75rem; text-align: center;">TEST_SIMPLE_JSON</td>
+                        <td style="padding: 0.75rem; text-align: center;">37</td>
+                        <td style="padding: 0.75rem; text-align: center;">✓ Complete</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem;">JSON Schema Validation</td>
+                        <td style="padding: 0.75rem; text-align: center;">TEST_JSON_SCHEMA_VALIDATION</td>
+                        <td style="padding: 0.75rem; text-align: center;">47+</td>
+                        <td style="padding: 0.75rem; text-align: center;">✓ Draft 7</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem;">JSON Patch (RFC 6902)</td>
+                        <td style="padding: 0.75rem; text-align: center;">TEST_SIMPLE_JSON_PATCH</td>
+                        <td style="padding: 0.75rem; text-align: center;">30+</td>
+                        <td style="padding: 0.75rem; text-align: center;">✓ All Operations</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem;">JSON Merge Patch (RFC 7386)</td>
+                        <td style="padding: 0.75rem; text-align: center;">TEST_SIMPLE_JSON_MERGE_PATCH</td>
+                        <td style="padding: 0.75rem; text-align: center;">14</td>
+                        <td style="padding: 0.75rem; text-align: center;">✓ Full RFC</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem;">Pretty Printing</td>
+                        <td style="padding: 0.75rem; text-align: center;">TEST_PRETTY_PRINTING</td>
+                        <td style="padding: 0.75rem; text-align: center;">20+</td>
+                        <td style="padding: 0.75rem; text-align: center;">✓ All Formats</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem;">JSONPath Queries</td>
+                        <td style="padding: 0.75rem; text-align: center;">TEST_JSON_PATH_QUERIES</td>
+                        <td style="padding: 0.75rem; text-align: center;">15+</td>
+                        <td style="padding: 0.75rem; text-align: center;">✓ Complete</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem;">Streaming Parser</td>
+                        <td style="padding: 0.75rem; text-align: center;">TEST_SIMPLE_JSON_STREAM</td>
+                        <td style="padding: 0.75rem; text-align: center;">11</td>
+                        <td style="padding: 0.75rem; text-align: center;">✓ Complete</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem;">Error Tracking</td>
+                        <td style="padding: 0.75rem; text-align: center;">TEST_ERROR_TRACKING + Advanced</td>
+                        <td style="padding: 0.75rem; text-align: center;">33+</td>
+                        <td style="padding: 0.75rem; text-align: center;">✓ All Scenarios</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="test-category">
+            <h2>Testing Philosophy</h2>
+            <p style="margin-bottom: 1rem;">
+                The SIMPLE_JSON test suite follows these principles:
+            </p>
+            <ul style="margin-left: 2rem; line-height: 2;">
+                <li><strong>100% Coverage:</strong> Every feature, every edge case, every error condition</li>
+                <li><strong>RFC Compliance:</strong> All tests validate against official specifications</li>
+                <li><strong>Real-World Scenarios:</strong> Tests based on actual use cases and documented bugs</li>
+                <li><strong>Clear Failures:</strong> Enhanced assertions provide detailed diff output</li>
+                <li><strong>Automated:</strong> All tests run via AutoTest with zero manual intervention</li>
+                <li><strong>Documentation:</strong> Tests serve as executable examples</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

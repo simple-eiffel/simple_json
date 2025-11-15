@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST_SIMPLE_JSON - SIMPLE_JSON Test Documentation</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #212121;
+            --text-light: #757575;
+            --border: #e0e0e0;
+            --code-bg: #f8f9fa;
+            --success: #4caf50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: var(--card-bg);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+        
+        nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .section {
+            background: var(--card-bg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(--0,0,0,0.1);
+        }
+        
+        h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        h3 {
+            color: var(--primary);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .test-group {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--code-bg);
+            border-left: 4px solid var(--success);
+            border-radius: 4px;
+        }
+        
+        .test-name {
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .test-description {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 3px solid var(--primary);
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: var(--primary-light);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: var(--code-bg);
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            margin-bottom: 2rem;
+        }
+        
+        .summary-box h3 {
+            margin-top: 0;
+            color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TEST_SIMPLE_JSON</h1>
+            <p class="subtitle">Core Functionality Test Suite</p>
+            <p class="subtitle">Testing: Parsing, Building, Type Checking, and Basic Operations</p>
+        </header>
+
+        <nav>
+            <a href="../index.html">← Documentation Home</a>
+            <a href="index.html">← Test Suite Index</a>
+        </nav>
+
+        <div class="summary-box">
+            <h3>📋 Test Suite Summary</h3>
+            <p><strong>Total Tests:</strong> 37</p>
+            <p><strong>Purpose:</strong> Comprehensive testing of core SIMPLE_JSON library functionality including JSON parsing, object/array building, type checking, and basic operations.</p>
+            <p><strong>Coverage:</strong> All primitive types (string, number, boolean, null), objects, arrays, nested structures, Unicode support, and fluent API.</p>
+        </div>
+
+        <div class="section">
+            <h2>Overview</h2>
+            <p>
+                TEST_SIMPLE_JSON is the foundational test class that validates the core functionality of the SIMPLE_JSON library. 
+                It ensures that:
+            </p>
+            <ul>
+                <li>JSON parsing works correctly for all data types</li>
+                <li>Object and array building follows the fluent API pattern</li>
+                <li>Type checking and conversion are accurate</li>
+                <li>Unicode strings are handled properly</li>
+                <li>Nested structures can be created and accessed</li>
+                <li>Edge cases (empty strings, zero, negative numbers) work correctly</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Test Categories</h2>
+            
+            <h3>1. Parsing Tests</h3>
+            <p>Verify JSON string parsing for all types:</p>
+            
+            <div class="test-group">
+                <div class="test-name">test_parse_simple_object</div>
+                <div class="test-description">Parse basic JSON object with single property</div>
+                <pre><code>JSON: {"name": "Alice"}
+Validates: Object detection, key existence, string value extraction</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_parse_object_with_types</div>
+                <div class="test-description">Parse object containing all primitive types</div>
+                <pre><code>JSON: {"str": "test", "num": 42, "bool": true, "null": null}
+Validates: Multiple types in single object, property count, key detection</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_parse_empty_array</div>
+                <div class="test-description">Parse empty array structure</div>
+                <pre><code>JSON: []
+Validates: Array detection, empty state</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_parse_string / test_parse_number / test_parse_real</div>
+                <div class="test-description">Parse individual primitive values</div>
+                <pre><code>Validates: String parsing, integer parsing, real number parsing</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_parse_boolean_true / test_parse_boolean_false</div>
+                <div class="test-description">Parse boolean literals</div>
+                <pre><code>JSON: true / false
+Validates: Boolean detection and value extraction</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_parse_null</div>
+                <div class="test-description">Parse null literal</div>
+                <pre><code>JSON: null
+Validates: Null type detection</code></pre>
+            </div>
+
+            <h3>2. Building Tests</h3>
+            <p>Test construction of JSON structures using the fluent API:</p>
+
+            <div class="test-group">
+                <div class="test-name">test_build_object</div>
+                <div class="test-description">Build object using fluent API</div>
+                <pre><code>obj := json.new_object
+    .put_string ("Alice", "name")
+    .put_integer (30, "age")
+Validates: Fluent API chaining, property addition, count verification</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_build_array</div>
+                <div class="test-description">Build array with mixed types</div>
+                <pre><code>arr := json.new_array
+    .add_string ("apple")
+    .add_string ("banana")
+    .add_integer (42)
+Validates: Array building, element addition, count</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_fluent_object / test_fluent_array</div>
+                <div class="test-description">Verify fluent API method chaining</div>
+                <pre><code>Multiple consecutive calls using method chaining
+Validates: Fluent API pattern works correctly</code></pre>
+            </div>
+
+            <h3>3. Nested Structure Tests</h3>
+            <p>Validate handling of nested objects and arrays:</p>
+
+            <div class="test-group">
+                <div class="test-name">test_nested_object</div>
+                <div class="test-description">Create object containing nested object</div>
+                <pre><code>person := json.new_object
+    .put_string ("Charlie", "name")
+    .put_object (address, "address")
+Validates: Nested object insertion, retrieval, navigation</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_nested_array</div>
+                <div class="test-description">Create object containing array</div>
+                <pre><code>person := json.new_object
+    .put_string ("Diana", "name")
+    .put_array (hobbies, "hobbies")
+Validates: Array embedding in objects, element access</code></pre>
+            </div>
+
+            <h3>4. Unicode Tests</h3>
+            
+            <div class="test-group">
+                <div class="test-name">test_unicode_string</div>
+                <div class="test-description">Handle Unicode strings from multiple languages</div>
+                <pre><code>obj := json.new_object
+    .put_string ("Hello", "english")
+    .put_string ("你好", "chinese")
+    .put_string ("Здравствуй", "russian")
+Validates: UTF-32 string handling, Unicode preservation</code></pre>
+            </div>
+
+            <h3>5. Type Checking Tests</h3>
+            <p>Comprehensive type detection validation:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test</th>
+                        <th>Input</th>
+                        <th>Validates</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>test_type_checking_string</td>
+                        <td>"test"</td>
+                        <td>is_string = true, all others = false</td>
+                    </tr>
+                    <tr>
+                        <td>test_type_checking_number</td>
+                        <td>42</td>
+                        <td>is_number = true, is_integer = true</td>
+                    </tr>
+                    <tr>
+                        <td>test_type_checking_boolean</td>
+                        <td>true</td>
+                        <td>is_boolean = true, all others = false</td>
+                    </tr>
+                    <tr>
+                        <td>test_type_checking_null</td>
+                        <td>null</td>
+                        <td>is_null = true, all others = false</td>
+                    </tr>
+                    <tr>
+                        <td>test_type_checking_object</td>
+                        <td>{}</td>
+                        <td>is_object = true, not is_array</td>
+                    </tr>
+                    <tr>
+                        <td>test_type_checking_array</td>
+                        <td>[]</td>
+                        <td>is_array = true, not is_object</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>6. Edge Case Tests</h3>
+            <p>Verify handling of special values and edge cases:</p>
+
+            <div class="test-group">
+                <div class="test-name">test_object_with_null</div>
+                <div class="test-description">Object containing explicit null value</div>
+                <pre><code>obj := json.new_object
+    .put_string ("valid", "key1")
+    .put_null ("key2")
+Validates: Null value storage, key existence with null</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_empty_string</div>
+                <div class="test-description">Empty string as value</div>
+                <pre><code>obj := json.new_object.put_string ("", "empty")
+Validates: Empty string handling, is_empty detection</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_zero_integer</div>
+                <div class="test-description">Zero as integer value</div>
+                <pre><code>obj := json.new_object.put_integer (0, "zero")
+Validates: Zero value storage and retrieval</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_negative_integer</div>
+                <div class="test-description">Negative integer value</div>
+                <pre><code>obj := json.new_object.put_integer (-42, "negative")
+Validates: Negative number handling</code></pre>
+            </div>
+
+            <h3>7. Utility Tests</h3>
+
+            <div class="test-group">
+                <div class="test-name">test_object_keys</div>
+                <div class="test-description">Retrieve all keys from object</div>
+                <pre><code>keys := obj.keys
+Validates: Key enumeration, count accuracy</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_array_access</div>
+                <div class="test-description">Access array elements by index</div>
+                <pre><code>arr.string_item (1), arr.integer_item (2), arr.boolean_item (3)
+Validates: Indexed access, type-specific getters</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_to_json_string</div>
+                <div class="test-description">Convert object to JSON string</div>
+                <pre><code>json_str := obj.to_json_string
+Validates: JSON serialization</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_is_valid_json</div>
+                <div class="test-description">Validate JSON string without parsing</div>
+                <pre><code>json.is_valid_json ("{\"key\": \"value\"}")
+json.is_valid_json ("not json")
+Validates: JSON syntax validation</code></pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Test Patterns Used</h2>
+            
+            <h3>Assertion Pattern</h3>
+            <pre><code>if attached json.parse (...) as v then
+    assert ("description", condition)
+    assert_strings_equal ("desc", expected, actual)
+    assert_integers_equal ("desc", expected, actual)
+    assert_booleans_equal ("desc", expected, actual)
+else
+    assert ("parse_failed", False)
+end</code></pre>
+
+            <h3>Type-Safe Access Pattern</h3>
+            <pre><code>if attached obj.string_item ("key") as s then
+    -- Use s safely
+else
+    assert ("key_exists", False)
+end</code></pre>
+
+            <h3>Fluent API Pattern</h3>
+            <pre><code>obj := json.new_object
+    .put_string ("value1", "key1")
+    .put_integer (42, "key2")
+    .put_boolean (True, "key3")</code></pre>
+        </div>
+
+        <div class="section">
+            <h2>Dependencies</h2>
+            <ul>
+                <li><strong>Inherits:</strong> TEST_SET_BASE</li>
+                <li><strong>Tests:</strong> SIMPLE_JSON, SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY, SIMPLE_JSON_VALUE</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Coverage Analysis</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature Category</th>
+                        <th>Tests</th>
+                        <th>Coverage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>JSON Parsing</td>
+                        <td>10</td>
+                        <td>✓ All primitive types + structures</td>
+                    </tr>
+                    <tr>
+                        <td>Object Building</td>
+                        <td>8</td>
+                        <td>✓ Fluent API + nested structures</td>
+                    </tr>
+                    <tr>
+                        <td>Array Building</td>
+                        <td>4</td>
+                        <td>✓ Mixed types + access patterns</td>
+                    </tr>
+                    <tr>
+                        <td>Type Checking</td>
+                        <td>6</td>
+                        <td>✓ All type predicates</td>
+                    </tr>
+                    <tr>
+                        <td>Unicode Support</td>
+                        <td>1</td>
+                        <td>✓ Multi-language strings</td>
+                    </tr>
+                    <tr>
+                        <td>Edge Cases</td>
+                        <td>5</td>
+                        <td>✓ Empty, zero, negative, null</td>
+                    </tr>
+                    <tr>
+                        <td>Utilities</td>
+                        <td>3</td>
+                        <td>✓ Serialization, validation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

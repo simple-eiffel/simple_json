@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMPLE_JSON Complete User Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .toc {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .toc h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+        .toc li {
+            padding: 0.5rem 0;
+        }
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        .section h3 {
+            color: #764ba2;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .code-inline {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #d63384;
+        }
+        .rfc-badge {
+            display: inline-block;
+            background: #764ba2;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover { background: #f8f9fa; }
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        .tip {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        ul, ol { margin-left: 2rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SIMPLE_JSON Complete User Guide</h1>
+        <p style="font-size: 1.2rem; opacity: 0.9;">Comprehensive Documentation and Examples</p>
+    </div>
+
+    <div class="container">
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#introduction">1. Introduction</a></li>
+                <li><a href="#installation">2. Installation & Setup</a></li>
+                <li><a href="#core">3. Core Components</a>
+                    <ul style="margin-left: 2rem;">
+                        <li><a href="#core-parser">3.1 SIMPLE_JSON - Parser & Builder</a></li>
+                        <li><a href="#core-value">3.2 SIMPLE_JSON_VALUE - Type System</a></li>
+                        <li><a href="#core-object">3.3 SIMPLE_JSON_OBJECT - Objects</a></li>
+                        <li><a href="#core-array">3.4 SIMPLE_JSON_ARRAY - Arrays</a></li>
+                        <li><a href="#core-error">3.5 SIMPLE_JSON_ERROR - Error Handling</a></li>
+                    </ul>
+                </li>
+                <li><a href="#pointer">4. JSON Pointer (RFC 6901)</a></li>
+                <li><a href="#patch">5. JSON Patch (RFC 6902)</a></li>
+                <li><a href="#merge-patch">6. JSON Merge Patch (RFC 7386)</a></li>
+                <li><a href="#schema">7. JSON Schema (Draft 7)</a></li>
+                <li><a href="#streaming">8. Streaming Parser</a></li>
+                <li><a href="#utilities">9. Utilities</a></li>
+                <li><a href="#testing">10. Testing & Quality</a></li>
+                <li><a href="#examples">11. Complete Examples</a></li>
+            </ul>
+        </div>
+
+        <div class="section" id="introduction">
+            <h2>1. Introduction</h2>
+            <p>
+                SIMPLE_JSON is a comprehensive, production-ready JSON library for Eiffel that provides:
+            </p>
+            <ul>
+                <li><strong>Full Unicode Support:</strong> STRING_32 throughout for international text</li>
+                <li><strong>Fluent API:</strong> Method chaining for readable code</li>
+                <li><strong>Type Safety:</strong> Design by Contract with comprehensive assertions</li>
+                <li><strong>RFC Compliance:</strong> JSON Pointer, JSON Patch, JSON Merge Patch, JSON Schema</li>
+                <li><strong>Error Tracking:</strong> Line/column position information for all errors</li>
+                <li><strong>100% Test Coverage:</strong> 216+ tests validating all features</li>
+            </ul>
+            
+            <h3>What Makes SIMPLE_JSON Special</h3>
+            <p>No other Eiffel JSON library provides:</p>
+            <ul>
+                <li>JSON Schema validation (Draft 7)</li>
+                <li>JSON Patch operations (RFC 6902)</li>
+                <li>JSON Merge Patch (RFC 7386)</li>
+                <li>JSON Pointer navigation (RFC 6901)</li>
+                <li>JSONPath queries with wildcards</li>
+                <li>Position-aware error tracking</li>
+                <li>Streaming parser for large files</li>
+                <li>100% STRING_32 public API</li>
+            </ul>
+        </div>
+
+        <div class="section" id="installation">
+            <h2>2. Installation & Setup</h2>
+            
+            <h3>Quick Start</h3>
+            <div class="code-block">
+# 1. Clone the repository
+git clone https://github.com/ljr1981/simple_json.git
+
+# 2. Set environment variable
+export SIMPLE_JSON=/path/to/simple_json
+
+# 3. Add to your .ecf file
+&lt;library name="simple_json" location="$SIMPLE_JSON/simple_json.ecf"/&gt;
+            </div>
+
+            <h3>Basic Usage</h3>
+            <div class="code-block">
+class MY_APPLICATION
+
+create
+    make
+
+feature
+    make
+        local
+            json: SIMPLE_JSON
+            value: detachable SIMPLE_JSON_VALUE
+        do
+            create json
+            value := json.parse ('{"message": "Hello, World!"}')
+            
+            if attached value and then value.is_object then
+                print (value.as_object.string_item ("message"))
+            end
+        end
+end
+            </div>
+        </div>
+
+        <div class="section" id="core">
+            <h2>3. Core Components</h2>
+            
+            <div id="core-parser">
+                <h3>3.1 SIMPLE_JSON - Parser & Builder</h3>
+                <p>The main entry point for all JSON operations.</p>
+                
+                <h4>Parsing JSON</h4>
+                <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    
+    -- Parse from string
+    value := json.parse ('{
+        "name": "Alice",
+        "age": 30,
+        "active": true
+    }')
+    
+    -- Parse from file
+    value := json.parse_file ("config.json")
+    
+    -- Validate without parsing
+    if json.is_valid_json (some_text) then
+        value := json.parse (some_text)
+    end
+end
+                </div>
+                
+                <h4>Building JSON</h4>
+                <div class="code-block">
+local
+    json: SIMPLE_JSON
+    obj: SIMPLE_JSON_OBJECT
+    arr: SIMPLE_JSON_ARRAY
+do
+    create json
+    
+    -- Build object with fluent API
+    obj := json.new_object
+        .put_string ("Bob", "name")
+        .put_integer (25, "age")
+        .put_boolean (True, "active")
+    
+    -- Build array
+    arr := json.new_array
+        .add_string ("red")
+        .add_string ("green")
+        .add_string ("blue")
+    
+    -- Create values
+    value := json.string_value ("Hello")
+    value := json.integer_value (42)
+    value := json.boolean_value (True)
+    value := json.null_value
+end
+                </div>
+                
+                <h4>Error Handling</h4>
+                <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    value := json.parse (invalid_json)
+    
+    if value = Void and then json.has_errors then
+        print ("Errors found: " + json.error_count.out + "%N")
+        print (json.errors_as_string)
+        print ("%N%NDetailed:%N")
+        print (json.detailed_errors)
+    end
+end
+                </div>
+            </div>
+
+            <div id="core-value">
+                <h3>3.2 SIMPLE_JSON_VALUE - Type System</h3>
+                <p>Base wrapper providing type checking and safe conversion.</p>
+                
+                <h4>Type Checking</h4>
+                <div class="code-block">
+local
+    value: SIMPLE_JSON_VALUE
+do
+    -- Check type before using
+    if value.is_string then
+        print (value.as_string_32)
+    elseif value.is_number then
+        if value.is_integer then
+            print (value.as_integer)
+        else
+            print (value.as_real)
+        end
+    elseif value.is_boolean then
+        print (value.as_boolean)
+    elseif value.is_null then
+        print ("null")
+    elseif value.is_object then
+        process_object (value.as_object)
+    elseif value.is_array then
+        process_array (value.as_array)
+    end
+end
+                </div>
+                
+                <div class="tip">
+                    <strong>💡 Design by Contract:</strong> All <code>as_*</code> methods have preconditions 
+                    requiring the corresponding <code>is_*</code> check. Always check type before conversion.
+                </div>
+            </div>
+
+            <div id="core-object">
+                <h3>3.3 SIMPLE_JSON_OBJECT - Objects</h3>
+                <p>JSON object operations with fluent API.</p>
+                
+                <h4>Adding Values</h4>
+                <div class="code-block">
+local
+    obj: SIMPLE_JSON_OBJECT
+    nested: SIMPLE_JSON_OBJECT
+    tags: SIMPLE_JSON_ARRAY
+do
+    create obj.make
+    
+    -- Type-specific methods (recommended)
+    obj.put_string ("Alice", "name")
+        .put_integer (30, "age")
+        .put_boolean (True, "active")
+        .put_real (98.6, "temperature")
+    
+    -- Nested objects
+    create nested.make
+    nested.put_string ("123 Main St", "street")
+    obj.put_object (nested, "address")
+    
+    -- Generic method (when type varies)
+    obj.put_value (some_value, "dynamic_field")
+end
+                </div>
+                
+                <h4>Accessing Values</h4>
+                <div class="code-block">
+local
+    obj: SIMPLE_JSON_OBJECT
+do
+    -- Check before accessing
+    if obj.has_key ("name") then
+        print (obj.string_item ("name"))
+    end
+    
+    -- Generic access
+    if attached obj.item ("age") as l_value then
+        if l_value.is_integer then
+            print (l_value.as_integer)
+        end
+    end
+    
+    -- Iterate over keys
+    across obj.keys as ic loop
+        if attached obj.item (ic) as l_value then
+            print (ic + ": " + l_value.to_json_string + "%N")
+        end
+    end
+end
+                </div>
+            </div>
+
+            <div id="core-array">
+                <h3>3.4 SIMPLE_JSON_ARRAY - Arrays</h3>
+                <p>JSON array operations with fluent API.</p>
+                
+                <div class="code-block">
+local
+    arr: SIMPLE_JSON_ARRAY
+do
+    create arr.make
+    
+    -- Add values (fluent)
+    arr.add_string ("first")
+        .add_integer (2)
+        .add_boolean (True)
+        .add_null
+    
+    -- Access by index (1-based)
+    if attached arr.item (1) as l_first then
+        print (l_first.to_json_string)
+    end
+    
+    -- Iterate
+    across 1 |..| arr.count as ic loop
+        if attached arr.item (ic) as l_item then
+            print (l_item.to_json_string + "%N")
+        end
+    end
+end
+                </div>
+            </div>
+
+            <div id="core-error">
+                <h3>3.5 SIMPLE_JSON_ERROR - Error Handling</h3>
+                <p>Comprehensive error tracking with position information.</p>
+                
+                <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    value := json.parse (bad_json)
+    
+    if json.has_errors then
+        across json.last_errors as ic loop
+            print ("Error at line " + ic.line.out)
+            print (", column " + ic.column.out + ":%N")
+            print ("  " + ic.message + "%N")
+            
+            -- Show source context
+            if attached ic.source_line as l_line then
+                print ("  " + l_line + "%N")
+                print ("  " + ic.position_indicator + "%N")
+            end
+        end
+    end
+end
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="pointer">
+            <h2>4. JSON Pointer <span class="rfc-badge">RFC 6901</span></h2>
+            <p>Navigate JSON documents using standard path syntax.</p>
+            
+            <h3>Basic Usage</h3>
+            <div class="code-block">
+local
+    pointer: SIMPLE_JSON_POINTER
+    document: SIMPLE_JSON_VALUE
+    value: detachable SIMPLE_JSON_VALUE
+do
+    -- Create pointer
+    create pointer.make ("/users/0/name")
+    
+    -- Evaluate against document
+    value := pointer.evaluate (document)
+    
+    if attached value then
+        print (value.to_json_string)
+    end
+end
+            </div>
+            
+            <h3>Pointer Syntax</h3>
+            <ul>
+                <li><code>/</code> - Root</li>
+                <li><code>/users</code> - Object property "users"</li>
+                <li><code>/users/0</code> - First element of "users" array</li>
+                <li><code>/users/0/name</code> - "name" property of first user</li>
+                <li><code>/path~0with~1slash</code> - Escaped characters (~0 for ~, ~1 for /)</li>
+            </ul>
+            
+            <h3>Advanced Features</h3>
+            <div class="code-block">
+local
+    pointer: SIMPLE_JSON_POINTER
+do
+    create pointer.make ("/users/0/address/city")
+    
+    -- Get parent path
+    print (pointer.parent_path)  -- "/users/0/address"
+    
+    -- Check if valid
+    if pointer.is_valid then
+        -- Use pointer
+    end
+end
+            </div>
+        </div>
+
+        <div class="section" id="patch">
+            <h2>5. JSON Patch <span class="rfc-badge">RFC 6902</span></h2>
+            <p>Apply structured modification operations to JSON documents.</p>
+            
+            <h3>Available Operations</h3>
+            <ul>
+                <li><strong>add</strong> - Add a value at a path</li>
+                <li><strong>remove</strong> - Remove value at a path</li>
+                <li><strong>replace</strong> - Replace value at a path</li>
+                <li><strong>move</strong> - Move value from one path to another</li>
+                <li><strong>copy</strong> - Copy value from one path to another</li>
+                <li><strong>test</strong> - Test if path has expected value</li>
+            </ul>
+            
+            <h3>Example Usage</h3>
+            <div class="code-block">
+local
+    patch: SIMPLE_JSON_PATCH
+    result: SIMPLE_JSON_PATCH_RESULT
+    json: SIMPLE_JSON
+do
+    create json
+    create patch
+    
+    -- Build patch operations
+    patch.add_add_operation ("/email", json.string_value ("alice@example.com"))
+    patch.add_replace_operation ("/age", json.integer_value (31))
+    patch.add_remove_operation ("/temporary_field")
+    patch.add_move_operation ("/old_path", "/new_path")
+    patch.add_copy_operation ("/template", "/instance")
+    patch.add_test_operation ("/version", json.string_value ("1.0"))
+    
+    -- Apply patch
+    result := patch.apply (document)
+    
+    if result.is_success then
+        print (result.document.to_json_string)
+    else
+        print ("Patch failed: " + result.error_message)
+    end
+end
+            </div>
+        </div>
+
+        <div class="section" id="merge-patch">
+            <h2>6. JSON Merge Patch <span class="rfc-badge">RFC 7386</span></h2>
+            <p>Simple merge semantics for updating JSON documents.</p>
+            
+            <h3>Merge Semantics</h3>
+            <ul>
+                <li><strong>null value</strong> → Delete the property</li>
+                <li><strong>Other values</strong> → Add or replace the property</li>
+                <li><strong>Nested objects</strong> → Recursive merge</li>
+            </ul>
+            
+            <h3>Example</h3>
+            <div class="code-block">
+local
+    merge_patch: SIMPLE_JSON_MERGE_PATCH
+    result: SIMPLE_JSON_MERGE_PATCH_RESULT
+    json: SIMPLE_JSON
+    target, patch: SIMPLE_JSON_OBJECT
+do
+    create json
+    create merge_patch
+    
+    -- Original document
+    target := json.new_object
+        .put_string ("Alice", "name")
+        .put_integer (30, "age")
+        .put_string ("old@example.com", "email")
+    
+    -- Patch document
+    patch := json.new_object
+        .put_integer (31, "age")           -- Replace age
+        .put_null ("email")                -- Delete email
+        .put_boolean (True, "active")      -- Add active
+    
+    -- Apply merge patch
+    result := merge_patch.apply (
+        create {SIMPLE_JSON_VALUE}.make_with_json_object (target.json_object),
+        create {SIMPLE_JSON_VALUE}.make_with_json_object (patch.json_object)
+    )
+    
+    if result.is_success and attached result.document as l_doc then
+        print (l_doc.to_json_string)
+        -- Result: {"name":"Alice","age":31,"active":true}
+    end
+end
+            </div>
+        </div>
+
+        <div class="section" id="schema">
+            <h2>7. JSON Schema <span class="rfc-badge">Draft 7</span></h2>
+            <p>Validate JSON documents against schema specifications.</p>
+            
+            <h3>Basic Validation</h3>
+            <div class="code-block">
+local
+    schema: SIMPLE_JSON_SCHEMA
+    result: SIMPLE_JSON_SCHEMA_VALIDATION_RESULT
+    json: SIMPLE_JSON
+    document: SIMPLE_JSON_VALUE
+do
+    create json
+    
+    -- Create schema
+    create schema.make_from_string ('{
+        "type": "object",
+        "required": ["name", "age"],
+        "properties": {
+            "name": {"type": "string"},
+            "age": {"type": "integer", "minimum": 0},
+            "email": {"type": "string", "format": "email"}
+        }
+    }')
+    
+    -- Validate document
+    document := json.parse ('{"name": "Alice", "age": 30}')
+    
+    if attached document then
+        result := schema.validate (document)
+        
+        if result.is_valid then
+            print ("Document is valid")
+        else
+            across result.errors as ic loop
+                print (ic.message + "%N")
+            end
+        end
+    end
+end
+            </div>
+            
+            <h3>Supported Validation Keywords</h3>
+            <table>
+                <tr>
+                    <th>Keyword</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><code>type</code></td>
+                    <td>Value type</td>
+                    <td>"string", "number", "object", "array", "boolean", "null"</td>
+                </tr>
+                <tr>
+                    <td><code>required</code></td>
+                    <td>Required properties</td>
+                    <td>["name", "age"]</td>
+                </tr>
+                <tr>
+                    <td><code>properties</code></td>
+                    <td>Object property schemas</td>
+                    <td>{"name": {"type": "string"}}</td>
+                </tr>
+                <tr>
+                    <td><code>minimum</code></td>
+                    <td>Minimum number value</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td><code>maximum</code></td>
+                    <td>Maximum number value</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <td><code>minLength</code></td>
+                    <td>Minimum string length</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><code>maxLength</code></td>
+                    <td>Maximum string length</td>
+                    <td>255</td>
+                </tr>
+                <tr>
+                    <td><code>pattern</code></td>
+                    <td>Regex pattern</td>
+                    <td>"^[a-zA-Z]+$"</td>
+                </tr>
+                <tr>
+                    <td><code>items</code></td>
+                    <td>Array item schema</td>
+                    <td>{"type": "string"}</td>
+                </tr>
+                <tr>
+                    <td><code>minItems</code></td>
+                    <td>Minimum array length</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><code>maxItems</code></td>
+                    <td>Maximum array length</td>
+                    <td>10</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section" id="streaming">
+            <h2>8. Streaming Parser</h2>
+            <p>Memory-efficient processing of large JSON arrays.</p>
+            
+            <h3>Basic Streaming</h3>
+            <div class="code-block">
+local
+    stream: SIMPLE_JSON_STREAM
+do
+    -- Create from file or string
+    create stream.make_from_file ("large_data.json")
+    create stream.make_from_string ("...")
+    
+    -- Iterate efficiently
+    across stream as ic loop
+        -- ic.value: SIMPLE_JSON_VALUE
+        -- ic.index: INTEGER (1-based position)
+        process_element (ic.value, ic.index)
+    end
+    
+    -- Check for errors
+    if stream.has_errors then
+        across stream.last_errors as ic loop
+            print (ic.to_string_with_position + "%N")
+        end
+    end
+end
+            </div>
+            
+            <div class="tip">
+                <strong>💡 When to Use Streaming:</strong> Use streaming when processing large JSON arrays
+                that don't fit comfortably in memory, or when you only need to process elements sequentially.
+            </div>
+        </div>
+
+        <div class="section" id="utilities">
+            <h2>9. Utilities</h2>
+            
+            <h3>Pretty Printing</h3>
+            <div class="code-block">
+local
+    printer: SIMPLE_JSON_PRETTY_PRINTER
+    json: SIMPLE_JSON
+    obj: SIMPLE_JSON_OBJECT
+do
+    create json
+    create printer
+    
+    obj := json.new_object
+        .put_string ("Alice", "name")
+        .put_integer (30, "age")
+    
+    -- Default formatting (2 spaces)
+    print (printer.format (obj.to_json_value))
+    
+    -- Custom indentation (4 spaces)
+    printer.set_indent_size (4)
+    print (printer.format (obj.to_json_value))
+    
+    -- Using object's built-in method
+    print (obj.pretty_print)
+    print (obj.pretty_print_with_indent (4))
+end
+            </div>
+        </div>
+
+        <div class="section" id="testing">
+            <h2>10. Testing & Quality</h2>
+            
+            <h3>Test Coverage</h3>
+            <p>SIMPLE_JSON maintains 100% test coverage with 216+ comprehensive tests:</p>
+            <ul>
+                <li><strong>Core Tests</strong> - Parsing, building, type operations</li>
+                <li><strong>Pointer Tests</strong> - RFC 6901 compliance</li>
+                <li><strong>Patch Tests</strong> - All 6 RFC 6902 operations</li>
+                <li><strong>Merge Patch Tests</strong> - RFC 7386 compliance with 14 spec examples</li>
+                <li><strong>Schema Tests</strong> - Draft 7 validation</li>
+                <li><strong>Streaming Tests</strong> - Large file processing</li>
+                <li><strong>Pretty Printing Tests</strong> - Output formatting</li>
+                <li><strong>Error Tracking Tests</strong> - Position-aware errors</li>
+            </ul>
+            
+            <h3>Running Tests</h3>
+            <div class="code-block">
+# Run all tests
+ec -config simple_json.ecf -target testing -c_compile -clean
+
+# Run specific test class
+ec -config simple_json.ecf -target testing -c_compile
+            </div>
+        </div>
+
+        <div class="section" id="examples">
+            <h2>11. Complete Examples</h2>
+            
+            <h3>Configuration Management</h3>
+            <div class="code-block">
+class CONFIG_MANAGER
+
+feature
+    load_config: SIMPLE_JSON_OBJECT
+        local
+            json: SIMPLE_JSON
+            value: detachable SIMPLE_JSON_VALUE
+        do
+            create json
+            value := json.parse_file ("app_config.json")
+            
+            if attached value and then value.is_object then
+                Result := value.as_object
+            else
+                -- Return defaults on error
+                Result := json.new_object
+                    .put_string ("localhost", "host")
+                    .put_integer (8080, "port")
+                    .put_boolean (False, "debug")
+            end
+        ensure
+            result_attached: Result /= Void
+        end
+        
+    save_config (config: SIMPLE_JSON_OBJECT)
+        local
+            file: PLAIN_TEXT_FILE
+        do
+            create file.make_create_read_write ("app_config.json")
+            file.put_string (config.pretty_print)
+            file.close
+        end
+end
+            </div>
+            
+            <h3>API Client</h3>
+            <div class="code-block">
+class API_CLIENT
+
+feature
+    get_users: ARRAYED_LIST [USER]
+        local
+            json: SIMPLE_JSON
+            response: detachable SIMPLE_JSON_VALUE
+            array: SIMPLE_JSON_ARRAY
+        do
+            create Result.make (0)
+            create json
+            
+            response := json.parse (http_get ("https://api.example.com/users"))
+            
+            if attached response and then response.is_array then
+                array := response.as_array
+                
+                across 1 |..| array.count as ic loop
+                    if attached array.item (ic) as l_item and then
+                       l_item.is_object then
+                        Result.extend (parse_user (l_item.as_object))
+                    end
+                end
+            end
+        end
+        
+    parse_user (obj: SIMPLE_JSON_OBJECT): USER
+        do
+            create Result.make (
+                obj.string_item ("name"),
+                obj.string_item ("email"),
+                obj.integer_item ("age")
+            )
+        end
+end
+            </div>
+            
+            <h3>Document Transformation</h3>
+            <div class="code-block">
+class DOCUMENT_TRANSFORMER
+
+feature
+    transform_user_data (source: SIMPLE_JSON_VALUE): SIMPLE_JSON_OBJECT
+        local
+            json: SIMPLE_JSON
+            pointer: SIMPLE_JSON_POINTER
+            patch: SIMPLE_JSON_PATCH
+            result_doc: SIMPLE_JSON_PATCH_RESULT
+        do
+            create json
+            create patch
+            
+            -- Add computed fields
+            patch.add_add_operation ("/timestamp",
+                json.string_value (current_timestamp))
+            patch.add_add_operation ("/version",
+                json.string_value ("2.0"))
+            
+            -- Move field
+            patch.add_move_operation ("/old_email", "/email")
+            
+            -- Remove deprecated fields
+            patch.add_remove_operation ("/deprecated_field")
+            
+            -- Apply transformations
+            result_doc := patch.apply (source)
+            
+            if result_doc.is_success and attached result_doc.document as l_doc
+               and then l_doc.is_object then
+                Result := l_doc.as_object
+            else
+                create Result.make
+            end
+        end
+end
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Additional Resources</h2>
+            <ul>
+                <li><a href="index.html">Documentation Home</a></li>
+                <li><a href="api_reference.html">Complete API Reference</a></li>
+                <li><a href="https://github.com/ljr1981/simple_json">GitHub Repository</a></li>
+                <li><a href="https://www.json.org">JSON Specification</a></li>
+                <li><a href="https://tools.ietf.org/html/rfc6901">RFC 6901 (JSON Pointer)</a></li>
+                <li><a href="https://tools.ietf.org/html/rfc6902">RFC 6902 (JSON Patch)</a></li>
+                <li><a href="https://tools.ietf.org/html/rfc7386">RFC 7386 (JSON Merge Patch)</a></li>
+                <li><a href="https://json-schema.org/draft-07/json-schema-release-notes.html">JSON Schema Draft 7</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 2rem; color: #666; border-top: 1px solid #ddd; margin-top: 3rem;">
+        <p><strong>SIMPLE_JSON</strong> Complete User Guide</p>
+        <p>Developed with Claude Sonnet 4.5 • Design by Contract • 100% Test Coverage</p>
+        <p>Copyright © 2024 Larry Rix • MIT License</p>
+    </div>
+</body>
+</html>

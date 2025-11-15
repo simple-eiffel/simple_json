@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMPLE_JSON - Main Parser and Entry Point</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .nav {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            margin-right: 2rem;
+            font-weight: 500;
+        }
+        
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section h3 {
+            color: #764ba2;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .section h4 {
+            color: #667eea;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .code-inline {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #d63384;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .tip {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature-card h4 {
+            margin-top: 0;
+        }
+        
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SIMPLE_JSON</h1>
+        <div class="subtitle">Main Parser and Entry Point for JSON Operations</div>
+    </div>
+
+    <div class="nav">
+        <a href="../index.html">← Home</a>
+        <a href="#overview">Overview</a>
+        <a href="#api">API Reference</a>
+        <a href="#examples">Examples</a>
+        <a href="#use-cases">Use Cases</a>
+        <a href="#corner-cases">Corner Cases</a>
+    </div>
+
+    <div class="container">
+        <div class="section" id="overview">
+            <h2>Overview</h2>
+            <p>
+                <code class="code-inline">SIMPLE_JSON</code> is the main entry point for all JSON operations in the library. 
+                It provides a simple, high-level API for parsing JSON text and building JSON values with full Unicode/UTF-8 support.
+            </p>
+            
+            <h3>Key Capabilities</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🔍 Parsing</h4>
+                    <p>Parse JSON from strings or files with comprehensive error tracking</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔨 Building</h4>
+                    <p>Create JSON values programmatically with type-safe builders</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Validation</h4>
+                    <p>Check JSON validity before parsing with detailed error messages</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📍 Error Tracking</h4>
+                    <p>Line and column position information for all parse errors</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🌍 Unicode Support</h4>
+                    <p>Full STRING_32 support for international characters</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📁 File Parsing</h4>
+                    <p>Direct file parsing with automatic UTF-8 conversion</p>
+                </div>
+            </div>
+
+            <div class="tip">
+                <strong>💡 Design Pattern:</strong> SIMPLE_JSON acts as a Factory for creating JSON values. 
+                Create a single instance and reuse it for multiple operations, or use stateless builder methods.
+            </div>
+        </div>
+
+        <div class="section" id="api">
+            <h2>API Reference</h2>
+
+            <h3>Parsing Operations</h3>
+            
+            <h4>parse (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE</h4>
+            <p>Parse JSON text and return a SIMPLE_JSON_VALUE wrapper.</p>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    value := json.parse ('{"name": "Alice", "age": 30}')
+    
+    if attached value then
+        -- Success: value contains parsed JSON
+    else
+        -- Error: check json.last_errors for details
+        print (json.errors_as_string)
+    end
+end
+            </div>
+            <p><strong>Preconditions:</strong></p>
+            <ul>
+                <li><code>not_empty</code>: Input text must not be empty</li>
+            </ul>
+            <p><strong>Returns:</strong> SIMPLE_JSON_VALUE on success, Void on error</p>
+            <p><strong>Error Handling:</strong> On error, returns Void and populates <code>last_errors</code> with detailed information</p>
+
+            <h4>parse_file (a_file_path: STRING_32): detachable SIMPLE_JSON_VALUE</h4>
+            <p>Parse JSON from a file with automatic UTF-8 conversion.</p>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    value := json.parse_file ("data.json")
+    
+    if attached value then
+        -- File parsed successfully
+    else
+        if json.has_errors then
+            across json.last_errors as ic loop
+                print (ic.to_string_with_position)
+                print ("%N")
+            end
+        end
+    end
+end
+            </div>
+            <p><strong>Preconditions:</strong></p>
+            <ul>
+                <li><code>not_empty</code>: File path must not be empty</li>
+            </ul>
+            <p><strong>File Handling:</strong></p>
+            <ul>
+                <li>Automatically checks file existence and readability</li>
+                <li>Converts UTF-8 file content to STRING_32</li>
+                <li>Adds file access errors to <code>last_errors</code> if file cannot be read</li>
+            </ul>
+
+            <h4>is_valid_json (a_json_text: STRING_32): BOOLEAN</h4>
+            <p>Check if text is valid JSON without creating the value object.</p>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+do
+    create json
+    if json.is_valid_json ('{"test": true}') then
+        print ("Valid JSON")
+    else
+        print ("Invalid JSON: " + json.errors_as_string)
+    end
+end
+            </div>
+            <p><strong>Use Case:</strong> Validate JSON before parsing when you only need to know if it's valid</p>
+            <p><strong>Performance:</strong> More efficient than <code>parse</code> when you don't need the parsed value</p>
+
+            <h3>Building Operations</h3>
+
+            <h4>new_object: SIMPLE_JSON_OBJECT</h4>
+            <p>Create a new JSON object builder for fluent construction.</p>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    obj: SIMPLE_JSON_OBJECT
+do
+    create json
+    obj := json.new_object
+        .put_string ("Alice", "name")
+        .put_integer (30, "age")
+        .put_boolean (True, "active")
+    
+    print (obj.to_json_string)
+    -- Output: {"name":"Alice","age":30,"active":true}
+end
+            </div>
+
+            <h4>new_array: SIMPLE_JSON_ARRAY</h4>
+            <p>Create a new JSON array builder for fluent construction.</p>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    arr: SIMPLE_JSON_ARRAY
+do
+    create json
+    arr := json.new_array
+        .add_string ("red")
+        .add_string ("green")
+        .add_string ("blue")
+    
+    print (arr.to_json_string)
+    -- Output: ["red","green","blue"]
+end
+            </div>
+
+            <h3>Value Creation Methods</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Parameter Type</th>
+                        <th>Returns</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>string_value</code></td>
+                        <td>STRING_32</td>
+                        <td>SIMPLE_JSON_VALUE</td>
+                        <td>Create JSON string value</td>
+                    </tr>
+                    <tr>
+                        <td><code>number_value</code></td>
+                        <td>DOUBLE</td>
+                        <td>SIMPLE_JSON_VALUE</td>
+                        <td>Create JSON number (real) value</td>
+                    </tr>
+                    <tr>
+                        <td><code>integer_value</code></td>
+                        <td>INTEGER_64</td>
+                        <td>SIMPLE_JSON_VALUE</td>
+                        <td>Create JSON integer value</td>
+                    </tr>
+                    <tr>
+                        <td><code>boolean_value</code></td>
+                        <td>BOOLEAN</td>
+                        <td>SIMPLE_JSON_VALUE</td>
+                        <td>Create JSON boolean value</td>
+                    </tr>
+                    <tr>
+                        <td><code>null_value</code></td>
+                        <td>-</td>
+                        <td>SIMPLE_JSON_VALUE</td>
+                        <td>Create JSON null value</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Error Tracking</h3>
+
+            <h4>has_errors: BOOLEAN</h4>
+            <p>Check if errors occurred during the last operation.</p>
+            
+            <h4>last_errors: ARRAYED_LIST [SIMPLE_JSON_ERROR]</h4>
+            <p>Get list of all errors from last operation with full details.</p>
+            
+            <h4>error_count: INTEGER</h4>
+            <p>Number of errors from last operation.</p>
+            
+            <h4>first_error: detachable SIMPLE_JSON_ERROR</h4>
+            <p>Get first error if any exist (convenience method).</p>
+            
+            <h4>errors_as_string: STRING_32</h4>
+            <p>All errors formatted as a single string with position information.</p>
+            
+            <h4>detailed_errors: STRING_32</h4>
+            <p>All errors with detailed position information and source context.</p>
+            
+            <h4>clear_errors</h4>
+            <p>Manually clear all error information (automatically done before each parse).</p>
+
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    value := json.parse ('{invalid json}')
+    
+    if json.has_errors then
+        print ("Error count: " + json.error_count.out + "%N")
+        print ("Errors:%N" + json.errors_as_string + "%N")
+        print ("%NDetailed:%N" + json.detailed_errors)
+    end
+end
+            </div>
+        </div>
+
+        <div class="section" id="examples">
+            <h2>Complete Examples</h2>
+
+            <h3>Example 1: Basic Parsing and Type Checking</h3>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+    obj: SIMPLE_JSON_OBJECT
+do
+    create json
+    value := json.parse ('{
+        "name": "Bob",
+        "age": 25,
+        "email": "bob@example.com",
+        "active": true
+    }')
+    
+    if attached value and then value.is_object then
+        obj := value.as_object
+        
+        -- Type-safe access with built-in validation
+        if obj.has_key ("name") then
+            print (obj.string_item ("name"))  -- Bob
+        end
+        
+        if obj.has_key ("age") then
+            print (obj.integer_item ("age"))  -- 25
+        end
+        
+        if obj.has_key ("active") then
+            print (obj.boolean_item ("active"))  -- True
+        end
+    end
+end
+            </div>
+
+            <h3>Example 2: Building Complex Structures</h3>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    user: SIMPLE_JSON_OBJECT
+    address: SIMPLE_JSON_OBJECT
+    tags: SIMPLE_JSON_ARRAY
+do
+    create json
+    
+    -- Create nested address
+    address := json.new_object
+        .put_string ("123 Main St", "street")
+        .put_string ("Springfield", "city")
+        .put_string ("62701", "zip")
+    
+    -- Create tags array
+    tags := json.new_array
+        .add_string ("developer")
+        .add_string ("eiffel")
+        .add_string ("json")
+    
+    -- Create main user object
+    user := json.new_object
+        .put_string ("Alice", "name")
+        .put_integer (30, "age")
+        .put_object (address, "address")
+        .put_array (tags, "tags")
+    
+    print (user.to_json_string)
+end
+            </div>
+
+            <h3>Example 3: Error Handling with Position Information</h3>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    value := json.parse ('{
+        "name": "Test",
+        "invalid": [1, 2, 3,]  -- Trailing comma error
+    }')
+    
+    if value = Void and then json.has_errors then
+        across json.last_errors as ic loop
+            print ("Error at line " + ic.line.out)
+            print (", column " + ic.column.out)
+            print (": " + ic.message + "%N")
+            
+            -- Print source context
+            if attached ic.source_line as l_line then
+                print (l_line + "%N")
+                print (ic.position_indicator)
+            end
+        end
+    end
+end
+            </div>
+
+            <h3>Example 4: File Parsing with Error Recovery</h3>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+    retry_count: INTEGER
+do
+    create json
+    
+    from
+        retry_count := 0
+    until
+        value /= Void or retry_count > 3
+    loop
+        value := json.parse_file ("config.json")
+        
+        if value = Void then
+            if json.has_errors then
+                print ("Parse error: " + json.errors_as_string + "%N")
+                
+                -- Check if it's a file access error
+                if attached json.first_error as err then
+                    if err.message.has_substring ("Cannot read file") then
+                        print ("File access error - aborting%N")
+                        retry_count := 4  -- Exit loop
+                    else
+                        -- Syntax error - might be corrupted file
+                        print ("Retrying...%N")
+                        retry_count := retry_count + 1
+                    end
+                end
+            end
+        end
+    end
+    
+    if attached value then
+        print ("Successfully parsed configuration")
+    end
+end
+            </div>
+        </div>
+
+        <div class="section" id="use-cases">
+            <h2>Common Use Cases</h2>
+
+            <h3>Configuration Files</h3>
+            <p>Parse application configuration from JSON files:</p>
+            <div class="code-block">
+load_config: SIMPLE_JSON_OBJECT
+    local
+        json: SIMPLE_JSON
+        value: detachable SIMPLE_JSON_VALUE
+    do
+        create json
+        value := json.parse_file ("app_config.json")
+        
+        if attached value and then value.is_object then
+            Result := value.as_object
+        else
+            -- Return default config
+            create Result.make
+            Result.put_string ("localhost", "host")
+                .put_integer (8080, "port")
+        end
+    ensure
+        result_not_void: Result /= Void
+    end
+            </div>
+
+            <h3>API Response Parsing</h3>
+            <p>Parse JSON responses from web APIs:</p>
+            <div class="code-block">
+parse_api_response (response_text: STRING_32): BOOLEAN
+    local
+        json: SIMPLE_JSON
+        value: detachable SIMPLE_JSON_VALUE
+        obj: SIMPLE_JSON_OBJECT
+    do
+        create json
+        value := json.parse (response_text)
+        
+        if attached value and then value.is_object then
+            obj := value.as_object
+            
+            -- Check for success status
+            if obj.has_key ("status") then
+                Result := obj.string_item ("status").is_case_insensitive_equal ("success")
+            end
+            
+            -- Process data if successful
+            if Result and obj.has_key ("data") then
+                process_response_data (obj.item ("data"))
+            end
+        end
+    end
+            </div>
+
+            <h3>Data Export</h3>
+            <p>Build JSON for data export:</p>
+            <div class="code-block">
+export_users (users: LIST [USER]): STRING_32
+    local
+        json: SIMPLE_JSON
+        array: SIMPLE_JSON_ARRAY
+        user_obj: SIMPLE_JSON_OBJECT
+    do
+        create json
+        array := json.new_array
+        
+        across users as ic loop
+            user_obj := json.new_object
+                .put_string (ic.name, "name")
+                .put_string (ic.email, "email")
+                .put_integer (ic.age, "age")
+            
+            array.add_object (user_obj)
+        end
+        
+        Result := array.to_json_string
+    end
+            </div>
+
+            <h3>Validation Before Processing</h3>
+            <p>Validate JSON structure before expensive operations:</p>
+            <div class="code-block">
+process_if_valid (json_text: STRING_32)
+    local
+        json: SIMPLE_JSON
+        value: detachable SIMPLE_JSON_VALUE
+    do
+        create json
+        
+        -- Quick validation check
+        if json.is_valid_json (json_text) then
+            -- Only parse if valid
+            value := json.parse (json_text)
+            
+            if attached value then
+                perform_expensive_processing (value)
+            end
+        else
+            log_validation_errors (json.errors_as_string)
+        end
+    end
+            </div>
+        </div>
+
+        <div class="section" id="corner-cases">
+            <h2>Corner Cases and Special Scenarios</h2>
+
+            <h3>Primitive Values at Top Level</h3>
+            <p>SIMPLE_JSON automatically handles primitive values that standard JSON parsers reject:</p>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    
+    -- These work even though they're not valid JSON documents
+    value := json.parse ('"just a string"')  -- String value
+    value := json.parse ('42')               -- Number value
+    value := json.parse ('true')             -- Boolean value
+    value := json.parse ('null')             -- Null value
+    
+    -- Parser wraps them in array internally then extracts
+end
+            </div>
+            <div class="note">
+                <strong>Note:</strong> The JSON specification (RFC 8259) requires top-level values to be objects or arrays. 
+                SIMPLE_JSON relaxes this requirement for convenience by automatically wrapping primitive values.
+            </div>
+
+            <h3>Empty Input Handling</h3>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    
+    -- Empty string triggers precondition violation
+    -- value := json.parse ("")  -- PRECONDITION VIOLATION!
+    
+    -- Correct: Check before parsing
+    if not input.is_empty then
+        value := json.parse (input)
+    end
+end
+            </div>
+            <div class="warning">
+                <strong>⚠️ Precondition:</strong> Both <code>parse</code> and <code>is_valid_json</code> require non-empty input. 
+                Check <code>is_empty</code> before calling these methods.
+            </div>
+
+            <h3>Unicode and Special Characters</h3>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+    obj: SIMPLE_JSON_OBJECT
+do
+    create json
+    
+    -- Full Unicode support in STRING_32
+    value := json.parse ('{
+        "chinese": "你好世界",
+        "arabic": "مرحبا بالعالم",
+        "emoji": "🚀🌟✨",
+        "escaped": "Line 1\nLine 2\tTabbed"
+    }')
+    
+    if attached value and then value.is_object then
+        obj := value.as_object
+        -- All strings preserved exactly
+        print (obj.string_item ("chinese"))  -- 你好世界
+        print (obj.string_item ("emoji"))    -- 🚀🌟✨
+    end
+end
+            </div>
+            <div class="success">
+                <strong>✓ Full Unicode Support:</strong> SIMPLE_JSON uses STRING_32 throughout, preserving all Unicode characters 
+                including emoji, CJK characters, and complex scripts.
+            </div>
+
+            <h3>Large Numbers</h3>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+    obj: SIMPLE_JSON_OBJECT
+do
+    create json
+    
+    value := json.parse ('{
+        "max_int64": 9223372036854775807,
+        "min_int64": -9223372036854775808,
+        "big_float": 1.7976931348623157e+308,
+        "small_float": 2.2250738585072014e-308
+    }')
+    
+    if attached value and then value.is_object then
+        obj := value.as_object
+        -- INTEGER_64 range fully supported
+        print (obj.integer_item ("max_int64"))
+    end
+end
+            </div>
+
+            <h3>Deeply Nested Structures</h3>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    
+    -- Parser handles arbitrary nesting depth
+    value := json.parse ('{
+        "level1": {
+            "level2": {
+                "level3": {
+                    "level4": {
+                        "level5": {
+                            "data": "deep value"
+                        }
+                    }
+                }
+            }
+        }
+    }')
+    
+    -- All levels accessible
+    if attached value then
+        -- Navigate using JSON Pointer (see SIMPLE_JSON_POINTER docs)
+        -- or manual traversal
+    end
+end
+            </div>
+            <div class="tip">
+                <strong>💡 Best Practice:</strong> For deep navigation, use SIMPLE_JSON_POINTER (RFC 6901) 
+                instead of manual traversal. See <a href="../pointer/simple_json_pointer.html">JSON Pointer documentation</a>.
+            </div>
+
+            <h3>Whitespace Variations</h3>
+            <div class="code-block">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    
+    -- All these are valid and equivalent
+    value := json.parse ('{"a":1}')                    -- Compact
+    value := json.parse ('{ "a": 1 }')                 -- Spaced
+    value := json.parse ('{%N  "a": 1%N}')            -- Newlines
+    value := json.parse ('{%T"a":%T1%T}')             -- Tabs
+    value := json.parse ('  %N  {  "a"  :  1  }  ')   -- Mixed
+end
+            </div>
+
+            <h3>Error Recovery Patterns</h3>
+            <div class="code-block">
+parse_with_fallback (json_text: STRING_32): SIMPLE_JSON_VALUE
+    local
+        json: SIMPLE_JSON
+        value: detachable SIMPLE_JSON_VALUE
+    do
+        create json
+        value := json.parse (json_text)
+        
+        if value = Void then
+            -- Parse failed - return safe default
+            create Result.make (create {JSON_NULL})
+            
+            -- Log error for debugging
+            log_parse_error (json.errors_as_string)
+        else
+            Result := value
+        end
+    ensure
+        result_not_void: Result /= Void
+    end
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Design by Contract</h2>
+            
+            <h3>Preconditions</h3>
+            <p>All parsing methods require:</p>
+            <ul>
+                <li><code>not_empty</code>: Input text/file path must not be empty</li>
+            </ul>
+            
+            <h3>Postconditions</h3>
+            <p><code>parse</code> guarantees:</p>
+            <ul>
+                <li><code>errors_cleared_on_success</code>: If Result is not Void, no errors exist</li>
+            </ul>
+            <p><code>is_valid_json</code> guarantees:</p>
+            <ul>
+                <li><code>valid_implies_no_errors</code>: If returns True, no errors exist</li>
+            </ul>
+            
+            <h3>Class Invariants</h3>
+            <p>All error tracking features maintain:</p>
+            <ul>
+                <li><code>last_errors</code> is never Void (may be empty)</li>
+                <li><code>has_errors</code> is consistent with <code>last_errors.is_empty</code></li>
+                <li><code>error_count</code> equals <code>last_errors.count</code></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Related Components</h2>
+            <ul>
+                <li><a href="simple_json_value.html">SIMPLE_JSON_VALUE</a> - Base value wrapper with type checking</li>
+                <li><a href="simple_json_object.html">SIMPLE_JSON_OBJECT</a> - JSON object operations</li>
+                <li><a href="simple_json_array.html">SIMPLE_JSON_ARRAY</a> - JSON array operations</li>
+                <li><a href="simple_json_error.html">SIMPLE_JSON_ERROR</a> - Error details with position tracking</li>
+                <li><a href="../pointer/simple_json_pointer.html">SIMPLE_JSON_POINTER</a> - RFC 6901 path navigation</li>
+                <li><a href="../schema/simple_json_schema.html">SIMPLE_JSON_SCHEMA</a> - JSON Schema validation</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 2rem; color: #666; border-top: 1px solid #ddd; margin-top: 3rem;">
+        <p><strong>SIMPLE_JSON</strong> Documentation</p>
+        <p>Copyright © 2024 Larry Rix • MIT License</p>
+    </div>
+</body>
+</html>

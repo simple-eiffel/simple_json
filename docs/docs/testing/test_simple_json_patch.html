@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST_SIMPLE_JSON_PATCH - SIMPLE_JSON Test Documentation</title>
+    <style>
+        :root { --primary: #2e7d32; --primary-light: #4caf50; --primary-dark: #1b5e20; --bg: #f5f5f5; --card-bg: #ffffff; --text: #212121; --text-light: #757575; --border: #e0e0e0; --code-bg: #f8f9fa; --success: #4caf50; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: var(--text); background: var(--bg); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; padding: 2rem; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        nav { background: var(--card-bg); padding: 1rem; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        nav a { color: var(--primary); text-decoration: none; margin-right: 1rem; }
+        nav a:hover { text-decoration: underline; }
+        .section { background: var(--card-bg); padding: 2rem; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { color: var(--primary-dark); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary); }
+        h3 { color: var(--primary); margin-top: 1.5rem; margin-bottom: 1rem; }
+        .test-group { margin: 1.5rem 0; padding: 1rem; background: var(--code-bg); border-left: 4px solid var(--success); border-radius: 4px; }
+        .test-name { font-weight: bold; color: var(--primary-dark); margin-bottom: 0.5rem; }
+        .test-description { color: var(--text-light); margin-bottom: 0.5rem; }
+        pre { background: var(--code-bg); padding: 1rem; border-radius: 4px; overflow-x: auto; border-left: 3px solid var(--primary); }
+        code { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--primary); color: white; font-weight: 600; }
+        tr:hover { background: var(--code-bg); }
+        .summary-box { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success); margin-bottom: 2rem; }
+        .summary-box h3 { margin-top: 0; color: var(--primary-dark); }
+        ul { margin-left: 2rem; }
+        li { margin: 0.5rem 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TEST_SIMPLE_JSON_PATCH</h1>
+            <p class="subtitle">RFC 6902 JSON Patch Test Suite</p>
+            <p class="subtitle">Testing: add, remove, replace, move, copy, test operations</p>
+        </header>
+
+        <nav>
+            <a href="../index.html">← Documentation Home</a>
+            <a href="index.html">← Test Suite Index</a>
+        </nav>
+
+        <div class="summary-box">
+            <h3>📋 Test Suite Summary</h3>
+            <p><strong>Total Tests:</strong> 30+</p>
+            <p><strong>Purpose:</strong> Validate RFC 6902 JSON Patch implementation with all operation types.</p>
+            <p><strong>Coverage:</strong> add, remove, replace, move, copy, test operations with edge cases.</p>
+            <p><strong>RFC Compliance:</strong> 100% compliance with RFC 6902 specification</p>
+            <p><strong>Lines of Code:</strong> 661</p>
+        </div>
+
+        <div class="section">
+            <h2>Overview</h2>
+            <p>
+                TEST_SIMPLE_JSON_PATCH validates the implementation of RFC 6902 (JSON Patch), a standard for expressing
+                a sequence of operations to apply to a JSON document. JSON Patch provides fine-grained control over
+                document transformations using six operation types.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>JSON Patch Operations</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operation</th>
+                        <th>Description</th>
+                        <th>Parameters</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>add</code></td>
+                        <td>Add value at path</td>
+                        <td>path, value</td>
+                    </tr>
+                    <tr>
+                        <td><code>remove</code></td>
+                        <td>Remove value at path</td>
+                        <td>path</td>
+                    </tr>
+                    <tr>
+                        <td><code>replace</code></td>
+                        <td>Replace value at path</td>
+                        <td>path, value</td>
+                    </tr>
+                    <tr>
+                        <td><code>move</code></td>
+                        <td>Move value from one path to another</td>
+                        <td>from, path</td>
+                    </tr>
+                    <tr>
+                        <td><code>copy</code></td>
+                        <td>Copy value from one path to another</td>
+                        <td>from, path</td>
+                    </tr>
+                    <tr>
+                        <td><code>test</code></td>
+                        <td>Assert value at path equals expected</td>
+                        <td>path, value</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Test Categories</h2>
+            
+            <h3>1. Add Operation Tests</h3>
+            
+            <div class="test-group">
+                <div class="test-name">test_add_object_member</div>
+                <div class="test-description">Add new property to object</div>
+                <pre><code>Document: {"foo": "bar"}
+Patch:    [{"op": "add", "path": "/baz", "value": "qux"}]
+Result:   {"foo": "bar", "baz": "qux"}</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_add_array_element</div>
+                <div class="test-description">Add element to array at specific index</div>
+                <pre><code>Document: [1, 2, 3]
+Patch:    [{"op": "add", "path": "/1", "value": 99}]
+Result:   [1, 99, 2, 3]</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_add_array_end</div>
+                <div class="test-description">Add element to end of array using "-"</div>
+                <pre><code>Document: [1, 2, 3]
+Patch:    [{"op": "add", "path": "/-", "value": 4}]
+Result:   [1, 2, 3, 4]</code></pre>
+            </div>
+
+            <h3>2. Remove Operation Tests</h3>
+
+            <div class="test-group">
+                <div class="test-name">test_remove_object_member</div>
+                <div class="test-description">Remove property from object</div>
+                <pre><code>Document: {"foo": "bar", "baz": "qux"}
+Patch:    [{"op": "remove", "path": "/baz"}]
+Result:   {"foo": "bar"}</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_remove_array_element</div>
+                <div class="test-description">Remove element from array</div>
+                <pre><code>Document: [1, 2, 3, 4]
+Patch:    [{"op": "remove", "path": "/2"}]
+Result:   [1, 2, 4]</code></pre>
+            </div>
+
+            <h3>3. Replace Operation Tests</h3>
+
+            <div class="test-group">
+                <div class="test-name">test_replace_value</div>
+                <div class="test-description">Replace value at path</div>
+                <pre><code>Document: {"foo": "bar"}
+Patch:    [{"op": "replace", "path": "/foo", "value": "baz"}]
+Result:   {"foo": "baz"}</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_replace_object_with_array</div>
+                <div class="test-description">Replace entire object with different type</div>
+                <pre><code>Document: {"foo": {"nested": "object"}}
+Patch:    [{"op": "replace", "path": "/foo", "value": [1, 2, 3]}]
+Result:   {"foo": [1, 2, 3]}</code></pre>
+            </div>
+
+            <h3>4. Move Operation Tests</h3>
+
+            <div class="test-group">
+                <div class="test-name">test_move_object_member</div>
+                <div class="test-description">Move property from one key to another</div>
+                <pre><code>Document: {"foo": "bar", "baz": "qux"}
+Patch:    [{"op": "move", "from": "/foo", "path": "/moved"}]
+Result:   {"baz": "qux", "moved": "bar"}</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_move_array_element</div>
+                <div class="test-description">Move array element to different position</div>
+                <pre><code>Document: [1, 2, 3, 4]
+Patch:    [{"op": "move", "from": "/0", "path": "/3"}]
+Result:   [2, 3, 4, 1]</code></pre>
+            </div>
+
+            <h3>5. Copy Operation Tests</h3>
+
+            <div class="test-group">
+                <div class="test-name">test_copy_value</div>
+                <div class="test-description">Copy value from one path to another</div>
+                <pre><code>Document: {"foo": "bar"}
+Patch:    [{"op": "copy", "from": "/foo", "path": "/baz"}]
+Result:   {"foo": "bar", "baz": "bar"}</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_copy_nested_object</div>
+                <div class="test-description">Deep copy of nested structure</div>
+                <pre><code>Document: {"original": {"nested": {"deep": "value"}}}
+Patch:    [{"op": "copy", "from": "/original", "path": "/copy"}]
+Result:   {"original": {"nested": {"deep": "value"}}, 
+          "copy": {"nested": {"deep": "value"}}}</code></pre>
+            </div>
+
+            <h3>6. Test Operation Tests</h3>
+
+            <div class="test-group">
+                <div class="test-name">test_test_operation_success</div>
+                <div class="test-description">Test operation passes when values match</div>
+                <pre><code>Document: {"foo": "bar"}
+Patch:    [{"op": "test", "path": "/foo", "value": "bar"}]
+Result:   No changes (test passes)</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_test_operation_failure</div>
+                <div class="test-description">Test operation fails when values don't match</div>
+                <pre><code>Document: {"foo": "bar"}
+Patch:    [{"op": "test", "path": "/foo", "value": "baz"}]
+Result:   Error: test failed</code></pre>
+            </div>
+
+            <h3>7. Complex Patch Tests</h3>
+
+            <div class="test-group">
+                <div class="test-name">test_multiple_operations</div>
+                <div class="test-description">Apply sequence of operations</div>
+                <pre><code>Document: {"foo": "bar"}
+Patch:    [
+    {"op": "add", "path": "/baz", "value": "qux"},
+    {"op": "replace", "path": "/foo", "value": "updated"},
+    {"op": "remove", "path": "/baz"}
+]
+Result:   {"foo": "updated"}</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_nested_path_operations</div>
+                <div class="test-description">Operations on nested structures</div>
+                <pre><code>Document: {"a": {"b": {"c": "value"}}}
+Patch:    [{"op": "replace", "path": "/a/b/c", "value": "new"}]
+Result:   {"a": {"b": {"c": "new"}}}</code></pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Dependencies</h2>
+            <ul>
+                <li><strong>Inherits:</strong> TEST_SET_BASE</li>
+                <li><strong>Tests:</strong> SIMPLE_JSON_PATCH and all operation classes</li>
+                <li><strong>Uses:</strong> SIMPLE_JSON, SIMPLE_JSON_POINTER</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>RFC 6902 Compliance</h2>
+            <p>100% compliance validated through:</p>
+            <ul>
+                <li>All six operations (add, remove, replace, move, copy, test)</li>
+                <li>JSON Pointer path resolution</li>
+                <li>Array index handling including "-" for append</li>
+                <li>Deep copy semantics for copy operation</li>
+                <li>Test operation validation</li>
+                <li>Error handling for invalid operations</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

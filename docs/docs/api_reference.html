@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMPLE_JSON API Reference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .api-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .api-section h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .api-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .api-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .api-card h3 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .api-card h3 a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .api-card h3 a:hover {
+            text-decoration: underline;
+        }
+        
+        .api-card .class-name {
+            font-family: 'Courier New', monospace;
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .api-card .description {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .api-card .features {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .api-card .features li {
+            padding: 0.3rem 0;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        .api-card .features li::before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .rfc-badge {
+            display: inline-block;
+            background: #764ba2;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .method-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .method-table th,
+        .method-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .method-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .method-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .method-table code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SIMPLE_JSON API Reference</h1>
+        <p style="font-size: 1.2rem; opacity: 0.9;">Complete Class and Method Documentation</p>
+    </div>
+
+    <div class="container">
+        <div class="api-section">
+            <h2>📦 Core Components</h2>
+            <p style="margin-bottom: 1.5rem;">Foundation classes for parsing, building, and manipulating JSON</p>
+            
+            <div class="api-grid">
+                <div class="api-card">
+                    <h3><a href="core/simple_json.html">SIMPLE_JSON</a></h3>
+                    <div class="class-name">SIMPLE_JSON</div>
+                    <p class="description">
+                        Main entry point for all JSON operations. Provides parsing, building, and error tracking capabilities.
+                    </p>
+                    <ul class="features">
+                        <li>Parse JSON from strings or files</li>
+                        <li>Build JSON with fluent API</li>
+                        <li>Comprehensive error tracking</li>
+                        <li>Line/column position information</li>
+                        <li>Full Unicode/UTF-8 support</li>
+                    </ul>
+                </div>
+
+                <div class="api-card">
+                    <h3><a href="core/simple_json_value.html">SIMPLE_JSON_VALUE</a></h3>
+                    <div class="class-name">SIMPLE_JSON_VALUE</div>
+                    <p class="description">
+                        Base wrapper for all JSON values with type checking and safe conversion methods.
+                    </p>
+                    <ul class="features">
+                        <li>Type checking (is_string, is_number, etc.)</li>
+                        <li>Safe type conversion (as_string_32, as_integer, etc.)</li>
+                        <li>STRING_32 for all text values</li>
+                        <li>Access to underlying JSON_VALUE</li>
+                    </ul>
+                </div>
+
+                <div class="api-card">
+                    <h3><a href="core/simple_json_object.html">SIMPLE_JSON_OBJECT</a></h3>
+                    <div class="class-name">SIMPLE_JSON_OBJECT</div>
+                    <p class="description">
+                        JSON object (map/dictionary) with fluent API for building and manipulation.
+                    </p>
+                    <ul class="features">
+                        <li>put_* methods for all types</li>
+                        <li>Fluent API with method chaining</li>
+                        <li>Key existence checking</li>
+                        <li>Type-safe item retrieval</li>
+                        <li>Pretty printing support</li>
+                    </ul>
+                </div>
+
+                <div class="api-card">
+                    <h3><a href="core/simple_json_array.html">SIMPLE_JSON_ARRAY</a></h3>
+                    <div class="class-name">SIMPLE_JSON_ARRAY</div>
+                    <p class="description">
+                        JSON array (list) with fluent API for building and manipulation.
+                    </p>
+                    <ul class="features">
+                        <li>add_* methods for all types</li>
+                        <li>Fluent API with method chaining</li>
+                        <li>Index-based access</li>
+                        <li>Count and iteration support</li>
+                        <li>Pretty printing support</li>
+                    </ul>
+                </div>
+
+                <div class="api-card">
+                    <h3><a href="core/simple_json_error.html">SIMPLE_JSON_ERROR</a></h3>
+                    <div class="class-name">SIMPLE_JSON_ERROR</div>
+                    <p class="description">
+                        Error information with line/column position tracking for debugging.
+                    </p>
+                    <ul class="features">
+                        <li>Error message</li>
+                        <li>Line and column numbers</li>
+                        <li>Source line context</li>
+                        <li>Position indicator</li>
+                        <li>Formatted output</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>🧭 Navigation & Querying</h2>
+            <p style="margin-bottom: 1.5rem;">RFC-compliant path navigation and query capabilities</p>
+            
+            <div class="api-grid">
+                <div class="api-card">
+                    <h3><a href="pointer/simple_json_pointer.html">JSON Pointer</a> <span class="rfc-badge">RFC 6901</span></h3>
+                    <div class="class-name">SIMPLE_JSON_POINTER</div>
+                    <p class="description">
+                        Navigate JSON documents using standard pointer syntax: <code>/path/to/value</code>
+                    </p>
+                    <ul class="features">
+                        <li>RFC 6901 compliant</li>
+                        <li>Path-based navigation</li>
+                        <li>Array index support</li>
+                        <li>Escaped character handling</li>
+                        <li>Parent path navigation</li>
+                    </ul>
+                </div>
+
+                <div class="api-card">
+                    <h3>JSONPath Queries</h3>
+                    <div class="class-name">via SIMPLE_JSON_OBJECT/ARRAY</div>
+                    <p class="description">
+                        Query JSON using path patterns with wildcards and array selectors.
+                    </p>
+                    <ul class="features">
+                        <li>Dot notation ($.users.name)</li>
+                        <li>Array wildcards ($.users[*])</li>
+                        <li>Multi-level queries</li>
+                        <li>Result collection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>🔧 Document Modification</h2>
+            <p style="margin-bottom: 1.5rem;">RFC-compliant operations for modifying JSON documents</p>
+            
+            <div class="api-grid">
+                <div class="api-card">
+                    <h3><a href="patch/simple_json_patch.html">JSON Patch</a> <span class="rfc-badge">RFC 6902</span></h3>
+                    <div class="class-name">SIMPLE_JSON_PATCH</div>
+                    <p class="description">
+                        Apply structured modification operations to JSON documents.
+                    </p>
+                    <ul class="features">
+                        <li>Add operation</li>
+                        <li>Remove operation</li>
+                        <li>Replace operation</li>
+                        <li>Move operation</li>
+                        <li>Copy operation</li>
+                        <li>Test operation</li>
+                    </ul>
+                </div>
+
+                <div class="api-card">
+                    <h3><a href="merge_patch/simple_json_merge_patch.html">JSON Merge Patch</a> <span class="rfc-badge">RFC 7386</span></h3>
+                    <div class="class-name">SIMPLE_JSON_MERGE_PATCH</div>
+                    <p class="description">
+                        Simple merge semantics for updating JSON with partial modifications.
+                    </p>
+                    <ul class="features">
+                        <li>Recursive merging</li>
+                        <li>Null = delete semantics</li>
+                        <li>Simpler than JSON Patch</li>
+                        <li>RFC 7386 compliant</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>✓ Validation & Schema</h2>
+            <p style="margin-bottom: 1.5rem;">JSON Schema Draft 7 validation capabilities</p>
+            
+            <div class="api-grid">
+                <div class="api-card">
+                    <h3><a href="schema/simple_json_schema.html">JSON Schema</a> <span class="rfc-badge">Draft 7</span></h3>
+                    <div class="class-name">SIMPLE_JSON_SCHEMA</div>
+                    <p class="description">
+                        Validate JSON documents against JSON Schema specifications.
+                    </p>
+                    <ul class="features">
+                        <li>Type validation</li>
+                        <li>Property constraints</li>
+                        <li>Required fields</li>
+                        <li>String patterns (regex)</li>
+                        <li>Number ranges</li>
+                        <li>Array constraints</li>
+                        <li>Nested schema support</li>
+                    </ul>
+                </div>
+
+                <div class="api-card">
+                    <h3><a href="schema/simple_json_schema_validator.html">Schema Validator</a></h3>
+                    <div class="class-name">SIMPLE_JSON_SCHEMA_VALIDATOR</div>
+                    <p class="description">
+                        Internal validator engine with comprehensive error reporting.
+                    </p>
+                    <ul class="features">
+                        <li>Detailed error messages</li>
+                        <li>Path-based error reporting</li>
+                        <li>Multiple error collection</li>
+                        <li>Recursive validation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>🚀 Performance & Utilities</h2>
+            <p style="margin-bottom: 1.5rem;">Streaming, pretty printing, and utility features</p>
+            
+            <div class="api-grid">
+                <div class="api-card">
+                    <h3><a href="streaming/simple_json_stream.html">Streaming Parser</a></h3>
+                    <div class="class-name">SIMPLE_JSON_STREAM</div>
+                    <p class="description">
+                        Memory-efficient streaming for large JSON arrays.
+                    </p>
+                    <ul class="features">
+                        <li>ITERABLE interface</li>
+                        <li>Lazy element access</li>
+                        <li>Memory efficient</li>
+                        <li>Large file support</li>
+                        <li>Index tracking</li>
+                    </ul>
+                </div>
+
+                <div class="api-card">
+                    <h3><a href="utilities/simple_json_pretty_printer.html">Pretty Printer</a></h3>
+                    <div class="class-name">SIMPLE_JSON_PRETTY_PRINTER</div>
+                    <p class="description">
+                        Format JSON with configurable indentation for readability.
+                    </p>
+                    <ul class="features">
+                        <li>Configurable indentation</li>
+                        <li>Nested structure formatting</li>
+                        <li>Array formatting</li>
+                        <li>Object formatting</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>📋 Quick API Summary</h2>
+            
+            <h3 style="color: #764ba2; margin-top: 1.5rem; margin-bottom: 1rem;">Common Methods</h3>
+            <table class="method-table">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>SIMPLE_JSON</td>
+                        <td><code>parse (text: STRING_32)</code></td>
+                        <td>Parse JSON text</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON</td>
+                        <td><code>parse_file (path: STRING_32)</code></td>
+                        <td>Parse JSON from file</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON</td>
+                        <td><code>new_object: SIMPLE_JSON_OBJECT</code></td>
+                        <td>Create new object builder</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON</td>
+                        <td><code>new_array: SIMPLE_JSON_ARRAY</code></td>
+                        <td>Create new array builder</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON_VALUE</td>
+                        <td><code>is_string/is_number/is_object/is_array</code></td>
+                        <td>Type checking</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON_VALUE</td>
+                        <td><code>as_string_32/as_integer/as_object/as_array</code></td>
+                        <td>Type conversion</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON_OBJECT</td>
+                        <td><code>put_string/put_integer/put_boolean/...</code></td>
+                        <td>Add values by type</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON_OBJECT</td>
+                        <td><code>has_key (key: STRING_32)</code></td>
+                        <td>Check key existence</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON_OBJECT</td>
+                        <td><code>item (key: STRING_32)</code></td>
+                        <td>Get value by key</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON_ARRAY</td>
+                        <td><code>add_string/add_integer/add_boolean/...</code></td>
+                        <td>Add values by type</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON_ARRAY</td>
+                        <td><code>item (index: INTEGER)</code></td>
+                        <td>Get value by index</td>
+                    </tr>
+                    <tr>
+                        <td>SIMPLE_JSON_ARRAY</td>
+                        <td><code>count: INTEGER</code></td>
+                        <td>Number of elements</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="api-section">
+            <h2>🔗 Quick Navigation</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <a href="core/simple_json.html" style="display: block; padding: 1rem; background: #f8f9fa; border-radius: 6px; color: #667eea; text-decoration: none; border-left: 4px solid #667eea;">
+                    <strong>Core: SIMPLE_JSON</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Main parser and entry point</span>
+                </a>
+                <a href="core/simple_json_value.html" style="display: block; padding: 1rem; background: #f8f9fa; border-radius: 6px; color: #667eea; text-decoration: none; border-left: 4px solid #667eea;">
+                    <strong>Core: SIMPLE_JSON_VALUE</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Base value wrapper</span>
+                </a>
+                <a href="core/simple_json_object.html" style="display: block; padding: 1rem; background: #f8f9fa; border-radius: 6px; color: #667eea; text-decoration: none; border-left: 4px solid #667eea;">
+                    <strong>Core: SIMPLE_JSON_OBJECT</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Object operations</span>
+                </a>
+                <a href="core/simple_json_array.html" style="display: block; padding: 1rem; background: #f8f9fa; border-radius: 6px; color: #667eea; text-decoration: none; border-left: 4px solid #667eea;">
+                    <strong>Core: SIMPLE_JSON_ARRAY</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Array operations</span>
+                </a>
+                <a href="pointer/simple_json_pointer.html" style="display: block; padding: 1rem; background: #f8f9fa; border-radius: 6px; color: #667eea; text-decoration: none; border-left: 4px solid #764ba2;">
+                    <strong>JSON Pointer (RFC 6901)</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Path navigation</span>
+                </a>
+                <a href="patch/simple_json_patch.html" style="display: block; padding: 1rem; background: #f8f9fa; border-radius: 6px; color: #667eea; text-decoration: none; border-left: 4px solid #764ba2;">
+                    <strong>JSON Patch (RFC 6902)</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Document modification</span>
+                </a>
+                <a href="merge_patch/simple_json_merge_patch.html" style="display: block; padding: 1rem; background: #f8f9fa; border-radius: 6px; color: #667eea; text-decoration: none; border-left: 4px solid #764ba2;">
+                    <strong>Merge Patch (RFC 7386)</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Simple merge semantics</span>
+                </a>
+                <a href="schema/simple_json_schema.html" style="display: block; padding: 1rem; background: #f8f9fa; border-radius: 6px; color: #667eea; text-decoration: none; border-left: 4px solid #764ba2;">
+                    <strong>JSON Schema (Draft 7)</strong><br>
+                    <span style="font-size: 0.9rem; color: #666;">Document validation</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 2rem; color: #666; border-top: 1px solid #ddd; margin-top: 3rem;">
+        <p><strong>SIMPLE_JSON</strong> API Reference</p>
+        <p>Copyright © 2024 Larry Rix • MIT License</p>
+        <p style="margin-top: 0.5rem;"><a href="index.html" style="color: #667eea;">← Back to Home</a></p>
+    </div>
+</body>
+</html>

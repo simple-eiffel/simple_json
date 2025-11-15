@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST_JSON_SCHEMA_VALIDATION - SIMPLE_JSON Test Documentation</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #212121;
+            --text-light: #757575;
+            --border: #e0e0e0;
+            --code-bg: #f8f9fa;
+            --success: #4caf50;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        nav {
+            background: var(--card-bg);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        nav a { color: var(--primary); text-decoration: none; margin-right: 1rem; }
+        nav a:hover { text-decoration: underline; }
+        .section {
+            background: var(--card-bg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        h3 { color: var(--primary); margin-top: 1.5rem; margin-bottom: 1rem; }
+        .test-group {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--code-bg);
+            border-left: 4px solid var(--success);
+            border-radius: 4px;
+        }
+        .test-name { font-weight: bold; color: var(--primary-dark); margin-bottom: 0.5rem; }
+        .test-description { color: var(--text-light); margin-bottom: 0.5rem; }
+        pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 3px solid var(--primary);
+        }
+        code { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--primary); color: white; font-weight: 600; }
+        tr:hover { background: var(--code-bg); }
+        .summary-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            margin-bottom: 2rem;
+        }
+        .summary-box h3 { margin-top: 0; color: var(--primary-dark); }
+        ul, ol { margin-left: 2rem; }
+        li { margin: 0.5rem 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TEST_JSON_SCHEMA_VALIDATION</h1>
+            <p class="subtitle">JSON Schema Draft 7 Validation Test Suite</p>
+            <p class="subtitle">Testing: Type Validation, String Constraints, Numeric Constraints, Object/Array Validation, Pattern Matching</p>
+        </header>
+
+        <nav>
+            <a href="../index.html">← Documentation Home</a>
+            <a href="index.html">← Test Suite Index</a>
+        </nav>
+
+        <div class="summary-box">
+            <h3>📋 Test Suite Summary</h3>
+            <p><strong>Total Tests:</strong> 47+</p>
+            <p><strong>Purpose:</strong> Comprehensive testing of JSON Schema Draft 7 validation capabilities.</p>
+            <p><strong>Coverage:</strong> Type validation, string constraints (length, pattern), numeric constraints (min/max, multiple of), object validation (required, properties, additional properties), array validation (items, min/max items, unique items).</p>
+            <p><strong>Lines of Code:</strong> 687 (largest test file)</p>
+        </div>
+
+        <div class="section">
+            <h2>Overview</h2>
+            <p>
+                TEST_JSON_SCHEMA_VALIDATION is the most comprehensive test class in the SIMPLE_JSON test suite, validating
+                full JSON Schema Draft 7 compliance. It ensures that:
+            </p>
+            <ul>
+                <li>All JSON Schema primitive types are correctly validated</li>
+                <li>String constraints (minLength, maxLength, pattern) work as specified</li>
+                <li>Numeric constraints (minimum, maximum, multipleOf) are enforced</li>
+                <li>Object validation (required fields, properties, additionalProperties) functions correctly</li>
+                <li>Array validation (items, minItems, maxItems, uniqueItems) is accurate</li>
+                <li>Validation results provide clear error messages</li>
+                <li>Complex nested schemas are handled properly</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Test Categories</h2>
+            
+            <h3>1. Type Validation Tests</h3>
+            <p>Validate schema type checking for all JSON types:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test</th>
+                        <th>Schema</th>
+                        <th>Valid Instance</th>
+                        <th>Invalid Instance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>test_valid_string_type</td>
+                        <td>{"type": "string"}</td>
+                        <td>"hello"</td>
+                        <td>42</td>
+                    </tr>
+                    <tr>
+                        <td>test_valid_number_type</td>
+                        <td>{"type": "number"}</td>
+                        <td>42.5</td>
+                        <td>"text"</td>
+                    </tr>
+                    <tr>
+                        <td>test_valid_integer_type</td>
+                        <td>{"type": "integer"}</td>
+                        <td>42</td>
+                        <td>42.5</td>
+                    </tr>
+                    <tr>
+                        <td>test_valid_boolean_type</td>
+                        <td>{"type": "boolean"}</td>
+                        <td>true</td>
+                        <td>"true"</td>
+                    </tr>
+                    <tr>
+                        <td>test_valid_null_type</td>
+                        <td>{"type": "null"}</td>
+                        <td>null</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>test_valid_object_type</td>
+                        <td>{"type": "object"}</td>
+                        <td>{}</td>
+                        <td>[]</td>
+                    </tr>
+                    <tr>
+                        <td>test_valid_array_type</td>
+                        <td>{"type": "array"}</td>
+                        <td>[]</td>
+                        <td>{}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>2. String Validation Tests</h3>
+            <p>Test string-specific constraints:</p>
+
+            <div class="test-group">
+                <div class="test-name">test_string_min_length</div>
+                <div class="test-description">Validate minimum length constraint</div>
+                <pre><code>Schema: {"type": "string", "minLength": 3}
+Valid: "abc", "abcd"
+Invalid: "ab", ""</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_string_max_length</div>
+                <div class="test-description">Validate maximum length constraint</div>
+                <pre><code>Schema: {"type": "string", "maxLength": 5}
+Valid: "abc", "abcde"
+Invalid: "abcdef"</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_string_pattern</div>
+                <div class="test-description">Validate regex pattern matching</div>
+                <pre><code>Schema: {"type": "string", "pattern": "^[A-Z][a-z]+$"}
+Valid: "Alice", "Bob"
+Invalid: "alice", "123", "ALICE"</code></pre>
+            </div>
+
+            <h3>3. Numeric Validation Tests</h3>
+            <p>Test numeric constraints:</p>
+
+            <div class="test-group">
+                <div class="test-name">test_number_minimum</div>
+                <div class="test-description">Validate minimum value constraint</div>
+                <pre><code>Schema: {"type": "number", "minimum": 0}
+Valid: 0, 1, 100
+Invalid: -1, -0.5</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_number_maximum</div>
+                <div class="test-description">Validate maximum value constraint</div>
+                <pre><code>Schema: {"type": "number", "maximum": 100}
+Valid: 0, 50, 100
+Invalid: 101, 200</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_number_exclusive_minimum</div>
+                <div class="test-description">Validate exclusive minimum (value must be greater than)</div>
+                <pre><code>Schema: {"type": "number", "minimum": 0, "exclusiveMinimum": true}
+Valid: 0.1, 1
+Invalid: 0, -1</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_number_exclusive_maximum</div>
+                <div class="test-description">Validate exclusive maximum (value must be less than)</div>
+                <pre><code>Schema: {"type": "number", "maximum": 100, "exclusiveMaximum": true}
+Valid: 99, 99.9
+Invalid: 100, 101</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_number_multiple_of</div>
+                <div class="test-description">Validate multipleOf constraint</div>
+                <pre><code>Schema: {"type": "number", "multipleOf": 5}
+Valid: 0, 5, 10, 15
+Invalid: 1, 3, 7</code></pre>
+            </div>
+
+            <h3>4. Object Validation Tests</h3>
+            <p>Test object-specific constraints:</p>
+
+            <div class="test-group">
+                <div class="test-name">test_object_required_fields</div>
+                <div class="test-description">Validate required fields</div>
+                <pre><code>Schema: {
+    "type": "object",
+    "required": ["name", "age"]
+}
+Valid: {"name": "Alice", "age": 30}
+Invalid: {"name": "Alice"}, {}</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_object_properties</div>
+                <div class="test-description">Validate property schemas</div>
+                <pre><code>Schema: {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "age": {"type": "integer", "minimum": 0}
+    }
+}
+Valid: {"name": "Bob", "age": 25}
+Invalid: {"name": 123}, {"age": -5}</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_object_additional_properties_false</div>
+                <div class="test-description">Disallow additional properties</div>
+                <pre><code>Schema: {
+    "type": "object",
+    "properties": {"name": {"type": "string"}},
+    "additionalProperties": false
+}
+Valid: {"name": "Alice"}
+Invalid: {"name": "Alice", "age": 30}</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_object_additional_properties_schema</div>
+                <div class="test-description">Validate additional properties against schema</div>
+                <pre><code>Schema: {
+    "type": "object",
+    "additionalProperties": {"type": "string"}
+}
+Valid: {"any": "value", "keys": "allowed"}
+Invalid: {"number": 123}</code></pre>
+            </div>
+
+            <h3>5. Array Validation Tests</h3>
+            <p>Test array-specific constraints:</p>
+
+            <div class="test-group">
+                <div class="test-name">test_array_items_schema</div>
+                <div class="test-description">Validate all items against single schema</div>
+                <pre><code>Schema: {
+    "type": "array",
+    "items": {"type": "number"}
+}
+Valid: [1, 2, 3], [1.5, 2.7]
+Invalid: [1, "two", 3]</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_array_min_items</div>
+                <div class="test-description">Validate minimum items constraint</div>
+                <pre><code>Schema: {
+    "type": "array",
+    "minItems": 2
+}
+Valid: [1, 2], [1, 2, 3]
+Invalid: [], [1]</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_array_max_items</div>
+                <div class="test-description">Validate maximum items constraint</div>
+                <pre><code>Schema: {
+    "type": "array",
+    "maxItems": 3
+}
+Valid: [], [1], [1, 2, 3]
+Invalid: [1, 2, 3, 4]</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_array_unique_items</div>
+                <div class="test-description">Validate uniqueness constraint</div>
+                <pre><code>Schema: {
+    "type": "array",
+    "uniqueItems": true
+}
+Valid: [1, 2, 3], ["a", "b", "c"]
+Invalid: [1, 2, 2, 3], ["a", "b", "a"]</code></pre>
+            </div>
+
+            <h3>6. Complex Schema Tests</h3>
+            <p>Test combinations of constraints:</p>
+
+            <div class="test-group">
+                <div class="test-name">test_nested_object_validation</div>
+                <div class="test-description">Validate nested object schemas</div>
+                <pre><code>Schema: {
+    "type": "object",
+    "properties": {
+        "person": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+                "name": {"type": "string"},
+                "address": {
+                    "type": "object",
+                    "properties": {
+                        "city": {"type": "string"}
+                    }
+                }
+            }
+        }
+    }
+}
+Validates: Multi-level nested object validation</code></pre>
+            </div>
+
+            <div class="test-group">
+                <div class="test-name">test_array_of_objects_validation</div>
+                <div class="test-description">Validate array containing objects</div>
+                <pre><code>Schema: {
+    "type": "array",
+    "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+            "id": {"type": "integer"},
+            "name": {"type": "string"}
+        }
+    }
+}
+Validates: Each array element against object schema</code></pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Validation Result Testing</h2>
+            <p>Tests verify that validation results provide:</p>
+            <ul>
+                <li><strong>is_valid flag:</strong> Boolean indicating validation success</li>
+                <li><strong>error_count:</strong> Number of validation errors found</li>
+                <li><strong>error messages:</strong> Descriptive error messages for debugging</li>
+                <li><strong>error paths:</strong> JSON Pointer paths to validation failures</li>
+            </ul>
+
+            <h3>Typical Validation Pattern</h3>
+            <pre><code>create l_validator.make
+create l_schema.make_from_string (schema_json)
+l_instance := l_json.parse (instance_json)
+
+l_result := l_validator.validate (l_instance, l_schema)
+
+assert_true ("is_valid", l_result.is_valid)
+assert_integers_equal ("no_errors", 0, l_result.error_count)
+
+-- OR for invalid cases:
+assert_false ("not_valid", l_result.is_valid)
+assert_greater_than ("has_errors", l_result.error_count, 0)</code></pre>
+        </div>
+
+        <div class="section">
+            <h2>Dependencies</h2>
+            <ul>
+                <li><strong>Inherits:</strong> TEST_SET_BASE</li>
+                <li><strong>Tests:</strong> SIMPLE_JSON_SCHEMA, SIMPLE_JSON_SCHEMA_VALIDATOR, SIMPLE_JSON_SCHEMA_VALIDATION_RESULT</li>
+                <li><strong>Uses:</strong> SIMPLE_JSON (for parsing test instances)</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>JSON Schema Draft 7 Coverage</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Schema Feature</th>
+                        <th>Status</th>
+                        <th>Test Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Type Validation (7 types)</td>
+                        <td>✓ Complete</td>
+                        <td>14+</td>
+                    </tr>
+                    <tr>
+                        <td>String Constraints</td>
+                        <td>✓ minLength, maxLength, pattern</td>
+                        <td>6+</td>
+                    </tr>
+                    <tr>
+                        <td>Numeric Constraints</td>
+                        <td>✓ min, max, exclusive, multipleOf</td>
+                        <td>10+</td>
+                    </tr>
+                    <tr>
+                        <td>Object Validation</td>
+                        <td>✓ required, properties, additionalProperties</td>
+                        <td>8+</td>
+                    </tr>
+                    <tr>
+                        <td>Array Validation</td>
+                        <td>✓ items, minItems, maxItems, uniqueItems</td>
+                        <td>8+</td>
+                    </tr>
+                    <tr>
+                        <td>Nested Schemas</td>
+                        <td>✓ Complex multi-level validation</td>
+                        <td>3+</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Significance</h2>
+            <p>
+                This test suite is significant because:
+            </p>
+            <ul>
+                <li><strong>Industry Standard:</strong> JSON Schema is widely used for API validation</li>
+                <li><strong>Unique Feature:</strong> No other Eiffel JSON library provides schema validation</li>
+                <li><strong>Production Ready:</strong> Comprehensive testing ensures reliability</li>
+                <li><strong>Specification Compliance:</strong> Tests follow JSON Schema Draft 7 specification</li>
+                <li><strong>Error Reporting:</strong> Validates that errors are descriptive and actionable</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

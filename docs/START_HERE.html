@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMPLE_JSON Documentation - Quick Access</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            max-width: 800px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        .links {
+            display: grid;
+            gap: 1rem;
+        }
+        .link-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: block;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        .link-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .link-card p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .status {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .status-item {
+            display: inline-block;
+            margin: 0 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 SIMPLE_JSON Documentation</h1>
+        <div class="subtitle">Quick Access to All Documentation Resources</div>
+        
+        <div class="links">
+            <a href="docs/index.html" class="link-card">
+                <h2>🏠 Main Documentation Home</h2>
+                <p>Start here! Overview, features, and navigation to all components.</p>
+                <span class="badge">Primary Entry Point</span>
+            </a>
+            
+            <a href="docs/api_reference.html" class="link-card">
+                <h2>📋 Complete API Reference</h2>
+                <p>All classes, methods, and quick reference tables in one place.</p>
+                <span class="badge">Quick Lookup</span>
+            </a>
+            
+            <a href="docs/user_guide.html" class="link-card">
+                <h2>📖 Comprehensive User Guide</h2>
+                <p>Step-by-step tutorial covering all features with examples.</p>
+                <span class="badge">Learn & Explore</span>
+            </a>
+            
+            <a href="docs/core/simple_json.html" class="link-card">
+                <h2>🔧 SIMPLE_JSON Core Documentation</h2>
+                <p>Detailed documentation for the main parser and entry point.</p>
+                <span class="badge">Deep Dive</span>
+            </a>
+            
+            <a href="docs/README.md" class="link-card" style="background: #555;">
+                <h2>📝 Documentation README</h2>
+                <p>Structure guide, EIS integration, and contribution guidelines.</p>
+                <span class="badge">Reference</span>
+            </a>
+        </div>
+        
+        <div class="status">
+            <div class="status-item">✅ <strong>4</strong> Complete Pages</div>
+            <div class="status-item">📚 <strong>1,500+</strong> Lines of Docs</div>
+            <div class="status-item">💻 <strong>30+</strong> Code Examples</div>
+        </div>
+    </div>
+</body>
+</html>

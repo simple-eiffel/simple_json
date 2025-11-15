@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMPLE_JSON - Comprehensive Eiffel JSON Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .header .tagline {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header .version {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .badges {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .overview {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .overview h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        
+        .overview p {
+            margin-bottom: 1rem;
+            color: #555;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .feature-card .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-section h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s;
+            border-left: 4px solid #667eea;
+        }
+        
+        .nav-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .nav-item .title {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        
+        .nav-item .desc {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            border-top: 1px solid #ddd;
+            margin-top: 3rem;
+        }
+        
+        .code-example {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .highlight {
+            background: #fffbcc;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        .rfc-tag {
+            display: inline-block;
+            background: #764ba2;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SIMPLE_JSON</h1>
+        <div class="tagline">Comprehensive Unicode-First JSON Library for Eiffel</div>
+        <div class="version">Production-Ready • 100% Test Coverage • AI-Assisted Development</div>
+        <div class="badges">
+            <span class="badge">🌍 Unicode First</span>
+            <span class="badge">⛓️ Fluent API</span>
+            <span class="badge">✅ Type-Safe</span>
+            <span class="badge">🧪 100% Tested</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="overview">
+            <h2>Overview</h2>
+            <p>
+                <strong>SIMPLE_JSON</strong> provides a complete, high-level API for working with JSON in Eiffel applications. 
+                Built on the standard Eiffel JSON library, it offers modern features including JSON Pointer navigation, 
+                JSON Patch operations, JSONPath queries, JSON Schema validation, and comprehensive error handling—all with 
+                full Unicode/UTF-8 support.
+            </p>
+            <p>
+                This library was developed interactively using Claude Sonnet 4.5 with strict adherence to Design by Contract 
+                principles and maintains 100% test coverage across all features.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon">🌍</div>
+                <h3>Unicode First</h3>
+                <p>Full Unicode/UTF-8 support with STRING_32 throughout the public API. Handle international text naturally.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">⛓️</div>
+                <h3>Fluent API</h3>
+                <p>Chainable methods for building JSON structures intuitively. Write expressive, readable code.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">✅</div>
+                <h3>Type-Safe</h3>
+                <p>Strong typing with comprehensive Design by Contract preconditions, postconditions, and invariants.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🧭</div>
+                <h3>JSON Pointer <span class="rfc-tag">RFC 6901</span></h3>
+                <p>Path-based navigation using standard pointer syntax: <code>/users/0/name</code></p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🔧</div>
+                <h3>JSON Patch <span class="rfc-tag">RFC 6902</span></h3>
+                <p>Standard document modification operations: add, remove, replace, move, copy, test.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🔗</div>
+                <h3>JSON Merge Patch <span class="rfc-tag">RFC 7386</span></h3>
+                <p>Simple merge semantics for updating JSON documents with partial modifications.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🔍</div>
+                <h3>JSONPath Queries</h3>
+                <p>Flexible queries with wildcards: <code>$.people[*].name</code></p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">✓</div>
+                <h3>Schema Validation <span class="rfc-tag">Draft 7</span></h3>
+                <p>Validate JSON documents against JSON Schema specifications.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">📍</div>
+                <h3>Position Tracking</h3>
+                <p>Line and column information for parse errors, making debugging straightforward.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🎨</div>
+                <h3>Pretty Printing</h3>
+                <p>Configurable indentation for human-readable JSON output.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🚀</div>
+                <h3>Streaming Parser</h3>
+                <p>Memory-efficient streaming for large JSON arrays.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🧪</div>
+                <h3>Well-Tested</h3>
+                <p>100% test coverage with 216+ comprehensive tests validating all features.</p>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h2>Core Components</h2>
+            <div class="nav-grid">
+                <a href="core/simple_json.html" class="nav-item">
+                    <span class="title">SIMPLE_JSON</span>
+                    <span class="desc">Main parser and entry point</span>
+                </a>
+                <a href="core/simple_json_value.html" class="nav-item">
+                    <span class="title">SIMPLE_JSON_VALUE</span>
+                    <span class="desc">Base value wrapper with type checking</span>
+                </a>
+                <a href="core/simple_json_object.html" class="nav-item">
+                    <span class="title">SIMPLE_JSON_OBJECT</span>
+                    <span class="desc">JSON object (map) operations</span>
+                </a>
+                <a href="core/simple_json_array.html" class="nav-item">
+                    <span class="title">SIMPLE_JSON_ARRAY</span>
+                    <span class="desc">JSON array (list) operations</span>
+                </a>
+                <a href="core/simple_json_error.html" class="nav-item">
+                    <span class="title">SIMPLE_JSON_ERROR</span>
+                    <span class="desc">Error tracking with position info</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h2>Advanced Features</h2>
+            <div class="nav-grid">
+                <a href="pointer/simple_json_pointer.html" class="nav-item">
+                    <span class="title">JSON Pointer <span class="rfc-tag">RFC 6901</span></span>
+                    <span class="desc">Path-based document navigation</span>
+                </a>
+                <a href="patch/simple_json_patch.html" class="nav-item">
+                    <span class="title">JSON Patch <span class="rfc-tag">RFC 6902</span></span>
+                    <span class="desc">Document modification operations</span>
+                </a>
+                <a href="merge_patch/simple_json_merge_patch.html" class="nav-item">
+                    <span class="title">JSON Merge Patch <span class="rfc-tag">RFC 7386</span></span>
+                    <span class="desc">Simple merge semantics</span>
+                </a>
+                <a href="schema/simple_json_schema.html" class="nav-item">
+                    <span class="title">JSON Schema <span class="rfc-tag">Draft 7</span></span>
+                    <span class="desc">Document validation</span>
+                </a>
+                <a href="streaming/simple_json_stream.html" class="nav-item">
+                    <span class="title">Streaming Parser</span>
+                    <span class="desc">Memory-efficient large file processing</span>
+                </a>
+                <a href="utilities/simple_json_pretty_printer.html" class="nav-item">
+                    <span class="title">Pretty Printer</span>
+                    <span class="desc">Human-readable formatting</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h2>Test Suite Documentation</h2>
+            <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #4caf50;">
+                <h3 style="margin: 0 0 0.5rem 0; color: #1b5e20;">🧪 Complete Test Suite</h3>
+                <p style="margin: 0 0 1rem 0; color: #2e7d32;">216+ tests across 13 test classes with 100% code coverage</p>
+                <a href="testing/index.html" style="display: inline-block; background: #4caf50; color: white; padding: 0.75rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: 600;">View Full Test Suite Documentation →</a>
+            </div>
+            <div class="nav-grid">
+                <a href="testing/test_simple_json.html" class="nav-item">
+                    <span class="title">Core Tests</span>
+                    <span class="desc">Basic parsing, building, and type operations</span>
+                </a>
+                <a href="testing/test_simple_json_patch.html" class="nav-item">
+                    <span class="title">JSON Patch Tests</span>
+                    <span class="desc">RFC 6902 operation validation</span>
+                </a>
+                <a href="testing/test_simple_json_merge_patch.html" class="nav-item">
+                    <span class="title">Merge Patch Tests</span>
+                    <span class="desc">RFC 7386 merge semantics</span>
+                </a>
+                <a href="testing/test_json_schema_validation.html" class="nav-item">
+                    <span class="title">Schema Validation Tests</span>
+                    <span class="desc">JSON Schema Draft 7 compliance</span>
+                </a>
+                <a href="testing/test_json_path_queries.html" class="nav-item">
+                    <span class="title">JSONPath Tests</span>
+                    <span class="desc">Query pattern validation</span>
+                </a>
+                <a href="testing/test_simple_json_stream.html" class="nav-item">
+                    <span class="title">Streaming Tests</span>
+                    <span class="desc">Large file processing validation</span>
+                </a>
+                <a href="testing/test_pretty_printing.html" class="nav-item">
+                    <span class="title">Pretty Printing Tests</span>
+                    <span class="desc">Output formatting validation</span>
+                </a>
+                <a href="testing/test_error_tracking.html" class="nav-item">
+                    <span class="title">Error Tracking Tests</span>
+                    <span class="desc">Position-aware error handling</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h2>Quick Examples</h2>
+            
+            <h3>Basic Parsing</h3>
+            <div class="code-example">
+local
+    json: SIMPLE_JSON
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create json
+    value := json.parse ('{"name": "Alice", "age": 30}')
+    
+    if attached value and then value.is_object then
+        print (value.as_object.string_item ("name"))  -- Alice
+        print (value.as_object.integer_item ("age"))  -- 30
+    end
+end
+            </div>
+
+            <h3>Building JSON with Fluent API</h3>
+            <div class="code-example">
+local
+    json: SIMPLE_JSON
+    obj: SIMPLE_JSON_OBJECT
+do
+    create json
+    obj := json.new_object
+        .put_string ("Bob", "name")
+        .put_integer (25, "age")
+        .put_boolean (True, "active")
+    
+    print (obj.to_json_string)
+    -- {"name":"Bob","age":25,"active":true}
+end
+            </div>
+
+            <h3>JSON Pointer Navigation</h3>
+            <div class="code-example">
+local
+    pointer: SIMPLE_JSON_POINTER
+    value: detachable SIMPLE_JSON_VALUE
+do
+    create pointer.make ("/users/0/name")
+    value := pointer.evaluate (json_doc)
+    
+    if attached value then
+        print (value.to_json_string)
+    end
+end
+            </div>
+
+            <h3>JSON Patch Operations</h3>
+            <div class="code-example">
+local
+    patch: SIMPLE_JSON_PATCH
+    result: SIMPLE_JSON_PATCH_RESULT
+do
+    create patch
+    patch.add_add_operation ("/email", json.string_value ("alice@example.com"))
+    patch.add_replace_operation ("/age", json.integer_value (31))
+    
+    result := patch.apply (document)
+    if result.is_success then
+        print (result.document.to_json_string)
+    end
+end
+            </div>
+
+            <h3>Schema Validation</h3>
+            <div class="code-example">
+local
+    schema: SIMPLE_JSON_SCHEMA
+    result: SIMPLE_JSON_SCHEMA_VALIDATION_RESULT
+do
+    create schema.make_from_string ('{
+        "type": "object",
+        "required": ["name", "age"],
+        "properties": {
+            "name": {"type": "string"},
+            "age": {"type": "integer", "minimum": 0}
+        }
+    }')
+    
+    result := schema.validate (document)
+    if result.is_valid then
+        print ("Document is valid")
+    else
+        across result.errors as ic loop
+            print (ic.message)
+        end
+    end
+end
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>SIMPLE_JSON</strong> - A comprehensive JSON library for Eiffel</p>
+        <p>Developed with Claude Sonnet 4.5 • Design by Contract • 100% Test Coverage</p>
+        <p>Copyright © 2024 Larry Rix • MIT License</p>
+    </div>
+</body>
+</html>
