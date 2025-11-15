@@ -79,6 +79,7 @@ feature -- Status report
 			-- Does object have key?
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		local
 			l_json_key: JSON_STRING
 		do
@@ -92,6 +93,7 @@ feature -- Access (Unicode keys)
 			-- Get value for key (returns Void if key doesn't exist)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		local
 			l_json_key: JSON_STRING
 		do
@@ -105,6 +107,7 @@ feature -- Access (Unicode keys)
 			-- Get string value for key (returns Void if not a string)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		do
 			if attached item (a_key) as l_value and then l_value.is_string then
 				Result := l_value.as_string_32
@@ -115,6 +118,7 @@ feature -- Access (Unicode keys)
 			-- Get integer value for key (returns 0 if not found or not a number)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		do
 			if attached item (a_key) as l_value and then l_value.is_number then
 				Result := l_value.as_integer
@@ -125,6 +129,7 @@ feature -- Access (Unicode keys)
 			-- Get real value for key (returns 0.0 if not found or not a number)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		do
 			if attached item (a_key) as l_value and then l_value.is_number then
 				Result := l_value.as_real
@@ -135,6 +140,7 @@ feature -- Access (Unicode keys)
 			-- Get boolean value for key (returns False if not found or not a boolean)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		do
 			if attached item (a_key) as l_value and then l_value.is_boolean then
 				Result := l_value.as_boolean
@@ -145,6 +151,7 @@ feature -- Access (Unicode keys)
 			-- Get object value for key (returns Void if not an object)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		do
 			if attached item (a_key) as l_value and then l_value.is_object then
 				Result := l_value.as_object
@@ -155,6 +162,7 @@ feature -- Access (Unicode keys)
 			-- Get array value for key (returns Void if not an array)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		do
 			if attached item (a_key) as l_value and then l_value.is_array then
 				Result := l_value.as_array
@@ -167,6 +175,8 @@ feature -- Element change (Fluent API)
 			-- Add string value with key (fluent)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
+			value_reasonable_length: a_value.count <= Max_reasonable_string_length
 		local
 			l_json_key: JSON_STRING
 			l_json_value: JSON_STRING
@@ -181,6 +191,7 @@ feature -- Element change (Fluent API)
 			-- Add integer value with key (fluent)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		local
 			l_json_key: JSON_STRING
 		do
@@ -193,6 +204,7 @@ feature -- Element change (Fluent API)
 			-- Add real value with key (fluent)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		local
 			l_json_key: JSON_STRING
 		do
@@ -205,6 +217,7 @@ feature -- Element change (Fluent API)
 			-- Add boolean value with key (fluent)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		local
 			l_json_key: JSON_STRING
 		do
@@ -217,6 +230,7 @@ feature -- Element change (Fluent API)
 			-- Add null value with key (fluent)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		local
 			l_json_key: JSON_STRING
 			l_json_null: JSON_NULL
@@ -231,6 +245,7 @@ feature -- Element change (Fluent API)
 			-- Add object value with key (fluent)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 			value_not_void: a_value /= Void
 		local
 			l_json_key: JSON_STRING
@@ -244,6 +259,7 @@ feature -- Element change (Fluent API)
 			-- Add array value with key (fluent)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 			value_not_void: a_value /= Void
 		local
 			l_json_key: JSON_STRING
@@ -257,6 +273,7 @@ feature -- Element change (Fluent API)
 			-- Add any JSON value with key (fluent)
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 			value_not_void: a_value /= Void
 		local
 			l_json_key: JSON_STRING
@@ -272,6 +289,7 @@ feature -- Removal
 			-- Remove key-value pair
 		require
 			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
 		local
 			l_json_key: JSON_STRING
 		do
@@ -317,6 +335,17 @@ feature -- Iteration
 				i := i + 1
 			end
 		end
+
+feature -- Constants
+
+	Max_reasonable_key_length: INTEGER = 1024
+			-- Maximum reasonable length for JSON keys (defense against abuse)
+
+	Max_reasonable_string_length: INTEGER = 10_000_000
+			-- Maximum reasonable length for JSON string values (10MB, defense against DoS)
+
+	Max_reasonable_object_size: INTEGER = 100_000
+			-- Maximum reasonable number of properties (defense against memory exhaustion)
 
 invariant
 	-- Core type stability
