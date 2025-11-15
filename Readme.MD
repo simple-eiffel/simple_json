@@ -272,14 +272,14 @@ stream_example
 
 ### 6. JSONPath Queries
 
-Query JSON with path expressions:
+SQL-like queries for JSON data:
 
 ```eiffel
 query_example
     local
         json_text: STRING_32
         value: detachable SIMPLE_JSON_VALUE
-        query: SIMPLE_JSON_QUERY
+        query: SIMPLE_JSON_PATH_QUERY
         results: ARRAYED_LIST [SIMPLE_JSON_VALUE]
     do
         json_text := "{%"users%": [{%"name%": %"Alice%"}, {%"name%": %"Bob%"}]}"
@@ -513,6 +513,157 @@ Contributions welcome! Please:
 
 ---
 
+## Future Work Roadmap
+
+SIMPLE_JSON is a production-ready library with comprehensive JSON support. The following enhancements represent opportunities to further strengthen and extend the library's capabilities. Contributions in these areas are welcome.
+
+### Phase 1: Quality Hardening (Priority: High)
+
+**1.1 Design by Contract Enhancement**
+
+Systematic review and strengthening of contracts across the library:
+
+- **Scope:** Review all 25 source files for contract completeness
+- **Focus Areas:**
+  - Strengthen preconditions (numeric bounds, string constraints, state validation)
+  - Enhance postconditions (relationship preservation, side effects)
+  - Add loop invariants to iterative features
+  - Verify class invariants comprehensively cover object state
+- **Expected Benefits:**
+  - Early detection of edge cases and potential bugs
+  - Improved runtime verification in finalized mode
+  - Better documentation of feature contracts
+  - Stronger guarantees for library users
+- **Estimated Effort:** 1-2 days
+- **Impact:** Prevents entire categories of bugs, improves long-term maintainability
+
+**1.2 Test Suite Optimization**
+
+Migrate appropriate test assertions into production contracts:
+
+- **Scope:** Review 216 tests across 13 test files
+- **Strategy:**
+  - Identify assertions verifying properties that should ALWAYS hold
+  - Move invariant relationships into class contracts
+  - Move state change verification into postconditions
+  - Retain integration tests, edge cases, and error scenarios as tests
+- **Expected Benefits:**
+  - Reduced test code maintenance (15-25% reduction expected)
+  - Stronger runtime verification
+  - Clearer contract specifications
+  - More focused test suite on integration scenarios
+- **Estimated Effort:** 1.5-2 days
+- **Impact:** Improves code quality while reducing test maintenance burden
+
+### Phase 2: Standards Completion (Priority: Medium-High)
+
+**2.1 JSON Canonicalization Scheme (RFC 8785)**
+
+Implement deterministic JSON representation for cryptographic operations:
+
+- **Use Cases:**
+  - Digital signatures over JSON documents
+  - Content-addressable storage (hash-based identification)
+  - Blockchain and distributed ledger applications
+  - Secure configuration management
+- **Implementation Requirements:**
+  - Lexicographic ordering of object keys
+  - Normalized whitespace handling
+  - Unicode escape sequence normalization
+  - Standardized number formatting
+  - Minimal string escaping
+- **Deliverables:**
+  - `SIMPLE_JSON_CANONICALIZER` class (~200-300 lines)
+  - Test suite with RFC-provided test vectors
+  - Round-trip verification tests
+  - EIS documentation and examples
+- **Estimated Effort:** 0.5-1 day
+- **Impact:** Completes RFC suite, enables cryptographic JSON use cases
+
+### Phase 3: User Experience (Priority: Medium)
+
+**3.1 Expanded Documentation Examples**
+
+Create comprehensive use case gallery demonstrating real-world scenarios:
+
+- **Proposed Additions:**
+  - **Use Case Gallery** (10-15 scenarios):
+    - API response validation
+    - Configuration management
+    - Document transformation pipelines
+    - Large file streaming
+    - Schema-driven data entry
+    - Cryptographic signatures (with RFC 8785)
+  - **Anti-Patterns Guide:**
+    - Common mistakes and their solutions
+    - Type-checking pitfalls
+    - Memory management best practices
+  - **Cookbook Recipes:**
+    - Quick-reference solutions for common tasks
+    - Copy-paste ready code examples
+    - Error handling patterns
+- **Estimated Effort:** 1-1.5 days
+- **Impact:** Significantly improves library adoption and user success
+
+### Phase 4: Future Considerations (Priority: Low-Medium)
+
+**4.1 JSON Schema Draft 2020-12**
+
+Upgrade from Draft 7 to latest specification:
+
+- **Current Status:** Draft 7 implementation is comprehensive and stable
+- **Considerations:**
+  - Draft 7 covers 95% of real-world validation needs
+  - Draft 2020-12 adds complexity with marginal benefit for most users
+  - Significant implementation effort (1+ week)
+- **Recommendation:** Evaluate based on user demand
+- **Estimated Effort:** 1-2 weeks if pursued
+
+**4.2 JSON-LD (Linked Data)**
+
+Semantic web capabilities for JSON:
+
+- **Scope:** W3C Recommendation for linking JSON data
+- **Complexity:** Very high (context resolution, compaction, expansion, framing)
+- **Recommendation:** Consider as separate library (`SIMPLE_JSON_LD`) building on SIMPLE_JSON
+- **Rationale:** Fundamentally different use case (semantics vs. structure)
+- **Estimated Effort:** 4-5 days for comprehensive implementation
+
+**4.3 JSON Lines Format Support**
+
+Newline-delimited JSON streams:
+
+- **Current Status:** Streaming parser handles this use case
+- **Consideration:** Explicit JSON Lines support may improve clarity
+- **Estimated Effort:** Minimal (few hours)
+- **Priority:** Low (existing capabilities sufficient)
+
+### Development Timeline
+
+For contributors working at typical development pace:
+
+- **Quality Hardening (Phase 1):** 2.5-4 days
+- **RFC 8785 (Phase 2):** 0.5-1 day
+- **Documentation (Phase 3):** 1-1.5 days
+
+**Total for high-priority items:** 4.5-6.5 days
+
+### Contributing to Roadmap Items
+
+Contributors interested in implementing roadmap items should:
+
+1. Open an issue discussing the specific enhancement
+2. Review existing code patterns and conventions
+3. Maintain 100% test coverage for new features
+4. Follow Design by Contract principles
+5. Add EIS documentation links
+6. Update HTML documentation
+7. Submit pull request with comprehensive tests
+
+The library maintainer is available to provide guidance and review contributions.
+
+---
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
@@ -529,6 +680,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - [RFC 6901](https://tools.ietf.org/html/rfc6901) - JSON Pointer
 - [RFC 6902](https://tools.ietf.org/html/rfc6902) - JSON Patch
 - [RFC 7386](https://tools.ietf.org/html/rfc7386) - JSON Merge Patch
+- [RFC 8785](https://tools.ietf.org/html/rfc8785) - JSON Canonicalization Scheme
 
 ### Eiffel Resources
 - [Eiffel Software](https://www.eiffel.org/) - Official Eiffel site
