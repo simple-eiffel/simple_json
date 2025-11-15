@@ -297,6 +297,19 @@ feature -- Iteration
 			create Result.make_filled (create {STRING_32}.make_empty, l_json_keys.lower, l_json_keys.upper)
 			from
 				i := l_json_keys.lower
+			invariant
+				-- Index bounds
+				valid_index: i >= l_json_keys.lower and i <= l_json_keys.upper + 1
+
+				-- Progress tracking
+				copied_elements: i - l_json_keys.lower <= l_json_keys.count
+
+				-- Result array integrity
+				result_attached: Result /= Void
+				result_same_bounds: Result.lower = l_json_keys.lower and Result.upper = l_json_keys.upper
+
+				-- All copied elements are non-void
+				copied_keys_valid: across l_json_keys.lower |..| (i - 1) as ic all Result [ic] /= Void end
 			until
 				i > l_json_keys.upper
 			loop

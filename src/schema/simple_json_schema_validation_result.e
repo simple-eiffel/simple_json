@@ -66,6 +66,20 @@ feature -- Access
 			create Result.make_empty
 			from
 				l_index := errors.lower
+			invariant
+				-- Index bounds
+				valid_index: l_index >= errors.lower and l_index <= errors.upper + 1
+
+				-- Result array integrity
+				result_attached: Result /= Void
+
+				-- Progress tracking - messages built matches elements processed
+				messages_built: Result.count = l_index - errors.lower
+
+				-- All messages are non-void and non-empty
+				all_messages_valid: across Result as ic_msg all
+					ic_msg /= Void and then not ic_msg.is_empty
+				end
 			until
 				l_index > errors.upper
 			loop

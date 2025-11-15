@@ -119,23 +119,32 @@ feature -- Visitor Pattern
 
 				increase_indent
 
-				from
-					l_json_array.start
-					l_first := True
-				until
-					l_json_array.off
-				loop
-					if not l_first then
-						output.append (",")
-						output.append_character ('%N')
-					end
+			from
+				l_json_array.start
+				l_first := True
+			invariant
+				-- Cursor validity
+				cursor_valid: not l_json_array.off implies l_json_array.item /= Void
 
-					append_indent
-					l_json_array.item.accept (Current)
+				-- Output integrity
+				output_attached: output /= Void
 
-					l_json_array.forth
-					l_first := False
+				-- First flag consistency
+				first_flag_valid: l_first implies l_json_array.index = 1
+			until
+				l_json_array.off
+			loop
+				if not l_first then
+					output.append (",")
+					output.append_character ('%N')
 				end
+
+				append_indent
+				l_json_array.item.accept (Current)
+
+				l_json_array.forth
+				l_first := False
+			end
 
 				decrease_indent
 
@@ -186,6 +195,13 @@ feature -- Visitor Pattern
 				from
 					l_pairs.start
 					l_first := True
+				invariant
+					-- Cursor validity
+					cursor_valid: not l_pairs.off implies
+						(l_pairs.key_for_iteration /= Void and l_pairs.item_for_iteration /= Void)
+
+					-- Output integrity
+					output_attached: output /= Void
 				until
 					l_pairs.off
 				loop

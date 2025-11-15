@@ -146,9 +146,22 @@ feature {NONE} -- Implementation
 		do
 			l_line := 1
 			l_column := 1
-			
+
 			from
 				i := 1
+			invariant
+				-- Index bounds
+				valid_index: i >= 1 and i <= a_json_text.count + 1
+
+				-- Progress guarantee
+				index_advances_toward_target: i <= a_position
+
+				-- Line/column validity
+				line_positive: l_line >= 1
+				column_positive: l_column >= 1
+
+				-- We've examined exactly (i - 1) characters
+				characters_examined: i - 1 <= a_json_text.count
 			until
 				i >= a_position or i > a_json_text.count
 			loop
@@ -162,7 +175,7 @@ feature {NONE} -- Implementation
 				end
 				i := i + 1
 			end
-			
+
 			line := l_line
 			column := l_column
 		ensure

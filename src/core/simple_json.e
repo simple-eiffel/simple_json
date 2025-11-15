@@ -531,8 +531,21 @@ feature {NONE} -- Implementation
 
 			-- Split by dots and handle brackets
 			create l_segment.make_empty
+
 			from
 				i := 1
+			invariant
+				-- Index bounds (outer loop)
+				valid_outer_index: i >= 1 and i <= l_path.count + 1
+
+				-- Segment list integrity
+				segments_attached: l_segments /= Void
+
+				-- Current segment integrity
+				segment_attached: l_segment /= Void
+
+				-- Progress toward completion
+				examined_chars: i - 1 <= l_path.count
 			until
 				i > l_path.count
 			loop
@@ -552,6 +565,15 @@ feature {NONE} -- Implementation
 					l_bracket_start := i
 					from
 						i := i + 1
+					invariant
+						-- Index bounds (nested loop)
+						valid_nested_index: i >= l_bracket_start + 1 and i <= l_path.count + 1
+
+						-- We're still searching for bracket
+						searching_for_bracket: i > l_bracket_start
+
+						-- Segment still valid
+						nested_segment_attached: l_segment /= Void
 					until
 						i > l_path.count or l_path [i] = ']'
 					loop

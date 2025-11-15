@@ -174,6 +174,15 @@ feature {NONE} -- Implementation
 		do
 			from
 				i := 1
+			invariant
+				-- Index bounds
+				valid_index: i >= 1 and i <= a_array.count + 1
+
+				-- Elements list integrity
+				elements_attached: elements /= Void
+
+				-- All elements are non-void
+				no_void_elements: across elements as ic_elem all ic_elem /= Void end
 			until
 				i > a_array.count
 			loop

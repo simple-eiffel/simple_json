@@ -132,43 +132,58 @@ feature -- Navigation
 			else
 				-- Navigate to parent
 				create l_parent_segments.make (segments.count - 1)
-				from
-					l_index := 1
-				until
-					l_index >= segments.count
-				loop
-					l_parent_segments.force (segments [l_index])
-					l_index := l_index + 1
-				end
+			from
+				l_index := 1
+			invariant
+				-- Index bounds
+				valid_index: l_index >= 1 and l_index <= segments.count
 
-				-- Navigate using parent segments
-				l_current := a_document
-				across
-					l_parent_segments as ic
-				until
-					l_current = Void
-				loop
-					if l_current.is_object then
-						l_current := l_current.as_object.item (ic)
-					elseif l_current.is_array then
-						if is_array_index (ic) then
-							l_index := ic.to_integer
-							if l_current.as_array.valid_index (l_index + 1) then
-								l_current := l_current.as_array.item (l_index + 1)
-							else
-								l_current := Void
-							end
+				-- Progress tracking
+				copied_count: l_index - 1 = l_parent_segments.count
+
+				-- Parent segments validity
+				parent_segments_attached: l_parent_segments /= Void
+				correct_size_limit: l_parent_segments.count < segments.count
+
+				-- All copied segments are non-void
+				all_segments_valid: across 1 |..| l_parent_segments.count as ic all
+					l_parent_segments [ic] /= Void
+				end
+			until
+				l_index >= segments.count
+			loop
+				l_parent_segments.force (segments [l_index])
+				l_index := l_index + 1
+			end
+
+			-- Navigate using parent segments
+			l_current := a_document
+			across
+				l_parent_segments as ic
+			until
+				l_current = Void
+			loop
+				if l_current.is_object then
+					l_current := l_current.as_object.item (ic)
+				elseif l_current.is_array then
+					if is_array_index (ic) then
+						l_index := ic.to_integer
+						if l_current.as_array.valid_index (l_index + 1) then
+							l_current := l_current.as_array.item (l_index + 1)
 						else
 							l_current := Void
 						end
 					else
 						l_current := Void
 					end
+				else
+					l_current := Void
 				end
-
-				Result := l_current
 			end
+
+			Result := l_current
 		end
+	end
 
 feature {NONE} -- Implementation
 
