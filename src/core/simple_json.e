@@ -7,6 +7,7 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 	EIS: "name=JSON Specification", "protocol=URI", "src=https://www.json.org"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/core/simple_json.html"
 
 class
 	SIMPLE_JSON

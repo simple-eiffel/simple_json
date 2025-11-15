@@ -6,6 +6,7 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 	EIS: "name=RFC 6902 Remove", "protocol=URI", "src=https://tools.ietf.org/html/rfc6902#section-4.2"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/patch/simple_json_patch.html"
 
 class
 	SIMPLE_JSON_PATCH_REMOVE

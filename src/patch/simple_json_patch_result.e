@@ -6,6 +6,7 @@ note
 		]"
 	date: "$Date$"
 	revision: "$Revision$"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/patch/simple_json_patch.html"
 
 class
 	SIMPLE_JSON_PATCH_RESULT

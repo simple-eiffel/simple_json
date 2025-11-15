@@ -3,6 +3,7 @@ note
 	testing: "type/manual"
 	date: "$Date$"
 	revision: "$Revision$"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_json_path_queries.html"
 
 class
 	TEST_JSON_PATH_QUERIES

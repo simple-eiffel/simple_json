@@ -4,6 +4,7 @@ note
 		Each test verifies expected error output against actual output.
 		]"
 	testing: "type/manual"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_error_tracking_advanced.html"
 
 class
 	TEST_ERROR_TRACKING_ADVANCED

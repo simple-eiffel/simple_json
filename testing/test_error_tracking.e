@@ -1,6 +1,7 @@
 note
 	description: "Tests for SIMPLE_JSON error tracking and position reporting"
 	testing: "type/manual"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_error_tracking.html"
 
 class
 	TEST_ERROR_TRACKING

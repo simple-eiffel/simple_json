@@ -1,6 +1,7 @@
 note
 	description: "Base test class with high-level generic assertions"
 	testing: "type/manual"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_set_base.html"
 
 deferred class
 	TEST_SET_BASE

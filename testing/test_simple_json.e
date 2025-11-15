@@ -1,6 +1,7 @@
 note
 	description: "Tests for SIMPLE_JSON library"
 	testing: "type/manual"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_simple_json.html"
 
 class
 	TEST_SIMPLE_JSON

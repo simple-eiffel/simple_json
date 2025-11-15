@@ -5,6 +5,7 @@ note
 		]"
 	date: "$Date$"
 	revision: "$Revision$"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/core/simple_json_array.html"
 
 class
 	SIMPLE_JSON_ARRAY

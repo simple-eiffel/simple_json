@@ -5,6 +5,7 @@ note
 		]"
 	date: "$Date$"
 	revision: "$Revision$"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/streaming/simple_json_stream.html"
 
 class
 	SIMPLE_JSON_STREAM_CURSOR

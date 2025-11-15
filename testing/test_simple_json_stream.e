@@ -1,6 +1,7 @@
 note
 	description: "Tests for streaming JSON parser (SIMPLE_JSON_STREAM)"
 	testing: "type/manual"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_simple_json_stream.html"
 
 class
 	TEST_SIMPLE_JSON_STREAM

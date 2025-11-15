@@ -1,6 +1,7 @@
 note
 	description: "Demonstration of generic high-level assertions"
 	testing: "type/manual"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_assertions_demo.html"
 
 class
 	TEST_ASSERTIONS_DEMO

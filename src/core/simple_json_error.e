@@ -6,6 +6,7 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 	EIS: "name=Error Handling Best Practices", "protocol=URI", "src=https://www.eiffel.org/doc/solutions/Error_Handling"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/core/simple_json_error.html"
 
 class
 	SIMPLE_JSON_ERROR

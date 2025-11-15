@@ -7,6 +7,7 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 	EIS: "name=RFC 6901", "protocol=URI", "src=https://tools.ietf.org/html/rfc6901"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/pointer/simple_json_pointer.html"
 
 class
 	SIMPLE_JSON_POINTER

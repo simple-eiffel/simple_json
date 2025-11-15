@@ -5,6 +5,7 @@ note
 		]"
 	date: "$Date$"
 	revision: "$Revision$"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/utilities/simple_json_pretty_printer.html"
 
 class
 	SIMPLE_JSON_PRETTY_PRINTER

@@ -9,6 +9,7 @@ note
 	legal: "See notice at end of class."
 	date: "$Date$"
 	revision: "$Revision$"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/merge_patch/simple_json_merge_patch.html"
 
 class
 	SIMPLE_JSON_MERGE_PATCH_RESULT

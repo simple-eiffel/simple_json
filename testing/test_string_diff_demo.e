@@ -1,6 +1,7 @@
 note
 	description: "Demo of string diff assertion showing special character handling"
 	testing: "type/manual"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_string_diff_demo.html"
 
 class
 	TEST_STRING_DIFF_DEMO

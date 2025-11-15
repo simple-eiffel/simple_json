@@ -17,6 +17,7 @@ note
 	EIS: "name=JSON Merge Patch RFC 7386",
 		 "src=https://tools.ietf.org/html/rfc7386",
 		 "tag=specification, merge-patch"
+	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/merge_patch/simple_json_merge_patch.html"
 
 class
 	SIMPLE_JSON_MERGE_PATCH
