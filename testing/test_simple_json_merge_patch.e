@@ -603,121 +603,121 @@ feature -- Test routines: RFC 7386 Examples (Appendix A)
 			end
 		end
 
---feature -- Test routines: Creation
+feature -- Test routines: Creation
 
---	test_make_creates_empty_patch
---		local
---			l_merge: SIMPLE_JSON_MERGE_PATCH
---		do
---			create l_merge.make
---			assert_true ("patch_is_object", l_merge.patch_document.is_object)
---			assert_integers_equal ("patch_is_empty", 0, l_merge.patch_document.as_object.count)
---		end
+	test_make_creates_empty_patch
+		local
+			l_merge: SIMPLE_JSON_MERGE_PATCH
+		do
+			create l_merge.make
+			assert_true ("patch_is_object", l_merge.patch_document.is_object)
+			assert_integers_equal ("patch_is_empty", 0, l_merge.patch_document.as_object.count)
+		end
 
---	test_make_from_json
---		local
---			l_merge: SIMPLE_JSON_MERGE_PATCH
---			l_json: SIMPLE_JSON
---			l_patch: detachable SIMPLE_JSON_VALUE
---		do
---			create l_json
---			l_patch := l_json.parse ("{%"a%":%"b%"}")
---			
---			if attached l_patch as al_patch then
---				create l_merge.make_from_json (al_patch)
---				assert_true ("patch_set", l_merge.patch_document = al_patch)
---			else
---				assert_false ("parse_failed", True)
---			end
---		end
+	test_make_from_json
+		local
+			l_merge: SIMPLE_JSON_MERGE_PATCH
+			l_json: SIMPLE_JSON
+			l_patch: detachable SIMPLE_JSON_VALUE
+		do
+			create l_json
+			l_patch := l_json.parse ("{%"a%":%"b%"}")
 
---	test_make_from_string
---		local
---			l_merge: SIMPLE_JSON_MERGE_PATCH
---		do
---			create l_merge.make_from_string ("{%"a%":%"b%"}")
---			assert_true ("patch_is_object", l_merge.patch_document.is_object)
---			assert_true ("has_key_a", l_merge.patch_document.as_object.has ("a"))
---		end
+			if attached l_patch as al_patch then
+				create l_merge.make_from_json (al_patch)
+				assert_true ("patch_set", l_merge.patch_document = al_patch)
+			else
+				assert_false ("parse_failed", True)
+			end
+		end
 
---feature -- Test routines: Edge Cases
+	test_make_from_string
+		local
+			l_merge: SIMPLE_JSON_MERGE_PATCH
+		do
+			create l_merge.make_from_string ("{%"a%":%"b%"}")
+			assert_true ("patch_is_object", l_merge.patch_document.is_object)
+			assert_true ("has_key_a", l_merge.patch_document.as_object.has_key ("a"))
+		end
 
---	test_empty_patch_on_empty_target
---		local
---			l_json: SIMPLE_JSON
---			l_target, l_patch: detachable SIMPLE_JSON_VALUE
---			l_merge: SIMPLE_JSON_MERGE_PATCH
---			l_result: SIMPLE_JSON_MERGE_PATCH_RESULT
---		do
---			create l_json
---			l_target := l_json.parse ("{}")
---			l_patch := l_json.parse ("{}")
---			
---			if attached l_target as al_target and then
---			   attached l_patch as al_patch then
---				
---				create l_merge.make_from_json (al_patch)
---				l_result := l_merge.apply (al_target)
---				
---				assert_true ("merge_succeeded", l_result.is_success)
---				
---				if attached l_result.merged_document as l_merged then
---					assert_integers_equal ("result_is_empty", 0, l_merged.as_object.count)
---				else
---					assert_false ("no_merged_document", True)
---				end
---			else
---				assert_false ("parse_failed", True)
---			end
---		end
+feature -- Test routines: Edge Cases
 
---	test_multiple_nested_objects
---		local
---			l_json: SIMPLE_JSON
---			l_target, l_patch: detachable SIMPLE_JSON_VALUE
---			l_merge: SIMPLE_JSON_MERGE_PATCH
---			l_result: SIMPLE_JSON_MERGE_PATCH_RESULT
---		do
---			create l_json
---			
---			-- Deep nesting with multiple levels
---			l_target := l_json.parse ("{%"a%":{%"b%":{%"c%":{%"d%":%"old%"}}}}")
---			l_patch := l_json.parse ("{%"a%":{%"b%":{%"c%":{%"d%":%"new%"}}}}")
---			
---			if attached l_target as al_target and then
---			   attached l_patch as al_patch then
---				
---				create l_merge.make_from_json (al_patch)
---				l_result := l_merge.apply (al_target)
---				
---				assert_true ("merge_succeeded", l_result.is_success)
---				
---				if attached l_result.merged_document as l_merged then
---					-- Navigate to deeply nested value
---					if attached l_merged.as_object.value ("a") as l_a then
---						if attached l_a.as_object.value ("b") as l_b then
---							if attached l_b.as_object.value ("c") as l_c then
---								if attached l_c.as_object.value ("d") as l_d then
---									assert_strings_equal ("deep_value_updated", "new", l_d.as_string_32)
---								else
---									assert_false ("d_missing", True)
---								end
---							else
---								assert_false ("c_missing", True)
---							end
---						else
---							assert_false ("b_missing", True)
---						end
---					else
---						assert_false ("a_missing", True)
---					end
---				else
---					assert_false ("no_merged_document", True)
---				end
---			else
---				assert_false ("parse_failed", True)
---			end
---		end
+	test_empty_patch_on_empty_target
+		local
+			l_json: SIMPLE_JSON
+			l_target, l_patch: detachable SIMPLE_JSON_VALUE
+			l_merge: SIMPLE_JSON_MERGE_PATCH
+			l_result: SIMPLE_JSON_MERGE_PATCH_RESULT
+		do
+			create l_json
+			l_target := l_json.parse ("{}")
+			l_patch := l_json.parse ("{}")
+
+			if attached l_target as al_target and then
+			   attached l_patch as al_patch then
+
+				create l_merge.make_from_json (al_patch)
+				l_result := l_merge.apply (al_target)
+
+				assert_true ("merge_succeeded", l_result.is_success)
+
+				if attached l_result.merged_document as l_merged then
+					assert_integers_equal ("result_is_empty", 0, l_merged.as_object.count)
+				else
+					assert_false ("no_merged_document", True)
+				end
+			else
+				assert_false ("parse_failed", True)
+			end
+		end
+
+	test_multiple_nested_objects
+		local
+			l_json: SIMPLE_JSON
+			l_target, l_patch: detachable SIMPLE_JSON_VALUE
+			l_merge: SIMPLE_JSON_MERGE_PATCH
+			l_result: SIMPLE_JSON_MERGE_PATCH_RESULT
+		do
+			create l_json
+
+			-- Deep nesting with multiple levels
+			l_target := l_json.parse ("{%"a%":{%"b%":{%"c%":{%"d%":%"old%"}}}}")
+			l_patch := l_json.parse ("{%"a%":{%"b%":{%"c%":{%"d%":%"new%"}}}}")
+
+			if attached l_target as al_target and then
+			   attached l_patch as al_patch then
+
+				create l_merge.make_from_json (al_patch)
+				l_result := l_merge.apply (al_target)
+
+				assert_true ("merge_succeeded", l_result.is_success)
+
+				if attached l_result.merged_document as l_merged then
+					-- Navigate to deeply nested value
+					if attached l_merged.as_object.item ("a") as l_a then
+						if attached l_a.as_object.item ("b") as l_b then
+							if attached l_b.as_object.item ("c") as l_c then
+								if attached l_c.as_object.item ("d") as l_d then
+									assert_strings_equal ("deep_value_updated", "new", l_d.as_string_32)
+								else
+									assert_false ("d_missing", True)
+								end
+							else
+								assert_false ("c_missing", True)
+							end
+						else
+							assert_false ("b_missing", True)
+						end
+					else
+						assert_false ("a_missing", True)
+					end
+				else
+					assert_false ("no_merged_document", True)
+				end
+			else
+				assert_false ("parse_failed", True)
+			end
+		end
 
 note
 	copyright: "2025, Larry Rix"
