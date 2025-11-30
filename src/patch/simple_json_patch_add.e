@@ -99,7 +99,7 @@ feature -- Operations
 								l_modified := clone_and_insert_into_array (a_document, path, l_key.to_integer, l_val)
 								create Result.make_success (l_modified)
 							else
-								create Result.make_failure ("Invalid array index: " + l_key)
+								create Result.make_failure ("Invalid array index: " + l_key.to_string_8)
 							end
 						else
 							create Result.make_failure ("Parent is not a container at path: " + path.to_string_8)
