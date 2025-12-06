@@ -85,8 +85,6 @@ feature -- Validation
 				end
 				create Result.make_invalid (l_array)
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 
@@ -172,8 +170,6 @@ feature {NONE} -- Type validation
 			else
 				Result := "unknown"
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature {NONE} -- String validation
@@ -481,8 +477,6 @@ feature {NONE} -- Path building
 			Result.append_string_general (a_base)
 			Result.append_character ('/')
 			Result.append_string_general (a_property)
-		ensure
-			result_not_void: Result /= Void
 		end
 
 invariant

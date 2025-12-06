@@ -135,8 +135,6 @@ feature -- Error Tracking
 			-- Errors from the last parse operation
 		attribute
 			create Result.make (0)
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	error_count: INTEGER
@@ -170,8 +168,6 @@ feature -- Error Tracking
 				end
 				Result.append (ic.to_string_with_position)
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	detailed_errors: STRING_32
@@ -190,8 +186,6 @@ feature -- Error Tracking
 				Result.append ("%N")
 				Result.append (ic.to_detailed_string)
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	clear_errors
@@ -315,8 +309,6 @@ feature -- JSONPath Queries
 					Result.force (ic.as_string_32)
 				end
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	query_integers (a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): ARRAYED_LIST [INTEGER_64]
@@ -338,8 +330,6 @@ feature -- JSONPath Queries
 					Result.force (ic.as_integer)
 				end
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 feature {NONE} -- Implementation
 
@@ -430,8 +420,6 @@ feature {NONE} -- Implementation
 			else
 				Result := a_error_text.twin
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	utf_converter: UTF_CONVERTER
@@ -509,8 +497,6 @@ feature {NONE} -- Implementation
 			end
 
 			Result := l_current_set
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	parse_json_path (a_path: STRING_32): LIST [STRING_32]
@@ -605,8 +591,6 @@ feature {NONE} -- Implementation
 			end
 
 			Result := l_segments
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	navigate_segment (a_value: SIMPLE_JSON_VALUE; a_segment: STRING_32): detachable SIMPLE_JSON_VALUE
@@ -678,7 +662,6 @@ feature -- JSON Patch (RFC 6902)
 		do
 			create Result.make
 		ensure
-			result_not_void: Result /= Void
 			empty: Result.is_empty
 		end
 
@@ -771,8 +754,6 @@ feature -- JSON Patch (RFC 6902)
 			else
 				create Result.make_failure ("Failed to parse patch document")
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 invariant

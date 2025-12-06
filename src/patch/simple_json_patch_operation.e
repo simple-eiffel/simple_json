@@ -23,7 +23,6 @@ feature -- Access
 			-- Operation name: "add", "remove", "replace", "move", "copy", "test"
 		deferred
 		ensure
-			result_not_void: Result /= Void
 			result_not_empty: not Result.is_empty
 		end
 
@@ -98,8 +97,6 @@ feature -- Operations
 			document_not_void: a_document /= Void
 			operation_is_valid: is_valid
 		deferred
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature -- Conversion
@@ -121,8 +118,6 @@ feature -- Conversion
 			if attached from_path as l_from then
 				Result := Result.put_string (l_from, "from")
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 invariant

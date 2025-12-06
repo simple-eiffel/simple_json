@@ -87,7 +87,6 @@ feature -- Output
 		do
 			create Result.make_from_string (message)
 		ensure
-			result_not_void: Result /= Void
 			contains_message: Result.has_substring (message)
 		end
 
@@ -109,8 +108,6 @@ feature -- Output
 			else
 				Result := to_string
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	to_detailed_string: STRING_32
@@ -128,8 +125,6 @@ feature -- Output
 				Result.append ("%N  Position: ")
 				Result.append (position.out)
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature {NONE} -- Implementation

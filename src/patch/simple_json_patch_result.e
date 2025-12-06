@@ -65,8 +65,6 @@ feature -- Access
 			-- Error message (empty if operation succeeded)
 		attribute
 			create Result.make_empty
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature -- Status report

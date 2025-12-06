@@ -254,8 +254,6 @@ feature -- Pretty Printing
 		do
 			create l_printer.make
 			Result := l_printer.print_json_value (json_value)
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	to_pretty_json_with_indent (a_indent: STRING_32): STRING_32
@@ -268,8 +266,6 @@ feature -- Pretty Printing
 		do
 			create l_printer.make_with_options (a_indent)
 			Result := l_printer.print_json_value (json_value)
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	to_pretty_json_with_tabs: STRING_32
@@ -280,8 +276,6 @@ feature -- Pretty Printing
 			create l_printer.make
 			l_printer.use_tabs
 			Result := l_printer.print_json_value (json_value)
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	to_pretty_json_with_spaces (a_count: INTEGER): STRING_32
@@ -295,8 +289,6 @@ feature -- Pretty Printing
 			create l_printer.make
 			l_printer.use_spaces (a_count)
 			Result := l_printer.print_json_value (json_value)
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature {NONE} -- Implementation

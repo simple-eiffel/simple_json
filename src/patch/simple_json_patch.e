@@ -196,8 +196,6 @@ feature -- Operations
 				create Result.make_success (l_current)
 				check all_succeeded: Result.is_success end
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature -- Conversion
@@ -216,7 +214,6 @@ feature -- Conversion
 				Result := Result.add_object (ic.to_json_object)
 			end
 		ensure
-			result_not_void: Result /= Void
 			correct_count: Result.count = operations.count
 		end
 
@@ -224,8 +221,6 @@ feature -- Conversion
 			-- Convert patch to JSON string
 		do
 			Result := to_json_array.to_json_string
-		ensure
-			result_not_void: Result /= Void
 		end
 
 invariant

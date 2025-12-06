@@ -45,7 +45,6 @@ feature -- Access
 			Result.append_string_general (": ")
 			Result.append (message)
 		ensure
-			result_not_void: Result /= Void
 			contains_path: Result.has_substring (path)
 			contains_message: Result.has_substring (message)
 		end

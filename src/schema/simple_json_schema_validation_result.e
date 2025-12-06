@@ -87,7 +87,6 @@ feature -- Access
 				l_index := l_index + 1
 			end
 		ensure
-			result_not_void: Result /= Void
 			same_count: Result.count = error_count
 		end
 

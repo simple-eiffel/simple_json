@@ -32,8 +32,6 @@ feature -- Access
 			has_segments: not segments.is_empty
 		do
 			Result := segments.last
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature -- Parsing
@@ -201,8 +199,6 @@ feature {NONE} -- Implementation
 			Result := a_token.twin
 			Result.replace_substring_all ("~1", "/")
 			Result.replace_substring_all ("~0", "~")
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	is_array_index (a_segment: STRING_32): BOOLEAN

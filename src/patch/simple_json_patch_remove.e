@@ -142,7 +142,6 @@ feature -- Operations
 				end
 			end
 		ensure then
-			result_not_void: Result /= Void
 			success_means_modified: Result.is_success implies Result.modified_document /= Void
 			failure_means_error: Result.is_failure implies Result.has_error
 		end
@@ -185,8 +184,6 @@ feature {NONE} -- Implementation
 			else
 				Result := a_doc
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	clone_and_remove_from_array (a_doc: SIMPLE_JSON_VALUE; a_path: STRING_32; a_index: INTEGER): SIMPLE_JSON_VALUE
@@ -207,8 +204,6 @@ feature {NONE} -- Implementation
 			else
 				Result := a_doc
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	extract_array_index (a_segment: STRING_32): INTEGER

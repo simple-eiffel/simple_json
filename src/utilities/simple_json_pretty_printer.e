@@ -102,8 +102,6 @@ feature -- Printing
 			reset
 			a_value.accept (Current)
 			Result := output
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature -- Visitor Pattern
@@ -308,8 +306,6 @@ feature {NONE} -- Implementation
 				end
 				i := i + 1
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 feature {NONE} -- Implementation

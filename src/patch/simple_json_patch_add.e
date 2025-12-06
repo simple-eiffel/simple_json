@@ -134,8 +134,6 @@ feature {NONE} -- Implementation
 			else
 				Result := a_doc
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	clone_and_append_to_array (a_doc: SIMPLE_JSON_VALUE; a_path: STRING_32; a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_VALUE
@@ -155,8 +153,6 @@ feature {NONE} -- Implementation
 			else
 				Result := a_doc
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	clone_and_insert_into_array (a_doc: SIMPLE_JSON_VALUE; a_path: STRING_32; a_index: INTEGER; a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_VALUE
@@ -177,8 +173,6 @@ feature {NONE} -- Implementation
 			else
 				Result := a_doc
 			end
-		ensure
-			result_not_void: Result /= Void
 		end
 
 	is_valid_array_index (a_str: STRING_32): BOOLEAN
