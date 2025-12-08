@@ -3,7 +3,7 @@ note
 		Automated tests for SIMPLE_JSON error tracking capabilities.
 		Each test verifies expected error output against actual output.
 		]"
-	testing: "type/manual"
+	testing: "covers"
 	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_error_tracking_advanced.html"
 
 class

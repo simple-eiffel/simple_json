@@ -1,6 +1,6 @@
 note
 	description: "Tests for SIMPLE_JSON_MERGE_PATCH (RFC 7386)"
-	testing: "type/manual"
+	testing: "covers"
 	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_simple_json_merge_patch.html"
 
 class

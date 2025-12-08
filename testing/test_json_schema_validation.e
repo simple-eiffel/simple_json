@@ -1,6 +1,6 @@
 note
 	description: "Tests for SIMPLE_JSON_SCHEMA_VALIDATOR"
-	testing: "type/manual"
+	testing: "covers"
 	EIS: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/testing/test_json_schema_validation.html"
 
 class

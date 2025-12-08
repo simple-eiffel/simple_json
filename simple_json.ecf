@@ -35,6 +35,7 @@
 		<setting name="total_order_on_reals" value="true"/>
 		<variable name="SYSTEM_PATH" value="D:\prod\simple_json"/>
 		<library name="simple_testing" location="$SIMPLE_TESTING\simple_testing.ecf"/>
+		<library name="testing" location="$ISE_LIBRARY\library\testing\testing.ecf"/>
 		<cluster name="test" location=".\testing\" recursive="true"/>
 	</target>
 	<target name="simple_json_benchmark" extends="simple_json_tests">
