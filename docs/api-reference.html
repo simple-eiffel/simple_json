@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference - simple_json</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="images/logo.png" alt="simple_* logo" class="logo">
+        </div>
+        <h1>simple_json</h1>
+        <p class="tagline">API Reference</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="user-guide.html">User Guide</a></li>
+            <li><a href="api-reference.html" class="active">API Reference</a></li>
+            <li><a href="architecture.html">Architecture</a></li>
+            <li><a href="cookbook.html">Cookbook</a></li>
+            <li><a href="https://github.com/simple-eiffel/simple_json">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="simple-json">
+            <h2>SIMPLE_JSON</h2>
+            <p>Main facade class for JSON operations. The primary entry point for the library.</p>
+
+            <h3>Parsing</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>parse</code></td>
+                    <td><code>(a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE</code></td>
+                    <td>Parse JSON string. Returns Void on error; check <code>last_errors</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>parse_file</code></td>
+                    <td><code>(a_file_path: STRING_32): detachable SIMPLE_JSON_VALUE</code></td>
+                    <td>Parse JSON from file. Returns Void on error.</td>
+                </tr>
+                <tr>
+                    <td><code>is_valid_json</code></td>
+                    <td><code>(a_json_text: STRING_32): BOOLEAN</code></td>
+                    <td>Check if text is valid JSON without creating value.</td>
+                </tr>
+            </table>
+
+            <h3>Error Tracking</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>has_errors</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Were there errors during last parse?</td>
+                </tr>
+                <tr>
+                    <td><code>last_errors</code></td>
+                    <td><code>: ARRAYED_LIST [SIMPLE_JSON_ERROR]</code></td>
+                    <td>List of errors from last parse.</td>
+                </tr>
+                <tr>
+                    <td><code>error_count</code></td>
+                    <td><code>: INTEGER</code></td>
+                    <td>Number of errors.</td>
+                </tr>
+                <tr>
+                    <td><code>first_error</code></td>
+                    <td><code>: detachable SIMPLE_JSON_ERROR</code></td>
+                    <td>First error, if any.</td>
+                </tr>
+                <tr>
+                    <td><code>errors_as_string</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>All errors as single string.</td>
+                </tr>
+                <tr>
+                    <td><code>detailed_errors</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>All errors with line/column context.</td>
+                </tr>
+                <tr>
+                    <td><code>clear_errors</code></td>
+                    <td><code></code></td>
+                    <td>Clear error list.</td>
+                </tr>
+            </table>
+
+            <h3>Building</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>new_object</code></td>
+                    <td><code>: SIMPLE_JSON_OBJECT</code></td>
+                    <td>Create empty JSON object builder.</td>
+                </tr>
+                <tr>
+                    <td><code>new_array</code></td>
+                    <td><code>: SIMPLE_JSON_ARRAY</code></td>
+                    <td>Create empty JSON array builder.</td>
+                </tr>
+                <tr>
+                    <td><code>string_value</code></td>
+                    <td><code>(a_string: STRING_32): SIMPLE_JSON_VALUE</code></td>
+                    <td>Create JSON string value.</td>
+                </tr>
+                <tr>
+                    <td><code>number_value</code></td>
+                    <td><code>(a_number: DOUBLE): SIMPLE_JSON_VALUE</code></td>
+                    <td>Create JSON number value.</td>
+                </tr>
+                <tr>
+                    <td><code>integer_value</code></td>
+                    <td><code>(a_integer: INTEGER_64): SIMPLE_JSON_VALUE</code></td>
+                    <td>Create JSON integer value.</td>
+                </tr>
+                <tr>
+                    <td><code>boolean_value</code></td>
+                    <td><code>(a_boolean: BOOLEAN): SIMPLE_JSON_VALUE</code></td>
+                    <td>Create JSON boolean value.</td>
+                </tr>
+                <tr>
+                    <td><code>null_value</code></td>
+                    <td><code>: SIMPLE_JSON_VALUE</code></td>
+                    <td>Create JSON null value.</td>
+                </tr>
+            </table>
+
+            <h3>JSONPath Queries</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>query_string</code></td>
+                    <td><code>(a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): detachable STRING_32</code></td>
+                    <td>Query single string value. Example: <code>"$.person.name"</code></td>
+                </tr>
+                <tr>
+                    <td><code>query_integer</code></td>
+                    <td><code>(a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): INTEGER_64</code></td>
+                    <td>Query single integer. Returns 0 if not found.</td>
+                </tr>
+                <tr>
+                    <td><code>query_strings</code></td>
+                    <td><code>(a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): ARRAYED_LIST [STRING_32]</code></td>
+                    <td>Query multiple strings with wildcards. Example: <code>"$.users[*].name"</code></td>
+                </tr>
+                <tr>
+                    <td><code>query_integers</code></td>
+                    <td><code>(a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): ARRAYED_LIST [INTEGER_64]</code></td>
+                    <td>Query multiple integers with wildcards.</td>
+                </tr>
+            </table>
+
+            <h3>JSON Patch</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>create_patch</code></td>
+                    <td><code>: SIMPLE_JSON_PATCH</code></td>
+                    <td>Create new empty patch.</td>
+                </tr>
+                <tr>
+                    <td><code>parse_patch</code></td>
+                    <td><code>(a_patch_json: STRING_32): detachable SIMPLE_JSON_PATCH</code></td>
+                    <td>Parse patch from JSON array string.</td>
+                </tr>
+                <tr>
+                    <td><code>apply_patch</code></td>
+                    <td><code>(a_document: SIMPLE_JSON_VALUE; a_patch_json: STRING_32): SIMPLE_JSON_PATCH_RESULT</code></td>
+                    <td>Parse and apply patch in one step.</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="simple-json-value">
+            <h2>SIMPLE_JSON_VALUE</h2>
+            <p>Wrapper around JSON values providing convenient typed access.</p>
+
+            <h3>Type Checking</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>is_string</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Is this a string value?</td>
+                </tr>
+                <tr>
+                    <td><code>is_number</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Is this a number value?</td>
+                </tr>
+                <tr>
+                    <td><code>is_integer</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Is this an integer value?</td>
+                </tr>
+                <tr>
+                    <td><code>is_boolean</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Is this a boolean value?</td>
+                </tr>
+                <tr>
+                    <td><code>is_null</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Is this a null value?</td>
+                </tr>
+                <tr>
+                    <td><code>is_object</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Is this an object value?</td>
+                </tr>
+                <tr>
+                    <td><code>is_array</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Is this an array value?</td>
+                </tr>
+            </table>
+
+            <h3>Value Access</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Precondition</th>
+                </tr>
+                <tr>
+                    <td><code>as_string_32</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td><code>is_string</code></td>
+                </tr>
+                <tr>
+                    <td><code>as_number</code></td>
+                    <td><code>: DOUBLE</code></td>
+                    <td><code>is_number</code></td>
+                </tr>
+                <tr>
+                    <td><code>as_integer</code></td>
+                    <td><code>: INTEGER_64</code></td>
+                    <td><code>is_integer</code></td>
+                </tr>
+                <tr>
+                    <td><code>as_boolean</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td><code>is_boolean</code></td>
+                </tr>
+                <tr>
+                    <td><code>as_object</code></td>
+                    <td><code>: SIMPLE_JSON_OBJECT</code></td>
+                    <td><code>is_object</code></td>
+                </tr>
+                <tr>
+                    <td><code>as_array</code></td>
+                    <td><code>: SIMPLE_JSON_ARRAY</code></td>
+                    <td><code>is_array</code></td>
+                </tr>
+            </table>
+
+            <h3>Output</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>to_json</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>Compact JSON string.</td>
+                </tr>
+                <tr>
+                    <td><code>to_pretty_json</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>Pretty-printed JSON with indentation.</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="simple-json-object">
+            <h2>SIMPLE_JSON_OBJECT</h2>
+            <p>JSON object with fluent builder API.</p>
+
+            <h3>Creation</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>make</code></td>
+                    <td><code></code></td>
+                    <td>Create empty object.</td>
+                </tr>
+                <tr>
+                    <td><code>make_from_value</code></td>
+                    <td><code>(a_value: SIMPLE_JSON_VALUE)</code></td>
+                    <td>Create from existing value.</td>
+                </tr>
+            </table>
+
+            <h3>Builder (returns LIKE CURRENT for chaining)</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>put_string</code></td>
+                    <td><code>(a_key, a_value: STRING_32): like Current</code></td>
+                    <td>Add string property.</td>
+                </tr>
+                <tr>
+                    <td><code>put_integer</code></td>
+                    <td><code>(a_key: STRING_32; a_value: INTEGER_64): like Current</code></td>
+                    <td>Add integer property.</td>
+                </tr>
+                <tr>
+                    <td><code>put_number</code></td>
+                    <td><code>(a_key: STRING_32; a_value: DOUBLE): like Current</code></td>
+                    <td>Add number property.</td>
+                </tr>
+                <tr>
+                    <td><code>put_boolean</code></td>
+                    <td><code>(a_key: STRING_32; a_value: BOOLEAN): like Current</code></td>
+                    <td>Add boolean property.</td>
+                </tr>
+                <tr>
+                    <td><code>put_null</code></td>
+                    <td><code>(a_key: STRING_32): like Current</code></td>
+                    <td>Add null property.</td>
+                </tr>
+                <tr>
+                    <td><code>put_object</code></td>
+                    <td><code>(a_key: STRING_32; a_obj: SIMPLE_JSON_OBJECT): like Current</code></td>
+                    <td>Add nested object.</td>
+                </tr>
+                <tr>
+                    <td><code>put_array</code></td>
+                    <td><code>(a_key: STRING_32; a_arr: SIMPLE_JSON_ARRAY): like Current</code></td>
+                    <td>Add nested array.</td>
+                </tr>
+                <tr>
+                    <td><code>put_value</code></td>
+                    <td><code>(a_key: STRING_32; a_val: SIMPLE_JSON_VALUE): like Current</code></td>
+                    <td>Add any value.</td>
+                </tr>
+            </table>
+
+            <h3>Access</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>has</code></td>
+                    <td><code>(a_key: STRING_32): BOOLEAN</code></td>
+                    <td>Does key exist?</td>
+                </tr>
+                <tr>
+                    <td><code>item</code></td>
+                    <td><code>(a_key: STRING_32): detachable SIMPLE_JSON_VALUE</code></td>
+                    <td>Get value by key.</td>
+                </tr>
+                <tr>
+                    <td><code>string_item</code></td>
+                    <td><code>(a_key: STRING_32): detachable STRING_32</code></td>
+                    <td>Get string value by key.</td>
+                </tr>
+                <tr>
+                    <td><code>integer_item</code></td>
+                    <td><code>(a_key: STRING_32): INTEGER_64</code></td>
+                    <td>Get integer (0 if missing/wrong type).</td>
+                </tr>
+                <tr>
+                    <td><code>number_item</code></td>
+                    <td><code>(a_key: STRING_32): DOUBLE</code></td>
+                    <td>Get number (0.0 if missing/wrong type).</td>
+                </tr>
+                <tr>
+                    <td><code>boolean_item</code></td>
+                    <td><code>(a_key: STRING_32): BOOLEAN</code></td>
+                    <td>Get boolean (False if missing/wrong type).</td>
+                </tr>
+                <tr>
+                    <td><code>object_item</code></td>
+                    <td><code>(a_key: STRING_32): detachable SIMPLE_JSON_OBJECT</code></td>
+                    <td>Get nested object.</td>
+                </tr>
+                <tr>
+                    <td><code>array_item</code></td>
+                    <td><code>(a_key: STRING_32): detachable SIMPLE_JSON_ARRAY</code></td>
+                    <td>Get nested array.</td>
+                </tr>
+                <tr>
+                    <td><code>keys</code></td>
+                    <td><code>: ARRAYED_LIST [STRING_32]</code></td>
+                    <td>All property keys.</td>
+                </tr>
+                <tr>
+                    <td><code>count</code></td>
+                    <td><code>: INTEGER</code></td>
+                    <td>Number of properties.</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="simple-json-array">
+            <h2>SIMPLE_JSON_ARRAY</h2>
+            <p>JSON array with fluent builder API.</p>
+
+            <h3>Builder (returns LIKE CURRENT for chaining)</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>add_string</code></td>
+                    <td><code>(a_value: STRING_32): like Current</code></td>
+                    <td>Append string.</td>
+                </tr>
+                <tr>
+                    <td><code>add_integer</code></td>
+                    <td><code>(a_value: INTEGER_64): like Current</code></td>
+                    <td>Append integer.</td>
+                </tr>
+                <tr>
+                    <td><code>add_number</code></td>
+                    <td><code>(a_value: DOUBLE): like Current</code></td>
+                    <td>Append number.</td>
+                </tr>
+                <tr>
+                    <td><code>add_boolean</code></td>
+                    <td><code>(a_value: BOOLEAN): like Current</code></td>
+                    <td>Append boolean.</td>
+                </tr>
+                <tr>
+                    <td><code>add_null</code></td>
+                    <td><code>: like Current</code></td>
+                    <td>Append null.</td>
+                </tr>
+                <tr>
+                    <td><code>add_object</code></td>
+                    <td><code>(a_obj: SIMPLE_JSON_OBJECT): like Current</code></td>
+                    <td>Append object.</td>
+                </tr>
+                <tr>
+                    <td><code>add_array</code></td>
+                    <td><code>(a_arr: SIMPLE_JSON_ARRAY): like Current</code></td>
+                    <td>Append array.</td>
+                </tr>
+                <tr>
+                    <td><code>add_value</code></td>
+                    <td><code>(a_val: SIMPLE_JSON_VALUE): like Current</code></td>
+                    <td>Append any value.</td>
+                </tr>
+            </table>
+
+            <h3>Access</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>count</code></td>
+                    <td><code>: INTEGER</code></td>
+                    <td>Number of elements.</td>
+                </tr>
+                <tr>
+                    <td><code>valid_index</code></td>
+                    <td><code>(i: INTEGER): BOOLEAN</code></td>
+                    <td>Is index valid? (1-based)</td>
+                </tr>
+                <tr>
+                    <td><code>item</code></td>
+                    <td><code>(i: INTEGER): SIMPLE_JSON_VALUE</code></td>
+                    <td>Element at index (1-based).</td>
+                </tr>
+                <tr>
+                    <td><code>is_empty</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Is array empty?</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="simple-json-pointer">
+            <h2>SIMPLE_JSON_POINTER</h2>
+            <p>JSON Pointer (RFC 6901) navigation.</p>
+
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>parse_path</code></td>
+                    <td><code>(a_path: STRING_32): BOOLEAN</code></td>
+                    <td>Parse pointer path like "/users/0/name".</td>
+                </tr>
+                <tr>
+                    <td><code>value_at</code></td>
+                    <td><code>(a_root: SIMPLE_JSON_VALUE): detachable SIMPLE_JSON_VALUE</code></td>
+                    <td>Navigate to value at this pointer.</td>
+                </tr>
+                <tr>
+                    <td><code>segments</code></td>
+                    <td><code>: ARRAYED_LIST [STRING_32]</code></td>
+                    <td>Path segments after parsing.</td>
+                </tr>
+                <tr>
+                    <td><code>last_segment</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>Final segment (property name or index).</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="simple-json-schema">
+            <h2>SIMPLE_JSON_SCHEMA_VALIDATOR</h2>
+            <p>JSON Schema validation (Draft 7).</p>
+
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>make</code></td>
+                    <td><code></code></td>
+                    <td>Create validator.</td>
+                </tr>
+                <tr>
+                    <td><code>validate</code></td>
+                    <td><code>(a_instance: SIMPLE_JSON_VALUE; a_schema: SIMPLE_JSON_SCHEMA): SIMPLE_JSON_SCHEMA_VALIDATION_RESULT</code></td>
+                    <td>Validate instance against schema.</td>
+                </tr>
+            </table>
+
+            <h3>SIMPLE_JSON_SCHEMA</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>make_from_string</code></td>
+                    <td><code>(a_schema_json: STRING_32)</code></td>
+                    <td>Create schema from JSON string.</td>
+                </tr>
+                <tr>
+                    <td><code>make_from_value</code></td>
+                    <td><code>(a_value: SIMPLE_JSON_VALUE)</code></td>
+                    <td>Create schema from parsed JSON.</td>
+                </tr>
+            </table>
+
+            <h3>SIMPLE_JSON_SCHEMA_VALIDATION_RESULT</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>is_valid</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Did validation pass?</td>
+                </tr>
+                <tr>
+                    <td><code>errors</code></td>
+                    <td><code>: ARRAY [SIMPLE_JSON_SCHEMA_VALIDATION_ERROR]</code></td>
+                    <td>Validation errors.</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="simple-json-patch">
+            <h2>SIMPLE_JSON_PATCH</h2>
+            <p>JSON Patch (RFC 6902) operations.</p>
+
+            <h3>Adding Operations</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>add_add</code></td>
+                    <td><code>(a_path: STRING_32; a_value: SIMPLE_JSON_VALUE)</code></td>
+                    <td>Add value at path.</td>
+                </tr>
+                <tr>
+                    <td><code>add_remove</code></td>
+                    <td><code>(a_path: STRING_32)</code></td>
+                    <td>Remove value at path.</td>
+                </tr>
+                <tr>
+                    <td><code>add_replace</code></td>
+                    <td><code>(a_path: STRING_32; a_value: SIMPLE_JSON_VALUE)</code></td>
+                    <td>Replace value at path.</td>
+                </tr>
+                <tr>
+                    <td><code>add_move</code></td>
+                    <td><code>(a_from, a_path: STRING_32)</code></td>
+                    <td>Move value from one path to another.</td>
+                </tr>
+                <tr>
+                    <td><code>add_copy</code></td>
+                    <td><code>(a_from, a_path: STRING_32)</code></td>
+                    <td>Copy value from one path to another.</td>
+                </tr>
+                <tr>
+                    <td><code>add_test</code></td>
+                    <td><code>(a_path: STRING_32; a_value: SIMPLE_JSON_VALUE)</code></td>
+                    <td>Test value at path equals expected.</td>
+                </tr>
+            </table>
+
+            <h3>Applying</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>apply</code></td>
+                    <td><code>(a_document: SIMPLE_JSON_VALUE): SIMPLE_JSON_PATCH_RESULT</code></td>
+                    <td>Apply patch to document.</td>
+                </tr>
+                <tr>
+                    <td><code>to_json</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>Serialize patch to JSON.</td>
+                </tr>
+            </table>
+
+            <h3>SIMPLE_JSON_PATCH_RESULT</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>is_success</code></td>
+                    <td><code>: BOOLEAN</code></td>
+                    <td>Did patch succeed?</td>
+                </tr>
+                <tr>
+                    <td><code>result_document</code></td>
+                    <td><code>: SIMPLE_JSON_VALUE</code></td>
+                    <td>Patched document (if success).</td>
+                </tr>
+                <tr>
+                    <td><code>error_message</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>Error message (if failure).</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="simple-json-merge-patch">
+            <h2>SIMPLE_JSON_MERGE_PATCH</h2>
+            <p>JSON Merge Patch (RFC 7386).</p>
+
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>apply</code></td>
+                    <td><code>(a_target, a_patch: SIMPLE_JSON_VALUE): SIMPLE_JSON_MERGE_PATCH_RESULT</code></td>
+                    <td>Apply merge patch to target.</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="simple-json-stream">
+            <h2>SIMPLE_JSON_STREAM</h2>
+            <p>Streaming JSON parser for large files.</p>
+
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>make_from_string</code></td>
+                    <td><code>(a_json: STRING_32)</code></td>
+                    <td>Create stream from string.</td>
+                </tr>
+                <tr>
+                    <td><code>make_from_file</code></td>
+                    <td><code>(a_path: STRING_32)</code></td>
+                    <td>Create stream from file.</td>
+                </tr>
+                <tr>
+                    <td><code>new_cursor</code></td>
+                    <td><code>: SIMPLE_JSON_STREAM_CURSOR</code></td>
+                    <td>Get cursor for iteration.</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="simple-json-error">
+            <h2>SIMPLE_JSON_ERROR</h2>
+            <p>Parse error with position information.</p>
+
+            <table class="api-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Signature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>message</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>Error message.</td>
+                </tr>
+                <tr>
+                    <td><code>line</code></td>
+                    <td><code>: INTEGER</code></td>
+                    <td>Line number (1-based).</td>
+                </tr>
+                <tr>
+                    <td><code>column</code></td>
+                    <td><code>: INTEGER</code></td>
+                    <td>Column number (1-based).</td>
+                </tr>
+                <tr>
+                    <td><code>position</code></td>
+                    <td><code>: INTEGER</code></td>
+                    <td>Character position in source.</td>
+                </tr>
+                <tr>
+                    <td><code>to_string_with_position</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>Error with line:column prefix.</td>
+                </tr>
+                <tr>
+                    <td><code>to_detailed_string</code></td>
+                    <td><code>: STRING_32</code></td>
+                    <td>Error with source context.</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="constants">
+            <h2>JSON Type Constants</h2>
+            <p>From <code>SIMPLE_JSON_CONSTANTS</code>:</p>
+            <table class="api-table">
+                <tr>
+                    <th>Constant</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td><code>Json_type_string</code></td>
+                    <td>"string"</td>
+                </tr>
+                <tr>
+                    <td><code>Json_type_number</code></td>
+                    <td>"number"</td>
+                </tr>
+                <tr>
+                    <td><code>Json_type_integer</code></td>
+                    <td>"integer"</td>
+                </tr>
+                <tr>
+                    <td><code>Json_type_boolean</code></td>
+                    <td>"boolean"</td>
+                </tr>
+                <tr>
+                    <td><code>Json_type_null</code></td>
+                    <td>"null"</td>
+                </tr>
+                <tr>
+                    <td><code>Json_type_object</code></td>
+                    <td>"object"</td>
+                </tr>
+                <tr>
+                    <td><code>Json_type_array</code></td>
+                    <td>"array"</td>
+                </tr>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>Part of the <a href="https://github.com/simple-eiffel">simple_*</a> ecosystem of focused, single-purpose Eiffel libraries.</p>
+        <p>&copy; 2025 Larry Rix. MIT License.</p>
+    </footer>
+</body>
+</html>

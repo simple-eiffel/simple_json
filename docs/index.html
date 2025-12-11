@@ -17,14 +17,17 @@
         <div class="badges">
             <span class="badge badge-version">v1.0.0</span>
             <span class="badge badge-license">MIT</span>
+            <span class="badge badge-dbc">DbC Enforced</span>
         </div>
     </header>
 
     <nav>
         <ul>
             <li><a href="#overview">Overview</a></li>
-            <li><a href="#quick-start">Quick Start</a></li>
-            <li><a href="#features">Features</a></li>
+            <li><a href="user-guide.html">User Guide</a></li>
+            <li><a href="api-reference.html">API Reference</a></li>
+            <li><a href="architecture.html">Architecture</a></li>
+            <li><a href="cookbook.html">Cookbook</a></li>
             <li><a href="https://github.com/simple-eiffel/simple_json">GitHub</a></li>
         </ul>
     </nav>
@@ -41,59 +44,98 @@
             </p>
             <p>
                 Part of the <strong>simple_*</strong> ecosystem of focused, single-purpose Eiffel libraries.
-                Includes 29 HTML documentation files with EIS (F1 help) integration.
             </p>
         </section>
 
         <section id="quick-start">
             <h2>Quick Start</h2>
 
-            <div class="quick-start">
-                <h3>Installation</h3>
-                <p>Add to your ECF file:</p>
+            <h3>Installation</h3>
+            <ol>
+                <li>Set the environment variable:
+<pre><code>export SIMPLE_JSON=/path/to/simple_json</code></pre>
+                </li>
+                <li>Add to your ECF file:
 <pre><code>&lt;library name="simple_json" location="$SIMPLE_JSON/simple_json.ecf"/&gt;</code></pre>
-            </div>
+                </li>
+            </ol>
 
             <h3>Parse &amp; Navigate</h3>
 <pre><code><span class="keyword">local</span>
+    json: <span class="type">SIMPLE_JSON</span>
     value: <span class="type">SIMPLE_JSON_VALUE</span>
-    pointer: <span class="type">SIMPLE_JSON_POINTER</span>
 <span class="keyword">do</span>
-    value := json.parse (<span class="string">'{"users": [{"name": "Alice"}]}'</span>)
-    <span class="keyword">create</span> pointer.make_from_string (<span class="string">"/users/0/name"</span>)
-    print (pointer.value_at (value))  <span class="comment">-- "Alice"</span>
+    <span class="keyword">create</span> json
+    <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (<span class="string">'{"users": [{"name": "Alice"}]}'</span>) <span class="keyword">as</span> v <span class="keyword">then</span>
+        <span class="comment">-- Use JSONPath query</span>
+        print (json.query_string (v, <span class="string">"$.users[0].name"</span>))  <span class="comment">-- "Alice"</span>
+    <span class="keyword">end</span>
 <span class="keyword">end</span></code></pre>
 
-            <h3>Schema Validation</h3>
+            <h3>Build JSON</h3>
 <pre><code><span class="keyword">local</span>
-    validator: <span class="type">SIMPLE_JSON_SCHEMA_VALIDATOR</span>
+    obj: <span class="type">SIMPLE_JSON_OBJECT</span>
 <span class="keyword">do</span>
-    <span class="keyword">create</span> validator.make_from_string (schema_text)
-    <span class="keyword">if</span> validator.validate_string (data).is_valid <span class="keyword">then</span>
-        <span class="comment">-- Valid JSON</span>
-    <span class="keyword">end</span>
+    obj := json.new_object
+        .put_string (<span class="string">"name"</span>, <span class="string">"Alice"</span>)
+        .put_integer (<span class="string">"age"</span>, 30)
+        .put_boolean (<span class="string">"active"</span>, True)
+
+    print (obj.to_json)
+    <span class="comment">-- {"name":"Alice","age":30,"active":true}</span>
 <span class="keyword">end</span></code></pre>
         </section>
 
         <section id="features">
-            <h2>Features</h2>
-            <ul>
-                <li><strong>JSON Schema Validation</strong> (Draft 7) - Only Eiffel library with this</li>
-                <li><strong>JSON Pointer</strong> (RFC 6901) - Path-based navigation</li>
-                <li><strong>JSON Patch</strong> (RFC 6902) - Standardized modifications</li>
-                <li><strong>JSON Merge Patch</strong> (RFC 7386) - Declarative merging</li>
-                <li><strong>JSONPath Queries</strong> - SQL-like queries for JSON</li>
-                <li><strong>Streaming Parser</strong> - Process large files efficiently</li>
-                <li><strong>Entity Serialization</strong> - SIMPLE_JSON_SERIALIZABLE pattern</li>
-                <li>216 tests, 100% coverage</li>
-                <li>Full Design by Contract support</li>
+            <h2>Key Features</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>JSON Schema Validation</h3>
+                    <p>Draft 7 support - the only Eiffel library with JSON Schema validation.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>JSON Pointer (RFC 6901)</h3>
+                    <p>Navigate JSON with simple path expressions like "/users/0/name".</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>JSON Patch (RFC 6902)</h3>
+                    <p>Standardized add, remove, replace, move, copy, and test operations.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>JSON Merge Patch</h3>
+                    <p>RFC 7386 declarative merging for configuration overlays.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>JSONPath Queries</h3>
+                    <p>SQL-like queries with wildcards: "$.users[*].name".</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>Streaming Parser</h3>
+                    <p>Process gigabyte-sized JSON files with constant memory.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="documentation">
+            <h2>Documentation</h2>
+            <ul class="doc-links">
+                <li><a href="user-guide.html"><strong>User Guide</strong></a> - Complete tutorial with examples</li>
+                <li><a href="api-reference.html"><strong>API Reference</strong></a> - Full feature documentation</li>
+                <li><a href="architecture.html"><strong>Architecture</strong></a> - Internal design and rationale</li>
+                <li><a href="cookbook.html"><strong>Cookbook</strong></a> - Real-world recipes and patterns</li>
             </ul>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 simple_* ecosystem. MIT License.</p>
-        <p><a href="https://github.com/simple-eiffel">GitHub</a></p>
+        <p>Part of the <a href="https://github.com/simple-eiffel">simple_*</a> ecosystem of focused, single-purpose Eiffel libraries.</p>
+        <p>&copy; 2025 Larry Rix. MIT License.</p>
     </footer>
 </body>
 </html>

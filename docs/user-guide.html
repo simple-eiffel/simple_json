@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guide - simple_json</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="images/logo.png" alt="simple_* logo" class="logo">
+        </div>
+        <h1>simple_json</h1>
+        <p class="tagline">User Guide</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="user-guide.html" class="active">User Guide</a></li>
+            <li><a href="api-reference.html">API Reference</a></li>
+            <li><a href="architecture.html">Architecture</a></li>
+            <li><a href="cookbook.html">Cookbook</a></li>
+            <li><a href="https://github.com/simple-eiffel/simple_json">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="getting-started">
+            <h2>Getting Started</h2>
+
+            <h3>Installation</h3>
+            <ol>
+                <li>Set the environment variable:
+<pre><code>export SIMPLE_JSON=/path/to/simple_json</code></pre>
+                </li>
+                <li>Add to your ECF file:
+<pre><code>&lt;library name="simple_json" location="$SIMPLE_JSON/simple_json.ecf"/&gt;</code></pre>
+                </li>
+            </ol>
+
+            <h3>Your First JSON Parser</h3>
+<pre><code><span class="keyword">class</span>
+    <span class="type">MY_APP</span>
+
+<span class="keyword">feature</span>
+    json: <span class="type">SIMPLE_JSON</span>
+        <span class="keyword">once</span>
+            <span class="keyword">create</span> Result
+        <span class="keyword">end</span>
+
+    demo
+        <span class="keyword">local</span>
+            value: <span class="type">SIMPLE_JSON_VALUE</span>
+        <span class="keyword">do</span>
+            <span class="comment">-- Parse JSON text</span>
+            <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (<span class="string">'{"name": "Alice", "age": 30}'</span>) <span class="keyword">as</span> v <span class="keyword">then</span>
+                print (v.as_object.string_item (<span class="string">"name"</span>))  <span class="comment">-- "Alice"</span>
+                print (v.as_object.integer_item (<span class="string">"age"</span>))   <span class="comment">-- 30</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="parsing">
+            <h2>Parsing JSON</h2>
+
+            <h3>Parse from String</h3>
+<pre><code><span class="keyword">local</span>
+    json: <span class="type">SIMPLE_JSON</span>
+    value: <span class="type">SIMPLE_JSON_VALUE</span>
+<span class="keyword">do</span>
+    <span class="keyword">create</span> json
+
+    <span class="comment">-- Parse object</span>
+    <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (<span class="string">'{"key": "value"}'</span>) <span class="keyword">as</span> v <span class="keyword">then</span>
+        <span class="comment">-- Use v</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">-- Parse array</span>
+    <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (<span class="string">'[1, 2, 3]'</span>) <span class="keyword">as</span> arr <span class="keyword">then</span>
+        <span class="comment">-- Use arr</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Parse from File</h3>
+<pre><code><span class="keyword">if</span> <span class="keyword">attached</span> json.parse_file (<span class="string">"config.json"</span>) <span class="keyword">as</span> config <span class="keyword">then</span>
+    <span class="comment">-- Use config</span>
+<span class="keyword">else</span>
+    print (json.errors_as_string)
+<span class="keyword">end</span></code></pre>
+
+            <h3>Validate Without Parsing</h3>
+<pre><code><span class="keyword">if</span> json.is_valid_json (user_input) <span class="keyword">then</span>
+    <span class="comment">-- Safe to parse</span>
+<span class="keyword">else</span>
+    print (<span class="string">"Invalid JSON: "</span> + json.errors_as_string)
+<span class="keyword">end</span></code></pre>
+
+            <h3>Error Handling</h3>
+<pre><code><span class="keyword">if</span> <span class="keyword">attached</span> json.parse (bad_json) <span class="keyword">as</span> v <span class="keyword">then</span>
+    <span class="comment">-- Success</span>
+<span class="keyword">else</span>
+    <span class="comment">-- Detailed error information</span>
+    <span class="keyword">if</span> json.has_errors <span class="keyword">then</span>
+        print (<span class="string">"Error count: "</span> + json.error_count.out)
+
+        <span class="comment">-- First error only</span>
+        <span class="keyword">if</span> <span class="keyword">attached</span> json.first_error <span class="keyword">as</span> err <span class="keyword">then</span>
+            print (err.message)
+            print (<span class="string">"Line: "</span> + err.line.out)
+            print (<span class="string">"Column: "</span> + err.column.out)
+        <span class="keyword">end</span>
+
+        <span class="comment">-- All errors with context</span>
+        print (json.detailed_errors)
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="building">
+            <h2>Building JSON</h2>
+
+            <h3>Build Objects</h3>
+<pre><code><span class="keyword">local</span>
+    json: <span class="type">SIMPLE_JSON</span>
+    obj: <span class="type">SIMPLE_JSON_OBJECT</span>
+<span class="keyword">do</span>
+    <span class="keyword">create</span> json
+
+    <span class="comment">-- Fluent builder pattern</span>
+    obj := json.new_object
+        .put_string (<span class="string">"name"</span>, <span class="string">"Alice"</span>)
+        .put_integer (<span class="string">"age"</span>, 30)
+        .put_boolean (<span class="string">"active"</span>, True)
+        .put_null (<span class="string">"nickname"</span>)
+
+    print (obj.to_json)
+    <span class="comment">-- {"name":"Alice","age":30,"active":true,"nickname":null}</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Build Arrays</h3>
+<pre><code><span class="keyword">local</span>
+    arr: <span class="type">SIMPLE_JSON_ARRAY</span>
+<span class="keyword">do</span>
+    arr := json.new_array
+        .add_string (<span class="string">"apple"</span>)
+        .add_string (<span class="string">"banana"</span>)
+        .add_integer (42)
+        .add_boolean (True)
+
+    print (arr.to_json)  <span class="comment">-- ["apple","banana",42,true]</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Nested Structures</h3>
+<pre><code><span class="keyword">local</span>
+    person: <span class="type">SIMPLE_JSON_OBJECT</span>
+    address: <span class="type">SIMPLE_JSON_OBJECT</span>
+    hobbies: <span class="type">SIMPLE_JSON_ARRAY</span>
+<span class="keyword">do</span>
+    <span class="comment">-- Build address sub-object</span>
+    address := json.new_object
+        .put_string (<span class="string">"street"</span>, <span class="string">"123 Main St"</span>)
+        .put_string (<span class="string">"city"</span>, <span class="string">"Boston"</span>)
+
+    <span class="comment">-- Build hobbies array</span>
+    hobbies := json.new_array
+        .add_string (<span class="string">"reading"</span>)
+        .add_string (<span class="string">"coding"</span>)
+
+    <span class="comment">-- Build person with nested data</span>
+    person := json.new_object
+        .put_string (<span class="string">"name"</span>, <span class="string">"Alice"</span>)
+        .put_object (<span class="string">"address"</span>, address)
+        .put_array (<span class="string">"hobbies"</span>, hobbies)
+
+    print (person.to_json)
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="navigation">
+            <h2>Navigating JSON</h2>
+
+            <h3>Object Navigation</h3>
+<pre><code><span class="keyword">if</span> <span class="keyword">attached</span> json.parse (text) <span class="keyword">as</span> v <span class="keyword">then</span>
+    <span class="keyword">if</span> v.is_object <span class="keyword">then</span>
+        <span class="keyword">local</span>
+            obj: <span class="type">SIMPLE_JSON_OBJECT</span>
+        <span class="keyword">do</span>
+            obj := v.as_object
+
+            <span class="comment">-- Get typed values</span>
+            <span class="keyword">if</span> <span class="keyword">attached</span> obj.string_item (<span class="string">"name"</span>) <span class="keyword">as</span> name <span class="keyword">then</span>
+                print (name)
+            <span class="keyword">end</span>
+
+            print (obj.integer_item (<span class="string">"age"</span>))  <span class="comment">-- 0 if missing</span>
+            print (obj.boolean_item (<span class="string">"active"</span>))
+
+            <span class="comment">-- Check if key exists</span>
+            <span class="keyword">if</span> obj.has (<span class="string">"email"</span>) <span class="keyword">then</span>
+                <span class="comment">-- Key exists</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">-- Get nested object</span>
+            <span class="keyword">if</span> <span class="keyword">attached</span> obj.object_item (<span class="string">"address"</span>) <span class="keyword">as</span> addr <span class="keyword">then</span>
+                print (addr.string_item (<span class="string">"city"</span>))
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Array Navigation</h3>
+<pre><code><span class="keyword">if</span> v.is_array <span class="keyword">then</span>
+    <span class="keyword">local</span>
+        arr: <span class="type">SIMPLE_JSON_ARRAY</span>
+        i: <span class="type">INTEGER</span>
+    <span class="keyword">do</span>
+        arr := v.as_array
+
+        print (<span class="string">"Count: "</span> + arr.count.out)
+
+        <span class="comment">-- Indexed access (1-based)</span>
+        <span class="keyword">if</span> arr.valid_index (1) <span class="keyword">then</span>
+            print (arr.item (1).out)
+        <span class="keyword">end</span>
+
+        <span class="comment">-- Iteration</span>
+        <span class="keyword">across</span> arr <span class="keyword">as</span> ic <span class="keyword">loop</span>
+            print (ic.out)
+        <span class="keyword">end</span>
+
+        <span class="comment">-- Traditional loop</span>
+        <span class="keyword">from</span> i := 1 <span class="keyword">until</span> i > arr.count <span class="keyword">loop</span>
+            print (arr.item (i).out)
+            i := i + 1
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="jsonpath">
+            <h2>JSONPath Queries</h2>
+
+            <p>JSONPath lets you query JSON using path expressions, similar to XPath for XML.</p>
+
+            <h3>Basic Path Queries</h3>
+<pre><code><span class="keyword">local</span>
+    json: <span class="type">SIMPLE_JSON</span>
+    v: <span class="type">SIMPLE_JSON_VALUE</span>
+<span class="keyword">do</span>
+    <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (<span class="string">'{"person": {"name": "Alice", "age": 30}}'</span>) <span class="keyword">as</span> value <span class="keyword">then</span>
+        <span class="comment">-- Query nested string</span>
+        <span class="keyword">if</span> <span class="keyword">attached</span> json.query_string (value, <span class="string">"$.person.name"</span>) <span class="keyword">as</span> name <span class="keyword">then</span>
+            print (name)  <span class="comment">-- "Alice"</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">-- Query nested integer</span>
+        print (json.query_integer (value, <span class="string">"$.person.age"</span>))  <span class="comment">-- 30</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Array Access</h3>
+<pre><code><span class="comment">-- JSON: {"users": [{"name": "Alice"}, {"name": "Bob"}]}</span>
+
+<span class="comment">-- Access specific array element (0-indexed)</span>
+json.query_string (v, <span class="string">"$.users[0].name"</span>)  <span class="comment">-- "Alice"</span>
+json.query_string (v, <span class="string">"$.users[1].name"</span>)  <span class="comment">-- "Bob"</span></code></pre>
+
+            <h3>Wildcard Queries</h3>
+<pre><code><span class="comment">-- JSON: {"hobbies": ["reading", "coding", "gaming"]}</span>
+
+<span class="comment">-- Get all array elements</span>
+<span class="keyword">local</span>
+    hobbies: <span class="type">ARRAYED_LIST [STRING_32]</span>
+<span class="keyword">do</span>
+    hobbies := json.query_strings (v, <span class="string">"$.hobbies[*]"</span>)
+    <span class="comment">-- ["reading", "coding", "gaming"]</span>
+<span class="keyword">end</span>
+
+<span class="comment">-- JSON: {"people": [{"name": "Alice"}, {"name": "Bob"}]}</span>
+
+<span class="comment">-- Get all names from array of objects</span>
+names := json.query_strings (v, <span class="string">"$.people[*].name"</span>)
+<span class="comment">-- ["Alice", "Bob"]</span></code></pre>
+        </section>
+
+        <section id="json-pointer">
+            <h2>JSON Pointer (RFC 6901)</h2>
+
+            <p>JSON Pointer is a simpler alternative to JSONPath, using forward slashes.</p>
+
+<pre><code><span class="keyword">local</span>
+    pointer: <span class="type">SIMPLE_JSON_POINTER</span>
+    v: <span class="type">SIMPLE_JSON_VALUE</span>
+<span class="keyword">do</span>
+    <span class="comment">-- Parse JSON</span>
+    <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (<span class="string">'{"users": [{"name": "Alice"}]}'</span>) <span class="keyword">as</span> root <span class="keyword">then</span>
+        <span class="keyword">create</span> pointer
+
+        <span class="comment">-- Navigate with pointer</span>
+        <span class="keyword">if</span> pointer.parse_path (<span class="string">"/users/0/name"</span>) <span class="keyword">then</span>
+            <span class="keyword">if</span> <span class="keyword">attached</span> pointer.value_at (root) <span class="keyword">as</span> val <span class="keyword">then</span>
+                print (val.as_string_32)  <span class="comment">-- "Alice"</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+
+            <div class="highlight-box">
+                <h3>JSONPath vs JSON Pointer</h3>
+                <table>
+                    <tr>
+                        <th>JSONPath</th>
+                        <th>JSON Pointer</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><code>$.name</code></td>
+                        <td><code>/name</code></td>
+                        <td>Root property</td>
+                    </tr>
+                    <tr>
+                        <td><code>$.users[0]</code></td>
+                        <td><code>/users/0</code></td>
+                        <td>Array element</td>
+                    </tr>
+                    <tr>
+                        <td><code>$.users[*].name</code></td>
+                        <td>N/A</td>
+                        <td>Wildcards (JSONPath only)</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section id="schema">
+            <h2>JSON Schema Validation</h2>
+
+            <p><strong>simple_json</strong> supports JSON Schema Draft 7 validation - the only Eiffel library with this capability.</p>
+
+            <h3>Basic Schema Validation</h3>
+<pre><code><span class="keyword">local</span>
+    schema: <span class="type">SIMPLE_JSON_SCHEMA</span>
+    validator: <span class="type">SIMPLE_JSON_SCHEMA_VALIDATOR</span>
+    result: <span class="type">SIMPLE_JSON_SCHEMA_VALIDATION_RESULT</span>
+<span class="keyword">do</span>
+    <span class="comment">-- Define schema</span>
+    <span class="keyword">create</span> schema.make_from_string (<span class="string">'{"type": "object", "properties": {"name": {"type": "string"}, "age": {"type": "integer", "minimum": 0}}}'</span>)
+
+    <span class="comment">-- Create validator</span>
+    <span class="keyword">create</span> validator.make
+
+    <span class="comment">-- Validate data</span>
+    <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (<span class="string">'{"name": "Alice", "age": 30}'</span>) <span class="keyword">as</span> data <span class="keyword">then</span>
+        result := validator.validate (data, schema)
+
+        <span class="keyword">if</span> result.is_valid <span class="keyword">then</span>
+            print (<span class="string">"Valid!"</span>)
+        <span class="keyword">else</span>
+            <span class="keyword">across</span> result.errors <span class="keyword">as</span> err <span class="keyword">loop</span>
+                print (err.message)
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Supported Schema Keywords</h3>
+            <ul>
+                <li><strong>type</strong>: string, number, integer, object, array, boolean, null</li>
+                <li><strong>properties</strong>: Object property schemas</li>
+                <li><strong>required</strong>: Required property names</li>
+                <li><strong>minimum, maximum</strong>: Number constraints</li>
+                <li><strong>minLength, maxLength</strong>: String length constraints</li>
+                <li><strong>pattern</strong>: Regex pattern for strings</li>
+                <li><strong>minItems, maxItems</strong>: Array length constraints</li>
+                <li><strong>items</strong>: Array item schema</li>
+            </ul>
+        </section>
+
+        <section id="patch">
+            <h2>JSON Patch (RFC 6902)</h2>
+
+            <p>JSON Patch lets you describe modifications to a JSON document.</p>
+
+            <h3>Create and Apply Patches</h3>
+<pre><code><span class="keyword">local</span>
+    patch: <span class="type">SIMPLE_JSON_PATCH</span>
+    result: <span class="type">SIMPLE_JSON_PATCH_RESULT</span>
+<span class="keyword">do</span>
+    <span class="comment">-- Create patch</span>
+    patch := json.create_patch
+    patch.add_add (<span class="string">"/email"</span>, json.string_value (<span class="string">"alice@example.com"</span>))
+    patch.add_replace (<span class="string">"/age"</span>, json.integer_value (31))
+    patch.add_remove (<span class="string">"/temporary"</span>)
+
+    <span class="comment">-- Apply to document</span>
+    <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (original_json) <span class="keyword">as</span> doc <span class="keyword">then</span>
+        result := patch.apply (doc)
+
+        <span class="keyword">if</span> result.is_success <span class="keyword">then</span>
+            print (result.result_document.to_json)
+        <span class="keyword">else</span>
+            print (<span class="string">"Patch failed: "</span> + result.error_message)
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Patch Operations</h3>
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>add</td>
+                    <td><code>add_add (path, value)</code></td>
+                    <td>Add value at path</td>
+                </tr>
+                <tr>
+                    <td>remove</td>
+                    <td><code>add_remove (path)</code></td>
+                    <td>Remove value at path</td>
+                </tr>
+                <tr>
+                    <td>replace</td>
+                    <td><code>add_replace (path, value)</code></td>
+                    <td>Replace value at path</td>
+                </tr>
+                <tr>
+                    <td>move</td>
+                    <td><code>add_move (from, path)</code></td>
+                    <td>Move value from one path to another</td>
+                </tr>
+                <tr>
+                    <td>copy</td>
+                    <td><code>add_copy (from, path)</code></td>
+                    <td>Copy value from one path to another</td>
+                </tr>
+                <tr>
+                    <td>test</td>
+                    <td><code>add_test (path, value)</code></td>
+                    <td>Test that path equals value</td>
+                </tr>
+            </table>
+
+            <h3>Parse Patch from JSON</h3>
+<pre><code><span class="keyword">local</span>
+    patch_json: <span class="type">STRING</span>
+    result: <span class="type">SIMPLE_JSON_PATCH_RESULT</span>
+<span class="keyword">do</span>
+    patch_json := <span class="string">'[{"op": "add", "path": "/email", "value": "alice@example.com"}, {"op": "replace", "path": "/age", "value": 31}]'</span>
+
+    result := json.apply_patch (document, patch_json)
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="merge-patch">
+            <h2>JSON Merge Patch (RFC 7386)</h2>
+
+            <p>A simpler alternative to JSON Patch - just provide the fields you want to change.</p>
+
+<pre><code><span class="keyword">local</span>
+    merge: <span class="type">SIMPLE_JSON_MERGE_PATCH</span>
+    result: <span class="type">SIMPLE_JSON_MERGE_PATCH_RESULT</span>
+<span class="keyword">do</span>
+    <span class="comment">-- Original: {"name": "Alice", "age": 30, "temp": true}</span>
+    <span class="comment">-- Patch: {"age": 31, "email": "alice@ex.com", "temp": null}</span>
+    <span class="comment">-- Result: {"name": "Alice", "age": 31, "email": "alice@ex.com"}</span>
+
+    <span class="keyword">create</span> merge
+    result := merge.apply (original, patch)
+
+    <span class="keyword">if</span> result.is_success <span class="keyword">then</span>
+        print (result.result_document.to_json)
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+
+            <div class="highlight-box">
+                <h3>Merge Patch Rules</h3>
+                <ul>
+                    <li>Properties in patch replace existing properties</li>
+                    <li>New properties are added</li>
+                    <li><code>null</code> values remove properties</li>
+                    <li>Properties not in patch are unchanged</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="streaming">
+            <h2>Streaming Parser</h2>
+
+            <p>For large files, use the streaming parser to process JSON incrementally.</p>
+
+<pre><code><span class="keyword">local</span>
+    stream: <span class="type">SIMPLE_JSON_STREAM</span>
+    cursor: <span class="type">SIMPLE_JSON_STREAM_CURSOR</span>
+<span class="keyword">do</span>
+    <span class="keyword">create</span> stream.make_from_file (<span class="string">"large_file.json"</span>)
+
+    <span class="keyword">from</span>
+        cursor := stream.new_cursor
+    <span class="keyword">until</span>
+        cursor.after
+    <span class="keyword">loop</span>
+        <span class="keyword">if</span> cursor.is_object_start <span class="keyword">then</span>
+            print (<span class="string">"Object started"</span>)
+        <span class="keyword">elseif</span> cursor.is_key <span class="keyword">then</span>
+            print (<span class="string">"Key: "</span> + cursor.key_name)
+        <span class="keyword">elseif</span> cursor.is_string <span class="keyword">then</span>
+            print (<span class="string">"Value: "</span> + cursor.string_value)
+        <span class="keyword">end</span>
+        cursor.forth
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="serialization">
+            <h2>Entity Serialization</h2>
+
+            <p>Implement <code>SIMPLE_JSON_SERIALIZABLE</code> for automatic JSON conversion.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">PERSON</span>
+
+<span class="keyword">inherit</span>
+    <span class="type">SIMPLE_JSON_SERIALIZABLE</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Access</span>
+
+    name: <span class="type">STRING_32</span>
+    age: <span class="type">INTEGER</span>
+    email: <span class="keyword">detachable</span> <span class="type">STRING_32</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Serialization</span>
+
+    to_json_object: <span class="type">SIMPLE_JSON_OBJECT</span>
+        <span class="keyword">do</span>
+            Result := json.new_object
+                .put_string (<span class="string">"name"</span>, name)
+                .put_integer (<span class="string">"age"</span>, age)
+            <span class="keyword">if</span> <span class="keyword">attached</span> email <span class="keyword">as</span> e <span class="keyword">then</span>
+                Result.put_string (<span class="string">"email"</span>, e)
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+    from_json (a_value: <span class="type">SIMPLE_JSON_VALUE</span>)
+        <span class="keyword">do</span>
+            <span class="keyword">if</span> a_value.is_object <span class="keyword">then</span>
+                <span class="keyword">if</span> <span class="keyword">attached</span> a_value.as_object.string_item (<span class="string">"name"</span>) <span class="keyword">as</span> n <span class="keyword">then</span>
+                    name := n
+                <span class="keyword">end</span>
+                age := a_value.as_object.integer_item (<span class="string">"age"</span>)
+                email := a_value.as_object.string_item (<span class="string">"email"</span>)
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+
+            <h3>Usage</h3>
+<pre><code><span class="keyword">local</span>
+    person: <span class="type">PERSON</span>
+<span class="keyword">do</span>
+    <span class="comment">-- Serialize to JSON</span>
+    <span class="keyword">create</span> person
+    person.set_name (<span class="string">"Alice"</span>)
+    person.set_age (30)
+    print (person.to_json)
+
+    <span class="comment">-- Deserialize from JSON</span>
+    <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (json_text) <span class="keyword">as</span> v <span class="keyword">then</span>
+        <span class="keyword">create</span> person
+        person.from_json (v)
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="unicode">
+            <h2>Unicode Support</h2>
+
+            <p><strong>simple_json</strong> uses <code>STRING_32</code> throughout for proper Unicode support.</p>
+
+<pre><code><span class="keyword">local</span>
+    obj: <span class="type">SIMPLE_JSON_OBJECT</span>
+<span class="keyword">do</span>
+    <span class="comment">-- Unicode strings work natively</span>
+    obj := json.new_object
+        .put_string (<span class="string">"greeting"</span>, <span class="string">"Hello"</span>)
+        .put_string (<span class="string">"emoji"</span>, <span class="string">"!"</span>)
+
+    print (obj.to_json)
+    <span class="comment">-- Properly encoded UTF-8 output</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+    </main>
+
+    <footer>
+        <p>Part of the <a href="https://github.com/simple-eiffel">simple_*</a> ecosystem of focused, single-purpose Eiffel libraries.</p>
+        <p>&copy; 2025 Larry Rix. MIT License.</p>
+    </footer>
+</body>
+</html>

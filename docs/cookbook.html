@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookbook - simple_json</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="images/logo.png" alt="simple_* logo" class="logo">
+        </div>
+        <h1>simple_json</h1>
+        <p class="tagline">Cookbook</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="user-guide.html">User Guide</a></li>
+            <li><a href="api-reference.html">API Reference</a></li>
+            <li><a href="architecture.html">Architecture</a></li>
+            <li><a href="cookbook.html" class="active">Cookbook</a></li>
+            <li><a href="https://github.com/simple-eiffel/simple_json">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="intro">
+            <h2>Cookbook Recipes</h2>
+            <p>Real-world examples and patterns for common JSON tasks.</p>
+        </section>
+
+        <section id="config-file" class="recipe">
+            <h2>Recipe 1: Configuration File Reader</h2>
+            <p>Load and access application configuration from JSON.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">APP_CONFIG</span>
+
+<span class="keyword">create</span>
+    make_from_file
+
+<span class="keyword">feature</span> {NONE} <span class="comment">-- Initialization</span>
+
+    make_from_file (a_path: STRING)
+        <span class="keyword">local</span>
+            json: <span class="type">SIMPLE_JSON</span>
+        <span class="keyword">do</span>
+            <span class="keyword">create</span> json
+            <span class="keyword">if</span> <span class="keyword">attached</span> json.parse_file (a_path) <span class="keyword">as</span> v <span class="keyword">then</span>
+                load_from_json (v)
+            <span class="keyword">else</span>
+                <span class="comment">-- Use defaults or raise error</span>
+                set_defaults
+                <span class="keyword">if</span> json.has_errors <span class="keyword">then</span>
+                    io.put_string (<span class="string">"Config error: "</span> + json.errors_as_string)
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Access</span>
+
+    database_host: STRING
+    database_port: INTEGER
+    debug_mode: BOOLEAN
+    allowed_origins: ARRAYED_LIST [STRING]
+
+<span class="keyword">feature</span> {NONE} <span class="comment">-- Implementation</span>
+
+    load_from_json (v: <span class="type">SIMPLE_JSON_VALUE</span>)
+        <span class="keyword">local</span>
+            json: <span class="type">SIMPLE_JSON</span>
+        <span class="keyword">do</span>
+            <span class="keyword">create</span> json
+            <span class="keyword">create</span> allowed_origins.make (0)
+
+            <span class="comment">-- Use JSONPath for nested access</span>
+            <span class="keyword">if</span> <span class="keyword">attached</span> json.query_string (v, <span class="string">"$.database.host"</span>) <span class="keyword">as</span> h <span class="keyword">then</span>
+                database_host := h
+            <span class="keyword">else</span>
+                database_host := <span class="string">"localhost"</span>
+            <span class="keyword">end</span>
+
+            database_port := json.query_integer (v, <span class="string">"$.database.port"</span>).to_integer
+            <span class="keyword">if</span> database_port = 0 <span class="keyword">then</span>
+                database_port := 5432
+            <span class="keyword">end</span>
+
+            <span class="comment">-- Boolean with default</span>
+            <span class="keyword">if</span> v.is_object <span class="keyword">then</span>
+                debug_mode := v.as_object.boolean_item (<span class="string">"debug"</span>)
+            <span class="keyword">end</span>
+
+            <span class="comment">-- Array of strings</span>
+            <span class="keyword">across</span> json.query_strings (v, <span class="string">"$.cors.origins[*]"</span>) <span class="keyword">as</span> origin <span class="keyword">loop</span>
+                allowed_origins.force (origin)
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+    set_defaults
+        <span class="keyword">do</span>
+            database_host := <span class="string">"localhost"</span>
+            database_port := 5432
+            debug_mode := False
+            <span class="keyword">create</span> allowed_origins.make (0)
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+
+            <h3>Example config.json</h3>
+<pre><code>{
+    "database": {
+        "host": "db.example.com",
+        "port": 5432
+    },
+    "debug": true,
+    "cors": {
+        "origins": ["http://localhost:3000", "https://app.example.com"]
+    }
+}</code></pre>
+        </section>
+
+        <section id="rest-api" class="recipe">
+            <h2>Recipe 2: REST API Response Builder</h2>
+            <p>Build consistent JSON responses for web APIs.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">API_RESPONSE_BUILDER</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Response Building</span>
+
+    success (a_data: <span class="type">SIMPLE_JSON_VALUE</span>): STRING
+            <span class="comment">-- Build success response</span>
+        <span class="keyword">do</span>
+            Result := json.new_object
+                .put_boolean (<span class="string">"success"</span>, True)
+                .put_value (<span class="string">"data"</span>, a_data)
+                .put_null (<span class="string">"error"</span>)
+                .to_json
+        <span class="keyword">end</span>
+
+    success_with_meta (a_data: <span class="type">SIMPLE_JSON_VALUE</span>; a_page, a_total: INTEGER): STRING
+            <span class="comment">-- Build paginated response</span>
+        <span class="keyword">do</span>
+            Result := json.new_object
+                .put_boolean (<span class="string">"success"</span>, True)
+                .put_value (<span class="string">"data"</span>, a_data)
+                .put_object (<span class="string">"meta"</span>, json.new_object
+                    .put_integer (<span class="string">"page"</span>, a_page)
+                    .put_integer (<span class="string">"total"</span>, a_total)
+                    .put_integer (<span class="string">"per_page"</span>, 20))
+                .put_null (<span class="string">"error"</span>)
+                .to_json
+        <span class="keyword">end</span>
+
+    error (a_code: INTEGER; a_message: STRING): STRING
+            <span class="comment">-- Build error response</span>
+        <span class="keyword">do</span>
+            Result := json.new_object
+                .put_boolean (<span class="string">"success"</span>, False)
+                .put_null (<span class="string">"data"</span>)
+                .put_object (<span class="string">"error"</span>, json.new_object
+                    .put_integer (<span class="string">"code"</span>, a_code)
+                    .put_string (<span class="string">"message"</span>, a_message))
+                .to_json
+        <span class="keyword">end</span>
+
+    validation_error (a_errors: ARRAYED_LIST [TUPLE [field, message: STRING]]): STRING
+            <span class="comment">-- Build validation error response</span>
+        <span class="keyword">local</span>
+            errors_array: <span class="type">SIMPLE_JSON_ARRAY</span>
+        <span class="keyword">do</span>
+            errors_array := json.new_array
+            <span class="keyword">across</span> a_errors <span class="keyword">as</span> e <span class="keyword">loop</span>
+                errors_array.add_object (json.new_object
+                    .put_string (<span class="string">"field"</span>, e.field)
+                    .put_string (<span class="string">"message"</span>, e.message))
+            <span class="keyword">end</span>
+
+            Result := json.new_object
+                .put_boolean (<span class="string">"success"</span>, False)
+                .put_null (<span class="string">"data"</span>)
+                .put_object (<span class="string">"error"</span>, json.new_object
+                    .put_integer (<span class="string">"code"</span>, 422)
+                    .put_string (<span class="string">"message"</span>, <span class="string">"Validation failed"</span>)
+                    .put_array (<span class="string">"details"</span>, errors_array))
+                .to_json
+        <span class="keyword">end</span>
+
+<span class="keyword">feature</span> {NONE} <span class="comment">-- Implementation</span>
+
+    json: <span class="type">SIMPLE_JSON</span>
+        <span class="keyword">once</span>
+            <span class="keyword">create</span> Result
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+
+            <h3>Usage</h3>
+<pre><code><span class="keyword">local</span>
+    response: <span class="type">API_RESPONSE_BUILDER</span>
+    users: <span class="type">SIMPLE_JSON_ARRAY</span>
+<span class="keyword">do</span>
+    <span class="keyword">create</span> response
+
+    <span class="comment">-- Success response</span>
+    users := json.new_array
+        .add_object (json.new_object.put_string (<span class="string">"name"</span>, <span class="string">"Alice"</span>))
+        .add_object (json.new_object.put_string (<span class="string">"name"</span>, <span class="string">"Bob"</span>))
+
+    print (response.success_with_meta (users.to_value, 1, 42))
+    <span class="comment">-- {"success":true,"data":[...],"meta":{"page":1,"total":42}}</span>
+
+    <span class="comment">-- Error response</span>
+    print (response.error (404, <span class="string">"User not found"</span>))
+    <span class="comment">-- {"success":false,"data":null,"error":{"code":404,"message":"User not found"}}</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="schema-validation" class="recipe">
+            <h2>Recipe 3: Request Validation with Schema</h2>
+            <p>Validate incoming JSON requests against a schema.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">USER_VALIDATOR</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Validation</span>
+
+    validate_create_user (a_json: STRING): TUPLE [valid: BOOLEAN; errors: STRING; data: <span class="keyword">detachable</span> <span class="type">SIMPLE_JSON_VALUE</span>]
+            <span class="comment">-- Validate user creation request</span>
+        <span class="keyword">local</span>
+            json: <span class="type">SIMPLE_JSON</span>
+            validator: <span class="type">SIMPLE_JSON_SCHEMA_VALIDATOR</span>
+            result: <span class="type">SIMPLE_JSON_SCHEMA_VALIDATION_RESULT</span>
+            error_text: STRING
+        <span class="keyword">do</span>
+            <span class="keyword">create</span> json
+            <span class="keyword">create</span> validator.make
+
+            <span class="comment">-- First, parse the JSON</span>
+            <span class="keyword">if</span> <span class="keyword">attached</span> json.parse (a_json) <span class="keyword">as</span> v <span class="keyword">then</span>
+                <span class="comment">-- Then validate against schema</span>
+                result := validator.validate (v, user_schema)
+
+                <span class="keyword">if</span> result.is_valid <span class="keyword">then</span>
+                    Result := [True, <span class="string">""</span>, v]
+                <span class="keyword">else</span>
+                    <span class="comment">-- Collect error messages</span>
+                    <span class="keyword">create</span> error_text.make_empty
+                    <span class="keyword">across</span> result.errors <span class="keyword">as</span> e <span class="keyword">loop</span>
+                        <span class="keyword">if</span> not error_text.is_empty <span class="keyword">then</span>
+                            error_text.append (<span class="string">"; "</span>)
+                        <span class="keyword">end</span>
+                        error_text.append (e.message)
+                    <span class="keyword">end</span>
+                    Result := [False, error_text, Void]
+                <span class="keyword">end</span>
+            <span class="keyword">else</span>
+                Result := [False, <span class="string">"Invalid JSON: "</span> + json.errors_as_string, Void]
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">feature</span> {NONE} <span class="comment">-- Schemas</span>
+
+    user_schema: <span class="type">SIMPLE_JSON_SCHEMA</span>
+            <span class="comment">-- Schema for user creation</span>
+        <span class="keyword">once</span>
+            <span class="keyword">create</span> Result.make_from_string (<span class="string">"[
+                {
+                    "type": "object",
+                    "required": ["email", "name"],
+                    "properties": {
+                        "email": {
+                            "type": "string",
+                            "pattern": "^[^@]+@[^@]+\\.[^@]+$"
+                        },
+                        "name": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                        },
+                        "age": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 150
+                        }
+                    }
+                }
+            ]"</span>)
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+
+            <h3>Usage in Web Handler</h3>
+<pre><code><span class="keyword">local</span>
+    validator: <span class="type">USER_VALIDATOR</span>
+    validation: TUPLE [valid: BOOLEAN; errors: STRING; data: <span class="keyword">detachable</span> <span class="type">SIMPLE_JSON_VALUE</span>]
+<span class="keyword">do</span>
+    <span class="keyword">create</span> validator
+    validation := validator.validate_create_user (request_body)
+
+    <span class="keyword">if</span> validation.valid <span class="keyword">and</span> <span class="keyword">attached</span> validation.data <span class="keyword">as</span> data <span class="keyword">then</span>
+        <span class="comment">-- Process valid request</span>
+        create_user (data)
+    <span class="keyword">else</span>
+        <span class="comment">-- Return validation errors</span>
+        send_error (422, validation.errors)
+    <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="diff-patch" class="recipe">
+            <h2>Recipe 4: Document Diff and Patch</h2>
+            <p>Track and apply changes to JSON documents.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">DOCUMENT_TRACKER</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Tracking</span>
+
+    track_changes (a_original, a_modified: <span class="type">SIMPLE_JSON_VALUE</span>): <span class="type">SIMPLE_JSON_PATCH</span>
+            <span class="comment">-- Generate patch representing changes from original to modified</span>
+        <span class="keyword">local</span>
+            patch: <span class="type">SIMPLE_JSON_PATCH</span>
+        <span class="keyword">do</span>
+            patch := json.create_patch
+
+            <span class="keyword">if</span> a_original.is_object <span class="keyword">and</span> a_modified.is_object <span class="keyword">then</span>
+                diff_objects (a_original.as_object, a_modified.as_object, <span class="string">""</span>, patch)
+            <span class="keyword">end</span>
+
+            Result := patch
+        <span class="keyword">end</span>
+
+    apply_and_log (a_document: <span class="type">SIMPLE_JSON_VALUE</span>; a_patch: <span class="type">SIMPLE_JSON_PATCH</span>): TUPLE [doc: <span class="type">SIMPLE_JSON_VALUE</span>; log: STRING]
+            <span class="comment">-- Apply patch and return result with change log</span>
+        <span class="keyword">local</span>
+            result: <span class="type">SIMPLE_JSON_PATCH_RESULT</span>
+            log: STRING
+        <span class="keyword">do</span>
+            result := a_patch.apply (a_document)
+
+            <span class="keyword">create</span> log.make_empty
+            log.append (<span class="string">"Applied "</span> + a_patch.operations.count.out + <span class="string">" operations%N"</span>)
+
+            <span class="keyword">if</span> result.is_success <span class="keyword">then</span>
+                log.append (<span class="string">"Status: Success"</span>)
+                Result := [result.result_document, log]
+            <span class="keyword">else</span>
+                log.append (<span class="string">"Status: Failed - "</span> + result.error_message)
+                Result := [a_document, log]  <span class="comment">-- Return original on failure</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">feature</span> {NONE} <span class="comment">-- Implementation</span>
+
+    diff_objects (a_orig, a_mod: <span class="type">SIMPLE_JSON_OBJECT</span>; a_path: STRING; a_patch: <span class="type">SIMPLE_JSON_PATCH</span>)
+            <span class="comment">-- Recursively diff objects</span>
+        <span class="keyword">local</span>
+            key, path: STRING
+        <span class="keyword">do</span>
+            <span class="comment">-- Check for removed keys</span>
+            <span class="keyword">across</span> a_orig.keys <span class="keyword">as</span> k <span class="keyword">loop</span>
+                key := k
+                path := a_path + <span class="string">"/"</span> + key
+                <span class="keyword">if</span> not a_mod.has (key) <span class="keyword">then</span>
+                    a_patch.add_remove (path)
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">-- Check for added/changed keys</span>
+            <span class="keyword">across</span> a_mod.keys <span class="keyword">as</span> k <span class="keyword">loop</span>
+                key := k
+                path := a_path + <span class="string">"/"</span> + key
+                <span class="keyword">if</span> not a_orig.has (key) <span class="keyword">then</span>
+                    <span class="comment">-- New key</span>
+                    <span class="keyword">if</span> <span class="keyword">attached</span> a_mod.item (key) <span class="keyword">as</span> v <span class="keyword">then</span>
+                        a_patch.add_add (path, v)
+                    <span class="keyword">end</span>
+                <span class="keyword">elseif</span> <span class="keyword">attached</span> a_orig.item (key) <span class="keyword">as</span> ov <span class="keyword">and</span> <span class="keyword">attached</span> a_mod.item (key) <span class="keyword">as</span> mv <span class="keyword">then</span>
+                    <span class="comment">-- Check if changed</span>
+                    <span class="keyword">if</span> not values_equal (ov, mv) <span class="keyword">then</span>
+                        a_patch.add_replace (path, mv)
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+    values_equal (a, b: <span class="type">SIMPLE_JSON_VALUE</span>): BOOLEAN
+        <span class="keyword">do</span>
+            Result := a.to_json.same_string (b.to_json)
+        <span class="keyword">end</span>
+
+    json: <span class="type">SIMPLE_JSON</span>
+        <span class="keyword">once</span>
+            <span class="keyword">create</span> Result
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="entity-serialization" class="recipe">
+            <h2>Recipe 5: Entity Serialization</h2>
+            <p>Serialize domain objects to/from JSON.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">ORDER</span>
+
+<span class="keyword">inherit</span>
+    <span class="type">SIMPLE_JSON_SERIALIZABLE</span>
+
+<span class="keyword">create</span>
+    make, make_from_json
+
+<span class="keyword">feature</span> {NONE} <span class="comment">-- Initialization</span>
+
+    make (a_id: INTEGER; a_customer: STRING)
+        <span class="keyword">do</span>
+            id := a_id
+            customer := a_customer
+            <span class="keyword">create</span> items.make (0)
+            status := <span class="string">"pending"</span>
+            created_at := create {DATE_TIME}.make_now
+        <span class="keyword">end</span>
+
+    make_from_json (a_value: <span class="type">SIMPLE_JSON_VALUE</span>)
+        <span class="keyword">do</span>
+            from_json (a_value)
+        <span class="keyword">end</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Access</span>
+
+    id: INTEGER
+    customer: STRING
+    items: ARRAYED_LIST [ORDER_ITEM]
+    status: STRING
+    created_at: DATE_TIME
+
+<span class="keyword">feature</span> <span class="comment">-- Serialization</span>
+
+    to_json_object: <span class="type">SIMPLE_JSON_OBJECT</span>
+        <span class="keyword">local</span>
+            items_array: <span class="type">SIMPLE_JSON_ARRAY</span>
+        <span class="keyword">do</span>
+            items_array := json.new_array
+            <span class="keyword">across</span> items <span class="keyword">as</span> item <span class="keyword">loop</span>
+                items_array.add_object (item.to_json_object)
+            <span class="keyword">end</span>
+
+            Result := json.new_object
+                .put_integer (<span class="string">"id"</span>, id)
+                .put_string (<span class="string">"customer"</span>, customer)
+                .put_array (<span class="string">"items"</span>, items_array)
+                .put_string (<span class="string">"status"</span>, status)
+                .put_string (<span class="string">"created_at"</span>, created_at.formatted_out (<span class="string">"yyyy-mm-dd hh:mi:ss"</span>))
+        <span class="keyword">end</span>
+
+    from_json (a_value: <span class="type">SIMPLE_JSON_VALUE</span>)
+        <span class="keyword">local</span>
+            item: ORDER_ITEM
+        <span class="keyword">do</span>
+            <span class="keyword">if</span> a_value.is_object <span class="keyword">then</span>
+                id := a_value.as_object.integer_item (<span class="string">"id"</span>).to_integer
+
+                <span class="keyword">if</span> <span class="keyword">attached</span> a_value.as_object.string_item (<span class="string">"customer"</span>) <span class="keyword">as</span> c <span class="keyword">then</span>
+                    customer := c
+                <span class="keyword">else</span>
+                    customer := <span class="string">""</span>
+                <span class="keyword">end</span>
+
+                <span class="keyword">if</span> <span class="keyword">attached</span> a_value.as_object.string_item (<span class="string">"status"</span>) <span class="keyword">as</span> s <span class="keyword">then</span>
+                    status := s
+                <span class="keyword">else</span>
+                    status := <span class="string">"pending"</span>
+                <span class="keyword">end</span>
+
+                <span class="comment">-- Parse items array</span>
+                <span class="keyword">create</span> items.make (0)
+                <span class="keyword">if</span> <span class="keyword">attached</span> a_value.as_object.array_item (<span class="string">"items"</span>) <span class="keyword">as</span> arr <span class="keyword">then</span>
+                    <span class="keyword">across</span> 1 |..| arr.count <span class="keyword">as</span> i <span class="keyword">loop</span>
+                        <span class="keyword">create</span> item.make_from_json (arr.item (i))
+                        items.force (item)
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">feature</span> {NONE}
+
+    json: <span class="type">SIMPLE_JSON</span>
+        <span class="keyword">once</span>
+            <span class="keyword">create</span> Result
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="streaming-large-file" class="recipe">
+            <h2>Recipe 6: Processing Large JSON Files</h2>
+            <p>Stream large JSON files without loading entirely into memory.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">LOG_ANALYZER</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Analysis</span>
+
+    count_errors_in_log (a_file: STRING): INTEGER
+            <span class="comment">-- Count error entries in large JSON log file</span>
+            <span class="comment">-- Format: [{"level": "error", ...}, {"level": "info", ...}, ...]</span>
+        <span class="keyword">local</span>
+            stream: <span class="type">SIMPLE_JSON_STREAM</span>
+            cursor: <span class="type">SIMPLE_JSON_STREAM_CURSOR</span>
+            in_object: BOOLEAN
+            current_level: <span class="keyword">detachable</span> STRING
+        <span class="keyword">do</span>
+            <span class="keyword">create</span> stream.make_from_file (a_file)
+            cursor := stream.new_cursor
+
+            <span class="keyword">from</span>
+            <span class="keyword">until</span>
+                cursor.after
+            <span class="keyword">loop</span>
+                <span class="keyword">if</span> cursor.is_object_start <span class="keyword">then</span>
+                    in_object := True
+                    current_level := Void
+                <span class="keyword">elseif</span> cursor.is_object_end <span class="keyword">then</span>
+                    <span class="keyword">if</span> <span class="keyword">attached</span> current_level <span class="keyword">as</span> lv <span class="keyword">and then</span> lv.same_string (<span class="string">"error"</span>) <span class="keyword">then</span>
+                        Result := Result + 1
+                    <span class="keyword">end</span>
+                    in_object := False
+                <span class="keyword">elseif</span> in_object <span class="keyword">and</span> cursor.is_key <span class="keyword">then</span>
+                    <span class="keyword">if</span> cursor.key_name.same_string (<span class="string">"level"</span>) <span class="keyword">then</span>
+                        cursor.forth
+                        <span class="keyword">if</span> cursor.is_string <span class="keyword">then</span>
+                            current_level := cursor.string_value
+                        <span class="keyword">end</span>
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                cursor.forth
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+    extract_timestamps (a_file: STRING; a_output: ARRAYED_LIST [STRING])
+            <span class="comment">-- Extract all timestamp fields from large file</span>
+        <span class="keyword">local</span>
+            stream: <span class="type">SIMPLE_JSON_STREAM</span>
+            cursor: <span class="type">SIMPLE_JSON_STREAM_CURSOR</span>
+            looking_for_value: BOOLEAN
+        <span class="keyword">do</span>
+            <span class="keyword">create</span> stream.make_from_file (a_file)
+            cursor := stream.new_cursor
+
+            <span class="keyword">from</span>
+            <span class="keyword">until</span>
+                cursor.after
+            <span class="keyword">loop</span>
+                <span class="keyword">if</span> cursor.is_key <span class="keyword">and then</span> cursor.key_name.same_string (<span class="string">"timestamp"</span>) <span class="keyword">then</span>
+                    looking_for_value := True
+                <span class="keyword">elseif</span> looking_for_value <span class="keyword">and</span> cursor.is_string <span class="keyword">then</span>
+                    a_output.force (cursor.string_value)
+                    looking_for_value := False
+                <span class="keyword">end</span>
+                cursor.forth
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="merge-configs" class="recipe">
+            <h2>Recipe 7: Merging Configuration Files</h2>
+            <p>Merge default config with user overrides using JSON Merge Patch.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">CONFIG_MERGER</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Merging</span>
+
+    merge_configs (a_default_file, a_user_file: STRING): <span class="type">SIMPLE_JSON_VALUE</span>
+            <span class="comment">-- Merge user config over default config</span>
+        <span class="keyword">local</span>
+            json: <span class="type">SIMPLE_JSON</span>
+            merge: <span class="type">SIMPLE_JSON_MERGE_PATCH</span>
+            result: <span class="type">SIMPLE_JSON_MERGE_PATCH_RESULT</span>
+        <span class="keyword">do</span>
+            <span class="keyword">create</span> json
+            <span class="keyword">create</span> merge
+
+            <span class="keyword">if</span> <span class="keyword">attached</span> json.parse_file (a_default_file) <span class="keyword">as</span> default_config <span class="keyword">then</span>
+                <span class="keyword">if</span> <span class="keyword">attached</span> json.parse_file (a_user_file) <span class="keyword">as</span> user_config <span class="keyword">then</span>
+                    <span class="comment">-- Merge user settings over defaults</span>
+                    result := merge.apply (default_config, user_config)
+                    <span class="keyword">if</span> result.is_success <span class="keyword">then</span>
+                        Result := result.result_document
+                    <span class="keyword">else</span>
+                        Result := default_config
+                    <span class="keyword">end</span>
+                <span class="keyword">else</span>
+                    <span class="comment">-- No user config, use defaults</span>
+                    Result := default_config
+                <span class="keyword">end</span>
+            <span class="keyword">else</span>
+                <span class="comment">-- Return empty object on failure</span>
+                Result := json.new_object.to_value
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+
+            <h3>Example</h3>
+<pre><code><span class="comment">-- default.json</span>
+{
+    "theme": "light",
+    "font_size": 14,
+    "auto_save": true,
+    "plugins": {
+        "spell_check": true,
+        "syntax_highlight": true
+    }
+}
+
+<span class="comment">-- user.json (overrides)</span>
+{
+    "theme": "dark",
+    "font_size": 16,
+    "plugins": {
+        "spell_check": false
+    }
+}
+
+<span class="comment">-- Result after merge</span>
+{
+    "theme": "dark",           <span class="comment">-- from user</span>
+    "font_size": 16,           <span class="comment">-- from user</span>
+    "auto_save": true,         <span class="comment">-- from default</span>
+    "plugins": {
+        "spell_check": false,  <span class="comment">-- from user</span>
+        "syntax_highlight": true  <span class="comment">-- from default</span>
+    }
+}</code></pre>
+        </section>
+
+        <section id="json-transform" class="recipe">
+            <h2>Recipe 8: JSON-to-JSON Transformation</h2>
+            <p>Transform JSON structure for API version compatibility.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">API_TRANSFORMER</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Transformation</span>
+
+    v1_to_v2 (a_v1: <span class="type">SIMPLE_JSON_VALUE</span>): <span class="type">SIMPLE_JSON_VALUE</span>
+            <span class="comment">-- Transform V1 API format to V2</span>
+            <span class="comment">-- V1: {"first_name": "...", "last_name": "..."}</span>
+            <span class="comment">-- V2: {"name": {"first": "...", "last": "..."}}</span>
+        <span class="keyword">local</span>
+            first, last: STRING
+        <span class="keyword">do</span>
+            <span class="keyword">if</span> a_v1.is_object <span class="keyword">then</span>
+                <span class="keyword">if</span> <span class="keyword">attached</span> a_v1.as_object.string_item (<span class="string">"first_name"</span>) <span class="keyword">as</span> f <span class="keyword">then</span>
+                    first := f
+                <span class="keyword">else</span>
+                    first := <span class="string">""</span>
+                <span class="keyword">end</span>
+
+                <span class="keyword">if</span> <span class="keyword">attached</span> a_v1.as_object.string_item (<span class="string">"last_name"</span>) <span class="keyword">as</span> l <span class="keyword">then</span>
+                    last := l
+                <span class="keyword">else</span>
+                    last := <span class="string">""</span>
+                <span class="keyword">end</span>
+
+                <span class="comment">-- Build V2 structure</span>
+                Result := json.new_object
+                    .put_object (<span class="string">"name"</span>, json.new_object
+                        .put_string (<span class="string">"first"</span>, first)
+                        .put_string (<span class="string">"last"</span>, last))
+                    .to_value
+
+                <span class="comment">-- Copy other fields</span>
+                <span class="keyword">across</span> a_v1.as_object.keys <span class="keyword">as</span> k <span class="keyword">loop</span>
+                    <span class="keyword">if</span> not k.same_string (<span class="string">"first_name"</span>) <span class="keyword">and</span> not k.same_string (<span class="string">"last_name"</span>) <span class="keyword">then</span>
+                        <span class="keyword">if</span> <span class="keyword">attached</span> a_v1.as_object.item (k) <span class="keyword">as</span> v <span class="keyword">then</span>
+                            Result.as_object.put_value (k, v)
+                        <span class="keyword">end</span>
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">else</span>
+                Result := a_v1
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">feature</span> {NONE}
+
+    json: <span class="type">SIMPLE_JSON</span>
+        <span class="keyword">once</span>
+            <span class="keyword">create</span> Result
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="error-handling" class="recipe">
+            <h2>Recipe 9: Comprehensive Error Handling</h2>
+            <p>Handle all JSON error cases gracefully.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">SAFE_JSON_PROCESSOR</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Processing</span>
+
+    process_safely (a_json: STRING): TUPLE [success: BOOLEAN; data: <span class="keyword">detachable</span> <span class="type">SIMPLE_JSON_VALUE</span>; error: STRING]
+            <span class="comment">-- Process JSON with comprehensive error handling</span>
+        <span class="keyword">local</span>
+            json: <span class="type">SIMPLE_JSON</span>
+            error_detail: STRING
+        <span class="keyword">do</span>
+            <span class="keyword">create</span> json
+
+            <span class="comment">-- Check for empty input</span>
+            <span class="keyword">if</span> a_json.is_empty <span class="keyword">then</span>
+                Result := [False, Void, <span class="string">"Empty JSON input"</span>]
+            <span class="keyword">elseif</span> <span class="keyword">attached</span> json.parse (a_json) <span class="keyword">as</span> v <span class="keyword">then</span>
+                <span class="comment">-- Success</span>
+                Result := [True, v, <span class="string">""</span>]
+            <span class="keyword">else</span>
+                <span class="comment">-- Parse failed - build detailed error</span>
+                <span class="keyword">create</span> error_detail.make_empty
+
+                <span class="keyword">if</span> json.has_errors <span class="keyword">then</span>
+                    <span class="keyword">if</span> <span class="keyword">attached</span> json.first_error <span class="keyword">as</span> err <span class="keyword">then</span>
+                        error_detail.append (<span class="string">"Parse error at line "</span>)
+                        error_detail.append (err.line.out)
+                        error_detail.append (<span class="string">", column "</span>)
+                        error_detail.append (err.column.out)
+                        error_detail.append (<span class="string">": "</span>)
+                        error_detail.append (err.message)
+
+                        <span class="comment">-- Add context if available</span>
+                        <span class="keyword">if</span> not err.to_detailed_string.is_empty <span class="keyword">then</span>
+                            error_detail.append (<span class="string">"%N"</span>)
+                            error_detail.append (err.to_detailed_string)
+                        <span class="keyword">end</span>
+                    <span class="keyword">else</span>
+                        error_detail.append (<span class="string">"Unknown parse error"</span>)
+                    <span class="keyword">end</span>
+                <span class="keyword">else</span>
+                    error_detail.append (<span class="string">"Parse returned null without error"</span>)
+                <span class="keyword">end</span>
+
+                Result := [False, Void, error_detail]
+            <span class="keyword">end</span>
+        <span class="keyword">rescue</span>
+            <span class="comment">-- Catch any unexpected exceptions</span>
+            Result := [False, Void, <span class="string">"Unexpected error processing JSON"</span>]
+        <span class="keyword">end</span>
+
+    safe_query (a_value: <span class="type">SIMPLE_JSON_VALUE</span>; a_path: STRING; a_default: STRING): STRING
+            <span class="comment">-- Query with default value on failure</span>
+        <span class="keyword">local</span>
+            json: <span class="type">SIMPLE_JSON</span>
+        <span class="keyword">do</span>
+            <span class="keyword">create</span> json
+            <span class="keyword">if</span> <span class="keyword">attached</span> json.query_string (a_value, a_path) <span class="keyword">as</span> s <span class="keyword">then</span>
+                Result := s
+            <span class="keyword">else</span>
+                Result := a_default
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="pretty-print" class="recipe">
+            <h2>Recipe 10: Pretty Printing for Debugging</h2>
+            <p>Format JSON for human readability.</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">JSON_DEBUGGER</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Debugging</span>
+
+    debug_print (a_value: <span class="type">SIMPLE_JSON_VALUE</span>)
+            <span class="comment">-- Print JSON with type annotations</span>
+        <span class="keyword">do</span>
+            io.put_string (<span class="string">"=== JSON Debug ===%N"</span>)
+            io.put_string (<span class="string">"Type: "</span> + type_name (a_value) + <span class="string">"%N"</span>)
+            io.put_string (<span class="string">"Pretty:%N"</span>)
+            io.put_string (a_value.to_pretty_json)
+            io.put_string (<span class="string">"%N================%N"</span>)
+        <span class="keyword">end</span>
+
+    compare_json (a_label1: STRING; a_json1: <span class="type">SIMPLE_JSON_VALUE</span>; a_label2: STRING; a_json2: <span class="type">SIMPLE_JSON_VALUE</span>)
+            <span class="comment">-- Side-by-side comparison</span>
+        <span class="keyword">do</span>
+            io.put_string (<span class="string">"=== "</span> + a_label1 + <span class="string">" ===%N"</span>)
+            io.put_string (a_json1.to_pretty_json)
+            io.put_string (<span class="string">"%N%N=== "</span> + a_label2 + <span class="string">" ===%N"</span>)
+            io.put_string (a_json2.to_pretty_json)
+            io.put_string (<span class="string">"%N"</span>)
+        <span class="keyword">end</span>
+
+<span class="keyword">feature</span> {NONE}
+
+    type_name (a_value: <span class="type">SIMPLE_JSON_VALUE</span>): STRING
+        <span class="keyword">do</span>
+            <span class="keyword">if</span> a_value.is_object <span class="keyword">then</span>
+                Result := <span class="string">"object ("</span> + a_value.as_object.count.out + <span class="string">" keys)"</span>
+            <span class="keyword">elseif</span> a_value.is_array <span class="keyword">then</span>
+                Result := <span class="string">"array ("</span> + a_value.as_array.count.out + <span class="string">" items)"</span>
+            <span class="keyword">elseif</span> a_value.is_string <span class="keyword">then</span>
+                Result := <span class="string">"string"</span>
+            <span class="keyword">elseif</span> a_value.is_integer <span class="keyword">then</span>
+                Result := <span class="string">"integer"</span>
+            <span class="keyword">elseif</span> a_value.is_number <span class="keyword">then</span>
+                Result := <span class="string">"number"</span>
+            <span class="keyword">elseif</span> a_value.is_boolean <span class="keyword">then</span>
+                Result := <span class="string">"boolean"</span>
+            <span class="keyword">elseif</span> a_value.is_null <span class="keyword">then</span>
+                Result := <span class="string">"null"</span>
+            <span class="keyword">else</span>
+                Result := <span class="string">"unknown"</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+        </section>
+    </main>
+
+    <footer>
+        <p>Part of the <a href="https://github.com/simple-eiffel">simple_*</a> ecosystem of focused, single-purpose Eiffel libraries.</p>
+        <p>&copy; 2025 Larry Rix. MIT License.</p>
+    </footer>
+</body>
+</html>

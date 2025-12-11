@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture - simple_json</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="images/logo.png" alt="simple_* logo" class="logo">
+        </div>
+        <h1>simple_json</h1>
+        <p class="tagline">Architecture Guide</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Overview</a></li>
+            <li><a href="user-guide.html">User Guide</a></li>
+            <li><a href="api-reference.html">API Reference</a></li>
+            <li><a href="architecture.html" class="active">Architecture</a></li>
+            <li><a href="cookbook.html">Cookbook</a></li>
+            <li><a href="https://github.com/simple-eiffel/simple_json">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="overview">
+            <h2>Architectural Overview</h2>
+
+            <p><strong>simple_json</strong> is designed as a high-level facade over the standard Eiffel JSON library (eJSON), adding modern features like JSON Schema validation, JSON Pointer, JSON Patch, and JSONPath queries while maintaining full compatibility with the underlying parser.</p>
+
+            <div class="highlight-box">
+                <h3>Design Philosophy</h3>
+                <ul>
+                    <li><strong>Facade Pattern</strong>: Simple API hiding complex internals</li>
+                    <li><strong>Builder Pattern</strong>: Fluent interface for constructing JSON</li>
+                    <li><strong>Wrapper Pattern</strong>: Type-safe wrappers around JSON values</li>
+                    <li><strong>Standards Compliance</strong>: RFC 6901, RFC 6902, RFC 7386, JSON Schema Draft 7</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="class-hierarchy">
+            <h2>Class Hierarchy</h2>
+
+<pre><code>SIMPLE_JSON_CONSTANTS (shared constants)
+    |
+    +-- SIMPLE_JSON (facade)
+    |
+    +-- SIMPLE_JSON_VALUE (value wrapper)
+    |
+    +-- SIMPLE_JSON_OBJECT (object builder)
+    |
+    +-- SIMPLE_JSON_ARRAY (array builder)
+    |
+    +-- SIMPLE_JSON_POINTER (RFC 6901)
+    |
+    +-- SIMPLE_JSON_SCHEMA_VALIDATOR
+    |
+    +-- SIMPLE_JSON_PATCH
+    |       |
+    |       +-- SIMPLE_JSON_PATCH_OPERATION (abstract)
+    |               |
+    |               +-- SIMPLE_JSON_PATCH_ADD
+    |               +-- SIMPLE_JSON_PATCH_REMOVE
+    |               +-- SIMPLE_JSON_PATCH_REPLACE
+    |               +-- SIMPLE_JSON_PATCH_MOVE
+    |               +-- SIMPLE_JSON_PATCH_COPY
+    |               +-- SIMPLE_JSON_PATCH_TEST
+    |
+    +-- SIMPLE_JSON_MERGE_PATCH (RFC 7386)
+    |
+    +-- SIMPLE_JSON_STREAM (streaming parser)
+            |
+            +-- SIMPLE_JSON_STREAM_CURSOR
+            +-- SIMPLE_JSON_STREAM_ELEMENT</code></pre>
+
+            <h3>Module Organization</h3>
+            <table>
+                <tr>
+                    <th>Module</th>
+                    <th>Contents</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td><code>src/core/</code></td>
+                    <td>SIMPLE_JSON, SIMPLE_JSON_VALUE, SIMPLE_JSON_OBJECT, SIMPLE_JSON_ARRAY</td>
+                    <td>Core parsing and building</td>
+                </tr>
+                <tr>
+                    <td><code>src/pointer/</code></td>
+                    <td>SIMPLE_JSON_POINTER</td>
+                    <td>RFC 6901 navigation</td>
+                </tr>
+                <tr>
+                    <td><code>src/schema/</code></td>
+                    <td>SIMPLE_JSON_SCHEMA, SIMPLE_JSON_SCHEMA_VALIDATOR</td>
+                    <td>JSON Schema validation</td>
+                </tr>
+                <tr>
+                    <td><code>src/patch/</code></td>
+                    <td>SIMPLE_JSON_PATCH, patch operations</td>
+                    <td>RFC 6902 modifications</td>
+                </tr>
+                <tr>
+                    <td><code>src/merge_patch/</code></td>
+                    <td>SIMPLE_JSON_MERGE_PATCH</td>
+                    <td>RFC 7386 merge</td>
+                </tr>
+                <tr>
+                    <td><code>src/streaming/</code></td>
+                    <td>SIMPLE_JSON_STREAM</td>
+                    <td>Large file processing</td>
+                </tr>
+                <tr>
+                    <td><code>src/utilities/</code></td>
+                    <td>SIMPLE_JSON_PRETTY_PRINTER</td>
+                    <td>Formatting utilities</td>
+                </tr>
+                <tr>
+                    <td><code>src/constants/</code></td>
+                    <td>SIMPLE_JSON_CONSTANTS</td>
+                    <td>Shared constants</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="relationship-to-ejson">
+            <h2>Relationship to eJSON</h2>
+
+            <p><strong>simple_json</strong> wraps the standard Eiffel JSON library (eJSON) rather than replacing it:</p>
+
+<pre><code>                    +-------------------+
+                    |   SIMPLE_JSON     |  (Facade)
+                    +-------------------+
+                            |
+            +---------------+---------------+
+            |                               |
+    +---------------+               +---------------+
+    |SIMPLE_JSON_   |               |SIMPLE_JSON_   |
+    |    VALUE      |               |    OBJECT     |
+    +---------------+               +---------------+
+            |                               |
+            |  wraps                        |  wraps
+            v                               v
+    +---------------+               +---------------+
+    |  JSON_VALUE   |               |  JSON_OBJECT  |  (eJSON)
+    +---------------+               +---------------+</code></pre>
+
+            <h3>Why Wrap Instead of Replace?</h3>
+            <ul>
+                <li><strong>Proven Parser</strong>: eJSON's parser is battle-tested</li>
+                <li><strong>Unicode Support</strong>: Proper UTF-8/UTF-32 handling</li>
+                <li><strong>Standards Compliance</strong>: JSON spec compliance</li>
+                <li><strong>Interoperability</strong>: Can use raw eJSON when needed</li>
+            </ul>
+
+            <h3>What simple_json Adds</h3>
+            <ul>
+                <li>High-level facade with builder pattern</li>
+                <li>STRING_32 throughout (instead of STRING_8)</li>
+                <li>Detailed error tracking with line/column</li>
+                <li>JSON Schema validation (unique in Eiffel)</li>
+                <li>JSON Pointer, Patch, Merge Patch</li>
+                <li>JSONPath queries</li>
+                <li>Streaming parser</li>
+            </ul>
+        </section>
+
+        <section id="facade-pattern">
+            <h2>Facade Pattern</h2>
+
+            <p>The <code>SIMPLE_JSON</code> class serves as the primary facade, providing a simplified interface for common operations:</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">SIMPLE_JSON</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Parsing</span>
+    parse (a_json_text: STRING_32): <span class="keyword">detachable</span> SIMPLE_JSON_VALUE
+    parse_file (a_file_path: STRING_32): <span class="keyword">detachable</span> SIMPLE_JSON_VALUE
+    is_valid_json (a_json_text: STRING_32): BOOLEAN
+
+<span class="keyword">feature</span> <span class="comment">-- Building</span>
+    new_object: SIMPLE_JSON_OBJECT
+    new_array: SIMPLE_JSON_ARRAY
+    string_value (a_string: STRING_32): SIMPLE_JSON_VALUE
+    <span class="comment">-- ... more value creators</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Queries</span>
+    query_string (a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): <span class="keyword">detachable</span> STRING_32
+    <span class="comment">-- ... more query methods</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Patching</span>
+    create_patch: SIMPLE_JSON_PATCH
+    apply_patch (...): SIMPLE_JSON_PATCH_RESULT
+
+<span class="keyword">feature</span> <span class="comment">-- Errors</span>
+    has_errors: BOOLEAN
+    last_errors: ARRAYED_LIST [SIMPLE_JSON_ERROR]
+    <span class="comment">-- ... more error methods</span>
+<span class="keyword">end</span></code></pre>
+
+            <div class="highlight-box">
+                <h3>Benefits of Facade</h3>
+                <ul>
+                    <li>Single entry point - one class to learn</li>
+                    <li>Discoverable API - related features grouped together</li>
+                    <li>Hides complexity - no need to know about eJSON internals</li>
+                    <li>Consistent error handling across all operations</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="builder-pattern">
+            <h2>Builder Pattern</h2>
+
+            <p>JSON construction uses a fluent builder pattern where methods return <code>like Current</code> for chaining:</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">SIMPLE_JSON_OBJECT</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Builder</span>
+
+    put_string (a_key, a_value: STRING_32): <span class="keyword">like</span> Current
+        <span class="keyword">do</span>
+            <span class="comment">-- Add string to underlying JSON_OBJECT</span>
+            Result := Current
+        <span class="keyword">ensure</span>
+            chained: Result = Current
+            has_key: has (a_key)
+        <span class="keyword">end</span>
+
+    put_integer (a_key: STRING_32; a_value: INTEGER_64): <span class="keyword">like</span> Current
+        <span class="keyword">do</span>
+            <span class="comment">-- Add integer to underlying JSON_OBJECT</span>
+            Result := Current
+        <span class="keyword">ensure</span>
+            chained: Result = Current
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+
+            <h3>Usage</h3>
+<pre><code><span class="comment">-- Fluent construction</span>
+obj := json.new_object
+    .put_string (<span class="string">"name"</span>, <span class="string">"Alice"</span>)
+    .put_integer (<span class="string">"age"</span>, 30)
+    .put_boolean (<span class="string">"active"</span>, True)
+    .put_object (<span class="string">"address"</span>, json.new_object
+        .put_string (<span class="string">"city"</span>, <span class="string">"Boston"</span>)
+        .put_string (<span class="string">"state"</span>, <span class="string">"MA"</span>))</code></pre>
+        </section>
+
+        <section id="wrapper-pattern">
+            <h2>Wrapper Pattern</h2>
+
+            <p><code>SIMPLE_JSON_VALUE</code> wraps <code>JSON_VALUE</code> to provide type-safe access with Unicode support:</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">SIMPLE_JSON_VALUE</span>
+
+<span class="keyword">feature</span> {NONE}
+    json_value: JSON_VALUE  <span class="comment">-- Wrapped eJSON value</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Type checking</span>
+    is_string: BOOLEAN
+        <span class="keyword">do</span> Result := json_value.is_string <span class="keyword">end</span>
+
+    is_object: BOOLEAN
+        <span class="keyword">do</span> Result := json_value.is_object <span class="keyword">end</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Access</span>
+    as_string_32: STRING_32
+        <span class="keyword">require</span>
+            is_string: is_string
+        <span class="keyword">do</span>
+            <span class="comment">-- Convert from eJSON STRING_8 to STRING_32</span>
+        <span class="keyword">end</span>
+
+    as_object: SIMPLE_JSON_OBJECT
+        <span class="keyword">require</span>
+            is_object: is_object
+        <span class="keyword">do</span>
+            <span class="comment">-- Wrap JSON_OBJECT in SIMPLE_JSON_OBJECT</span>
+        <span class="keyword">end</span>
+
+<span class="keyword">end</span></code></pre>
+
+            <h3>Key Design Decisions</h3>
+            <ul>
+                <li><strong>STRING_32</strong>: All string access returns STRING_32 for proper Unicode</li>
+                <li><strong>Preconditions</strong>: Type-checking methods have corresponding preconditions</li>
+                <li><strong>Lazy Wrapping</strong>: Nested objects/arrays wrapped on demand</li>
+            </ul>
+        </section>
+
+        <section id="error-handling">
+            <h2>Error Handling Architecture</h2>
+
+            <p>The library uses a structured error model with position tracking:</p>
+
+<pre><code><span class="keyword">class</span>
+    <span class="type">SIMPLE_JSON_ERROR</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Access</span>
+    message: STRING_32
+    position: INTEGER       <span class="comment">-- Character offset in source</span>
+    line: INTEGER          <span class="comment">-- Calculated line number</span>
+    column: INTEGER        <span class="comment">-- Calculated column number</span>
+
+<span class="keyword">feature</span> <span class="comment">-- Output</span>
+    to_detailed_string: STRING_32
+        <span class="comment">-- Shows error with source context:</span>
+        <span class="comment">-- Line 5, Column 12: Unexpected token</span>
+        <span class="comment">--     {"name": "Alice", age: 30}</span>
+        <span class="comment">--                      ^</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Error Flow</h3>
+<pre><code>parse() called
+    |
+    v
+JSON_PARSER.parse_content
+    |
+    +-- Success --> Create SIMPLE_JSON_VALUE
+    |
+    +-- Failure --> capture_parser_errors()
+                        |
+                        v
+                    Extract position from error string
+                    Calculate line/column from position
+                    Create SIMPLE_JSON_ERROR with context
+                    Add to last_errors list</code></pre>
+        </section>
+
+        <section id="jsonpath-implementation">
+            <h2>JSONPath Implementation</h2>
+
+            <p>JSONPath queries are implemented as path parsing + recursive navigation:</p>
+
+<pre><code><span class="comment">-- Path: $.users[0].name</span>
+<span class="comment">-- Segments: ["users", "[0]", "name"]</span>
+
+query_single_value (a_value: SIMPLE_JSON_VALUE; a_path: STRING_32)
+    <span class="keyword">local</span>
+        l_segments: LIST [STRING_32]
+        l_current: <span class="keyword">detachable</span> SIMPLE_JSON_VALUE
+    <span class="keyword">do</span>
+        l_segments := parse_json_path (a_path)  <span class="comment">-- Split into segments</span>
+        l_current := a_value
+
+        <span class="keyword">across</span> l_segments <span class="keyword">as</span> ic <span class="keyword">until</span> l_current = Void <span class="keyword">loop</span>
+            l_current := navigate_segment (l_current, ic)  <span class="comment">-- Navigate one level</span>
+        <span class="keyword">end</span>
+
+        Result := l_current
+    <span class="keyword">end</span></code></pre>
+
+            <h3>Wildcard Expansion</h3>
+<pre><code><span class="comment">-- Path: $.users[*].name</span>
+<span class="comment">-- Expands [*] to iterate all array elements</span>
+
+query_multiple_values (a_value: SIMPLE_JSON_VALUE; a_path: STRING_32)
+    <span class="keyword">do</span>
+        <span class="comment">-- Maintains SET of current values</span>
+        <span class="comment">-- At wildcard segments, expands set</span>
+        <span class="comment">-- At regular segments, navigates each</span>
+    <span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="json-pointer-implementation">
+            <h2>JSON Pointer (RFC 6901)</h2>
+
+            <p>Simpler than JSONPath - just forward-slash separated segments:</p>
+
+<pre><code><span class="comment">-- Pointer: /users/0/name</span>
+<span class="comment">-- Segments: ["users", "0", "name"]</span>
+
+parse_path (a_path: STRING_32): BOOLEAN
+    <span class="keyword">do</span>
+        <span class="comment">-- Split by "/"</span>
+        <span class="comment">-- Unescape ~0 (tilde) and ~1 (slash)</span>
+        <span class="comment">-- Store in segments list</span>
+    <span class="keyword">end</span>
+
+value_at (a_root: SIMPLE_JSON_VALUE): <span class="keyword">detachable</span> SIMPLE_JSON_VALUE
+    <span class="keyword">do</span>
+        <span class="comment">-- Navigate each segment</span>
+        <span class="comment">-- For objects: lookup by key</span>
+        <span class="comment">-- For arrays: parse segment as integer index</span>
+    <span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="json-patch-implementation">
+            <h2>JSON Patch (RFC 6902)</h2>
+
+            <p>Patch operations are implemented as a command pattern:</p>
+
+<pre><code><span class="keyword">deferred class</span>
+    <span class="type">SIMPLE_JSON_PATCH_OPERATION</span>
+
+<span class="keyword">feature</span>
+    path: STRING_32
+    is_valid: BOOLEAN
+    apply (a_document: SIMPLE_JSON_VALUE): SIMPLE_JSON_PATCH_RESULT
+        <span class="keyword">deferred</span>
+        <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">class</span> <span class="type">SIMPLE_JSON_PATCH_ADD</span>
+<span class="keyword">inherit</span> <span class="type">SIMPLE_JSON_PATCH_OPERATION</span>
+<span class="keyword">feature</span>
+    value: SIMPLE_JSON_VALUE
+
+    apply (a_document: SIMPLE_JSON_VALUE): SIMPLE_JSON_PATCH_RESULT
+        <span class="keyword">do</span>
+            <span class="comment">-- Navigate to parent of path</span>
+            <span class="comment">-- Add value at final segment</span>
+        <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Patch Application</h3>
+<pre><code>SIMPLE_JSON_PATCH.apply (document)
+    |
+    v
+For each operation in operations:
+    |
+    +-- Parse path into JSON Pointer
+    |
+    +-- Navigate to target location
+    |
+    +-- Execute operation (add/remove/replace/move/copy/test)
+    |
+    +-- On failure: return error result immediately
+    |
+    +-- On success: continue to next operation
+    |
+    v
+Return success with modified document</code></pre>
+        </section>
+
+        <section id="schema-validation">
+            <h2>Schema Validation Architecture</h2>
+
+            <p>JSON Schema validation follows Draft 7 specification:</p>
+
+<pre><code>SIMPLE_JSON_SCHEMA_VALIDATOR.validate (instance, schema)
+    |
+    +-- validate_type (instance, schema)
+    |       |
+    |       +-- Check "type" keyword matches instance type
+    |
+    +-- Type-specific validation:
+            |
+            +-- String: minLength, maxLength, pattern
+            +-- Number: minimum, maximum
+            +-- Object: properties, required, additionalProperties
+            +-- Array: items, minItems, maxItems</code></pre>
+
+            <h3>Validation Result</h3>
+<pre><code><span class="keyword">class</span>
+    <span class="type">SIMPLE_JSON_SCHEMA_VALIDATION_RESULT</span>
+
+<span class="keyword">feature</span>
+    is_valid: BOOLEAN
+    errors: ARRAY [SIMPLE_JSON_SCHEMA_VALIDATION_ERROR]
+        <span class="comment">-- Each error has:</span>
+        <span class="comment">--   path: JSON Pointer to invalid location</span>
+        <span class="comment">--   message: Human-readable description</span>
+        <span class="comment">--   keyword: Schema keyword that failed</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="streaming-parser">
+            <h2>Streaming Parser Architecture</h2>
+
+            <p>For large files, the streaming parser processes JSON token-by-token:</p>
+
+<pre><code>SIMPLE_JSON_STREAM
+    |
+    +-- Character buffer (file or string)
+    |
+    +-- Tokenizer (produces tokens)
+    |
+    +-- Cursor (iterates tokens)
+            |
+            +-- is_object_start, is_object_end
+            +-- is_array_start, is_array_end
+            +-- is_key, is_string, is_number
+            +-- forth (advance to next token)</code></pre>
+
+            <h3>Memory Efficiency</h3>
+            <p>Unlike DOM parsing which loads entire document into memory, streaming:</p>
+            <ul>
+                <li>Reads file in chunks</li>
+                <li>Produces tokens on demand</li>
+                <li>Discards processed tokens</li>
+                <li>Constant memory regardless of file size</li>
+            </ul>
+        </section>
+
+        <section id="unicode">
+            <h2>Unicode Handling</h2>
+
+            <p>All string operations use STRING_32 for proper Unicode support:</p>
+
+<pre><code><span class="comment">-- Internal conversion</span>
+utf_converter: UTF_CONVERTER
+    <span class="keyword">once</span>
+        <span class="keyword">create</span> Result
+    <span class="keyword">end</span>
+
+<span class="comment">-- String input: STRING_32 -> UTF-8 -> eJSON parser</span>
+l_utf8 := utf_converter.utf_32_string_to_utf_8_string_8 (a_json_text)
+
+<span class="comment">-- String output: eJSON -> UTF-8 -> STRING_32</span>
+Result := utf_converter.utf_8_string_8_to_string_32 (l_json_string)</code></pre>
+        </section>
+
+        <section id="design-by-contract">
+            <h2>Design by Contract</h2>
+
+            <p>The library uses comprehensive contracts throughout:</p>
+
+<pre><code><span class="keyword">feature</span> <span class="comment">-- Parsing</span>
+
+    parse (a_json_text: STRING_32): <span class="keyword">detachable</span> SIMPLE_JSON_VALUE
+        <span class="keyword">require</span>
+            not_empty: not a_json_text.is_empty
+        <span class="keyword">ensure</span>
+            errors_cleared_on_success: Result /= Void <span class="keyword">implies</span> not has_errors
+
+<span class="keyword">invariant</span>
+    <span class="comment">-- Error list integrity</span>
+    last_errors_attached: last_errors /= Void
+
+    <span class="comment">-- Error state consistency</span>
+    has_errors_definition: has_errors = not last_errors.is_empty
+
+    <span class="comment">-- No void errors in list</span>
+    no_void_errors: <span class="keyword">across</span> last_errors <span class="keyword">as</span> ic <span class="keyword">all</span> ic /= Void <span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="scoop-compatibility">
+            <h2>SCOOP Compatibility</h2>
+
+            <p>The library is designed for SCOOP (Simple Concurrent Object-Oriented Programming):</p>
+
+            <ul>
+                <li><strong>No global state</strong>: Each SIMPLE_JSON instance is independent</li>
+                <li><strong>Immutable values</strong>: SIMPLE_JSON_VALUE wraps don't mutate underlying JSON</li>
+                <li><strong>Thread-safe once features</strong>: UTF converter is once-per-thread</li>
+                <li><strong>ECF configured</strong>: <code>concurrency="scoop"</code></li>
+            </ul>
+
+<pre><code><span class="comment">-- Safe in SCOOP context</span>
+<span class="keyword">separate</span>
+    json_processor: SIMPLE_JSON
+<span class="keyword">do</span>
+    <span class="comment">-- Each processor has its own error state</span>
+    <span class="comment">-- No shared mutable state</span>
+<span class="keyword">end</span></code></pre>
+        </section>
+    </main>
+
+    <footer>
+        <p>Part of the <a href="https://github.com/simple-eiffel">simple_*</a> ecosystem of focused, single-purpose Eiffel libraries.</p>
+        <p>&copy; 2025 Larry Rix. MIT License.</p>
+    </footer>
+</body>
+</html>
