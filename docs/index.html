@@ -22,6 +22,7 @@
     <nav>
         <ul>
             <li><a href="#overview">Overview</a></li>
+            <li><a href="#decimal-precision">Decimal Precision</a></li>
             <li><a href="user-guide.html">User Guide</a></li>
             <li><a href="api-reference.html">API Reference</a></li>
             <li><a href="architecture.html">Architecture</a></li>
@@ -117,7 +118,59 @@
                     <h3>Streaming Parser</h3>
                     <p>Process gigabyte-sized JSON files with constant memory.</p>
                 </div>
+
+                <div class="feature-card">
+                    <h3>Decimal Precision</h3>
+                    <p>Exact decimal values via simple_decimal - no floating-point artifacts.</p>
+                </div>
             </div>
+        </section>
+
+        <section id="decimal-precision">
+            <h2>Decimal Precision</h2>
+            <p>
+                For financial data or any values requiring exact representation, use <code>put_decimal</code>
+                instead of <code>put_real</code>. This prevents floating-point artifacts like 19.99 becoming
+                19.989999999999998.
+            </p>
+
+            <h3>The Problem with REAL</h3>
+<pre><code><span class="comment">-- Using put_real</span>
+obj.put_real (19.99, <span class="string">"price"</span>)
+<span class="comment">-- Output: {"price": 19.989999999999998}</span></code></pre>
+
+            <h3>The Solution with SIMPLE_DECIMAL</h3>
+<pre><code><span class="keyword">local</span>
+    price: <span class="type">SIMPLE_DECIMAL</span>
+<span class="keyword">do</span>
+    <span class="keyword">create</span> price.make (<span class="string">"19.99"</span>)
+    obj.put_decimal (price, <span class="string">"price"</span>)
+    <span class="comment">-- Output: {"price": 19.99}</span>
+<span class="keyword">end</span></code></pre>
+
+            <h3>Decimal API</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>put_decimal (value, key)</code></td>
+                    <td>Store exact decimal value in object</td>
+                </tr>
+                <tr>
+                    <td><code>decimal_item (key)</code></td>
+                    <td>Retrieve value as SIMPLE_DECIMAL</td>
+                </tr>
+                <tr>
+                    <td><code>add_decimal (value)</code></td>
+                    <td>Add decimal to array</td>
+                </tr>
+                <tr>
+                    <td><code>as_decimal</code></td>
+                    <td>Convert any JSON number to SIMPLE_DECIMAL</td>
+                </tr>
+            </table>
         </section>
 
         <section id="documentation">

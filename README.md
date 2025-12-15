@@ -42,6 +42,7 @@ end
 - **JSONPath Queries** - SQL-like queries: "$.users[*].name"
 - **Streaming Parser** - Process gigabyte files with constant memory
 - **Full Unicode** - UTF-8/UTF-16 through STRING_32
+- **Decimal Precision** - Exact decimal values via simple_decimal (no floating-point artifacts)
 
 ## Installation
 
@@ -54,6 +55,47 @@ export SIMPLE_JSON=/path/to/simple_json
 ```xml
 <library name="simple_json" location="$SIMPLE_JSON/simple_json.ecf"/>
 ```
+
+## Dependencies
+
+- simple_decimal (for exact decimal support)
+
+## Decimal Precision
+
+For financial data or any values requiring exact representation, use `put_decimal` instead of `put_real`:
+
+```eiffel
+local
+    obj: SIMPLE_JSON_OBJECT
+    price: SIMPLE_DECIMAL
+do
+    create price.make ("19.99")
+    obj := json.new_object
+        .put_decimal (price, "price")
+
+    print (obj.to_json)
+    -- {"price": 19.99}  (exact, not 19.989999999999998)
+end
+```
+
+**The problem with REAL:**
+```eiffel
+obj.put_real (19.99, "price")
+-- Output: {"price": 19.989999999999998}
+```
+
+**The solution with SIMPLE_DECIMAL:**
+```eiffel
+create price.make ("19.99")
+obj.put_decimal (price, "price")
+-- Output: {"price": 19.99}
+```
+
+**Decimal API:**
+- `put_decimal (value, key)` - Store exact decimal in object
+- `decimal_item (key)` - Retrieve as SIMPLE_DECIMAL
+- `add_decimal (value)` - Add to array
+- `as_decimal` - Convert any JSON number to SIMPLE_DECIMAL
 
 ## License
 

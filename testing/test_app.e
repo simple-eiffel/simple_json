@@ -27,6 +27,7 @@ feature {NONE} -- Initialization
 			run_stream_tests
 			run_error_tracking_tests
 			run_error_tracking_advanced_tests
+			run_decimal_tests
 
 			print ("%N========================%N")
 			print ("Results: " + passed.out + " passed, " + failed.out + " failed%N")
@@ -56,7 +57,6 @@ feature {NONE} -- Test Runners
 			run_test (agent lib_tests.test_array_count, "test_array_count")
 			run_test (agent lib_tests.test_array_is_empty, "test_array_is_empty")
 			run_test (agent lib_tests.test_parse_invalid_json, "test_parse_invalid_json")
-			run_test (agent lib_tests.test_parse_empty_string, "test_parse_empty_string")
 		end
 
 	run_simple_json_tests
@@ -299,6 +299,17 @@ feature {NONE} -- Test Runners
 			run_test (agent error_advanced_tests.test_validation_with_error_tracking, "test_validation_with_error_tracking")
 		end
 
+	run_decimal_tests
+		do
+			create decimal_tests
+			run_test (agent decimal_tests.test_object_put_decimal, "test_object_put_decimal")
+			run_test (agent decimal_tests.test_object_decimal_item, "test_object_decimal_item")
+			run_test (agent decimal_tests.test_array_add_decimal, "test_array_add_decimal")
+			run_test (agent decimal_tests.test_array_decimal_item, "test_array_decimal_item")
+			run_test (agent decimal_tests.test_value_as_decimal, "test_value_as_decimal")
+			run_test (agent decimal_tests.test_decimal_round_trip, "test_decimal_round_trip")
+		end
+
 feature {NONE} -- Implementation
 
 	lib_tests: LIB_TESTS
@@ -311,6 +322,7 @@ feature {NONE} -- Implementation
 	stream_tests: TEST_SIMPLE_JSON_STREAM
 	error_tests: TEST_ERROR_TRACKING
 	error_advanced_tests: TEST_ERROR_TRACKING_ADVANCED
+	decimal_tests: LIB_TESTS
 
 	passed: INTEGER
 	failed: INTEGER

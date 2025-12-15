@@ -136,6 +136,18 @@ feature -- Access (Unicode keys)
 			end
 		end
 
+	decimal_item (a_key: STRING_32): detachable SIMPLE_DECIMAL
+			-- Get decimal value for key (returns Void if not found or not a number).
+			-- Use for precise decimal arithmetic without floating-point errors.
+		require
+			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
+		do
+			if attached item (a_key) as l_value and then l_value.is_number then
+				Result := l_value.as_decimal
+			end
+		end
+
 	boolean_item (a_key: STRING_32): BOOLEAN
 			-- Get boolean value for key (returns False if not found or not a boolean)
 		require
@@ -304,6 +316,24 @@ feature -- Element change (Fluent API)
 		do
 			create l_json_key.make_from_string_32 (a_key)
 			json_value.replace_with_real (a_value, l_json_key)
+			Result := Current
+		end
+
+	put_decimal (a_value: SIMPLE_DECIMAL; a_key: STRING_32): SIMPLE_JSON_OBJECT
+			-- Add decimal value with key (fluent).
+			-- Use for precise decimal values without floating-point errors.
+			-- The decimal's exact string representation is preserved in JSON.
+		require
+			key_not_empty: not a_key.is_empty
+			key_reasonable_length: a_key.count <= Max_reasonable_key_length
+			value_not_void: a_value /= Void
+		local
+			l_json_key: JSON_STRING
+			l_json_decimal: JSON_DECIMAL
+		do
+			create l_json_key.make_from_string_32 (a_key)
+			create l_json_decimal.make_decimal (a_value)
+			json_value.replace (l_json_decimal, l_json_key)
 			Result := Current
 		end
 

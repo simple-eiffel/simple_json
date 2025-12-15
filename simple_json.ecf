@@ -24,6 +24,7 @@
 		<library name="logging" location="$ISE_LIBRARY\library\runtime\logging\logging.ecf"/>
 		<library name="regexp" location="$ISE_LIBRARY\contrib\library\gobo\library\regexp\src\library.ecf"/>
 		<library name="simple_datetime" location="$SIMPLE_DATETIME/simple_datetime.ecf"/>
+		<library name="simple_decimal" location="$SIMPLE_DECIMAL\simple_decimal.ecf"/>
 		<cluster name="src" location=".\src\" recursive="true"/>
 	</target>
 	<target name="simple_json_tests" extends="simple_json">

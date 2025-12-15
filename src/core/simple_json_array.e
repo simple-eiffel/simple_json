@@ -113,6 +113,17 @@ feature -- Access
 			end
 		end
 
+	decimal_item (i: INTEGER): detachable SIMPLE_DECIMAL
+			-- Get decimal value at index (returns Void if not found or not a number).
+			-- Use for precise decimal arithmetic without floating-point errors.
+		require
+			valid_index: valid_index (i)
+		do
+			if attached item (i) as l_value and then l_value.is_number then
+				Result := l_value.as_decimal
+			end
+		end
+
 	boolean_item (i: INTEGER): BOOLEAN
 			-- Get boolean value at index (returns False if not found or not a boolean)
 		require
@@ -183,6 +194,20 @@ feature -- Element change (Fluent API)
 		do
 			create l_json_number.make_real (a_value)
 			json_value.add (l_json_number)
+			Result := Current
+		end
+
+	add_decimal (a_value: SIMPLE_DECIMAL): SIMPLE_JSON_ARRAY
+			-- Add decimal value (fluent).
+			-- Use for precise decimal values without floating-point errors.
+			-- The decimal's exact string representation is preserved in JSON.
+		require
+			value_not_void: a_value /= Void
+		local
+			l_json_decimal: JSON_DECIMAL
+		do
+			create l_json_decimal.make_decimal (a_value)
+			json_value.add (l_json_decimal)
 			Result := Current
 		end
 

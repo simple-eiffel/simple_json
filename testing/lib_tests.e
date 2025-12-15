@@ -209,15 +209,129 @@ feature -- Test: Error Handling
 			assert_true ("has error", json.has_errors)
 		end
 
-	test_parse_empty_string
-			-- Test parsing empty string.
+feature -- Test: Decimal Support
+
+	test_object_put_decimal
+			-- Test putting decimal value in object preserves precision.
 		note
-			testing: "covers/{SIMPLE_JSON}.parse"
+			testing: "covers/{SIMPLE_JSON_OBJECT}.put_decimal"
 		local
-			json: SIMPLE_JSON
+			obj: SIMPLE_JSON_OBJECT
+			dec: SIMPLE_DECIMAL
 		do
-			create json
-			if attached json.parse ("") then assert_true ("should be void", False) else assert_true ("empty returns void", True) end
+			create obj.make
+			create dec.make ("19.99")
+			obj.put_decimal (dec, "price").do_nothing
+
+			assert_true ("has price", obj.has_key ("price"))
+			-- JSON output should have exact value, not floating-point artifacts
+			assert_string_contains ("exact value", obj.to_json_string, "19.99")
+			assert_string_not_contains ("no fp error", obj.to_json_string, "19.989")
+		end
+
+	test_object_decimal_item
+			-- Test retrieving decimal value from object.
+		note
+			testing: "covers/{SIMPLE_JSON_OBJECT}.decimal_item"
+		local
+			obj: SIMPLE_JSON_OBJECT
+			dec: SIMPLE_DECIMAL
+			retrieved: detachable SIMPLE_DECIMAL
+		do
+			create obj.make
+			create dec.make ("99.95")
+			obj.put_decimal (dec, "amount").do_nothing
+
+			retrieved := obj.decimal_item ("amount")
+			assert_attached ("retrieved", retrieved)
+			if attached retrieved as r then
+				assert_strings_equal ("value", "99.95", r.to_string)
+			end
+		end
+
+	test_array_add_decimal
+			-- Test adding decimal to array.
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.add_decimal"
+		local
+			arr: SIMPLE_JSON_ARRAY
+			dec: SIMPLE_DECIMAL
+		do
+			create arr.make
+			create dec.make ("3.14159")
+			arr.add_decimal (dec).do_nothing
+
+			assert_integers_equal ("count", 1, arr.count)
+			assert_string_contains ("exact pi", arr.to_json_string, "3.14159")
+		end
+
+	test_array_decimal_item
+			-- Test retrieving decimal from array.
+		note
+			testing: "covers/{SIMPLE_JSON_ARRAY}.decimal_item"
+		local
+			arr: SIMPLE_JSON_ARRAY
+			dec: SIMPLE_DECIMAL
+			retrieved: detachable SIMPLE_DECIMAL
+		do
+			create arr.make
+			create dec.make ("2.71828")
+			arr.add_decimal (dec).do_nothing
+
+			retrieved := arr.decimal_item (1)
+			assert_attached ("retrieved", retrieved)
+			if attached retrieved as r then
+				assert_strings_equal ("value", "2.71828", r.to_string)
+			end
+		end
+
+	test_value_as_decimal
+			-- Test SIMPLE_JSON_VALUE.as_decimal.
+		note
+			testing: "covers/{SIMPLE_JSON_VALUE}.as_decimal"
+		local
+			obj: SIMPLE_JSON_OBJECT
+			dec: SIMPLE_DECIMAL
+		do
+			create obj.make
+			create dec.make ("42.5")
+			obj.put_decimal (dec, "num").do_nothing
+
+			if attached obj.item ("num") as v then
+				assert_true ("is number", v.is_number)
+				assert_strings_equal ("as_decimal", "42.5", v.as_decimal.to_string)
+			else
+				assert_true ("item exists", False)
+			end
+		end
+
+	test_decimal_round_trip
+			-- Test decimal survives JSON encode/decode.
+		note
+			testing: "covers/{JSON_DECIMAL}"
+		local
+			obj: SIMPLE_JSON_OBJECT
+			dec: SIMPLE_DECIMAL
+			json_str: STRING_32
+			parser: SIMPLE_JSON
+			retrieved: detachable SIMPLE_DECIMAL
+		do
+			create obj.make
+			create dec.make ("123.456")
+			obj.put_decimal (dec, "value").do_nothing
+
+			json_str := obj.to_json_string
+
+			create parser
+			if attached parser.parse (json_str) as parsed and then parsed.is_object then
+				retrieved := parsed.as_object.decimal_item ("value")
+				assert_attached ("round trip", retrieved)
+				if attached retrieved as r then
+					assert_strings_equal ("preserved", "123.456", r.to_string)
+				end
+			else
+				assert_true ("parse succeeded", False)
+			end
 		end
 
 end

@@ -146,6 +146,31 @@ feature -- Number access
 			Result := as_real
 		end
 
+feature -- Decimal access
+
+	as_decimal: SIMPLE_DECIMAL
+			-- Get value as SIMPLE_DECIMAL for precise arithmetic.
+			-- Preserves exact precision from JSON source.
+		require
+			is_number: is_number
+		do
+			if attached {JSON_NUMBER} json_value as l_number then
+				create Result.make (l_number.representation)
+			else
+				create Result.make_zero
+			end
+		ensure
+			result_attached: Result /= Void
+		end
+
+	decimal_value: SIMPLE_DECIMAL
+			-- Synonym for as_decimal
+		require
+			is_number: is_number
+		do
+			Result := as_decimal
+		end
+
 feature -- Boolean access
 
 	as_boolean: BOOLEAN
