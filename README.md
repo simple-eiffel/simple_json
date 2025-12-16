@@ -22,6 +22,40 @@ Part of the [Simple Eiffel](https://github.com/simple-eiffel) ecosystem.
 
 SIMPLE_JSON builds on the standard eJSON library to provide modern features: **JSON Schema validation** (Draft 7), **JSON Pointer** (RFC 6901), **JSON Patch** (RFC 6902), **JSON Merge Patch** (RFC 7386), **JSONPath queries**, and streaming for large files.
 
+## Quick Start (Zero-Configuration)
+
+Use `SIMPLE_JSON_QUICK` for the simplest possible JSON operations:
+
+```eiffel
+local
+    json: SIMPLE_JSON_QUICK
+    name: detachable STRING
+do
+    create json.make
+
+    -- Parse and query in one call
+    name := json.get_string (json_string, "$.users[0].name")
+
+    -- Parse to object
+    if attached json.parse_object (json_string) as obj then
+        name := json.string_at (obj, "user.name")
+    end
+
+    -- Build JSON fluently
+    print (json.object.put ("name", "Alice").put ("age", 30).to_json)
+    -- {"name":"Alice","age":30}
+
+    -- Quick object from pairs
+    print (json.from_pairs (<<["city", "Paris"], ["country", "France"]>>))
+
+    -- Validation
+    if json.is_valid (some_string) then ...
+    if json.is_object (some_string) then ...
+end
+```
+
+## Standard API (Full Control)
+
 ```eiffel
 local
     json: SIMPLE_JSON

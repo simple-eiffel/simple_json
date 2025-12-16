@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMPLE_JSON_QUICK - Zero-Configuration JSON</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="images/logo.png" alt="simple_* logo" class="logo">
+        </div>
+        <h1>SIMPLE_JSON_QUICK</h1>
+        <p class="tagline">Zero-Configuration JSON for Beginners</p>
+        <div class="badges">
+            <span class="badge badge-version">v1.0.0</span>
+            <span class="badge badge-license">MIT</span>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#api">API Reference</a></li>
+            <li><a href="user-guide.html">Full API</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>
+                <strong>SIMPLE_JSON_QUICK</strong> provides the simplest possible JSON operations for beginners.
+                One-liner parse, query, and build operations with sensible defaults.
+            </p>
+            <p>For full control, use <a href="user-guide.html">SIMPLE_JSON</a> directly.</p>
+        </section>
+
+        <section id="quick-start">
+            <h2>Quick Start</h2>
+<pre><code><span class="keyword">local</span>
+    json: <span class="type">SIMPLE_JSON_QUICK</span>
+    name: <span class="keyword">detachable</span> <span class="type">STRING</span>
+<span class="keyword">do</span>
+    <span class="keyword">create</span> json.make
+
+    <span class="comment">-- Parse and query in one call</span>
+    name := json.get_string (json_string, <span class="string">"$.users[0].name"</span>)
+
+    <span class="comment">-- Parse to object</span>
+    <span class="keyword">if</span> <span class="keyword">attached</span> json.parse_object (json_string) <span class="keyword">as</span> obj <span class="keyword">then</span>
+        name := json.string_at (obj, <span class="string">"user.name"</span>)
+    <span class="keyword">end</span>
+
+    <span class="comment">-- Build JSON fluently</span>
+    print (json.object.put (<span class="string">"name"</span>, <span class="string">"Alice"</span>).put (<span class="string">"age"</span>, 30).to_json)
+    <span class="comment">-- {"name":"Alice","age":30}</span>
+
+    <span class="comment">-- Quick object from pairs</span>
+    print (json.from_pairs (&lt;&lt;[<span class="string">"city"</span>, <span class="string">"Paris"</span>], [<span class="string">"country"</span>, <span class="string">"France"</span>]&gt;&gt;))
+
+    <span class="comment">-- Validation</span>
+    <span class="keyword">if</span> json.is_valid (some_string) <span class="keyword">then</span> ...
+    <span class="keyword">if</span> json.is_object (some_string) <span class="keyword">then</span> ...
+<span class="keyword">end</span></code></pre>
+        </section>
+
+        <section id="api">
+            <h2>API Reference</h2>
+
+            <h3>Parsing</h3>
+            <table>
+                <tr><th>Feature</th><th>Description</th></tr>
+                <tr><td><code>parse (json)</code></td><td>Parse JSON string to value</td></tr>
+                <tr><td><code>parse_object (json)</code></td><td>Parse JSON string to object</td></tr>
+                <tr><td><code>parse_array (json)</code></td><td>Parse JSON string to array</td></tr>
+                <tr><td><code>parse_file (path)</code></td><td>Parse JSON file</td></tr>
+            </table>
+
+            <h3>Querying</h3>
+            <table>
+                <tr><th>Feature</th><th>Description</th></tr>
+                <tr><td><code>get_string (json, path)</code></td><td>Get string at JSONPath</td></tr>
+                <tr><td><code>get_integer (json, path)</code></td><td>Get integer at JSONPath</td></tr>
+                <tr><td><code>get_real (json, path)</code></td><td>Get real at JSONPath</td></tr>
+                <tr><td><code>get_boolean (json, path)</code></td><td>Get boolean at JSONPath</td></tr>
+                <tr><td><code>string_at (obj, dotpath)</code></td><td>Get string via dot-path</td></tr>
+                <tr><td><code>integer_at (obj, dotpath)</code></td><td>Get integer via dot-path</td></tr>
+            </table>
+
+            <h3>Building</h3>
+            <table>
+                <tr><th>Feature</th><th>Description</th></tr>
+                <tr><td><code>object</code></td><td>Start fluent object builder</td></tr>
+                <tr><td><code>from_pairs (pairs)</code></td><td>Build object from key-value pairs</td></tr>
+            </table>
+
+            <h3>Validation</h3>
+            <table>
+                <tr><th>Feature</th><th>Description</th></tr>
+                <tr><td><code>is_valid (json)</code></td><td>Is string valid JSON?</td></tr>
+                <tr><td><code>is_object (json)</code></td><td>Is string a JSON object?</td></tr>
+                <tr><td><code>is_array (json)</code></td><td>Is string a JSON array?</td></tr>
+            </table>
+        </section>
+
+        <section id="when-to-use">
+            <h2>When to Use QUICK vs Standard API</h2>
+            <table>
+                <tr><th>Use QUICK when...</th><th>Use Standard API when...</th></tr>
+                <tr><td>Learning JSON in Eiffel</td><td>Need JSON Schema validation</td></tr>
+                <tr><td>Simple config file parsing</td><td>Need JSON Patch/Pointer</td></tr>
+                <tr><td>Quick one-liner operations</td><td>Processing large files</td></tr>
+                <tr><td>Building simple JSON responses</td><td>Need custom serialization</td></tr>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>Part of the <a href="https://github.com/simple-eiffel">Simple Eiffel</a> ecosystem</p>
+    </footer>
+</body>
+</html>
