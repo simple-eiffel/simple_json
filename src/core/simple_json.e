@@ -793,6 +793,44 @@ feature -- JSON Patch (RFC 6902)
 			end
 		end
 
+feature {NONE} -- Type references (for `like` anchors only)
+
+	json_value_typeref: detachable SIMPLE_JSON_VALUE
+		require
+			type_ref_only_never_call: False
+		attribute
+		end
+
+	json_object_typeref: detachable SIMPLE_JSON_OBJECT
+		require
+			type_ref_only_never_call: False
+		attribute
+		end
+
+	json_array_typeref: detachable SIMPLE_JSON_ARRAY
+		require
+			type_ref_only_never_call: False
+		attribute
+		end
+
+	json_error_typeref: detachable SIMPLE_JSON_ERROR
+		require
+			type_ref_only_never_call: False
+		attribute
+		end
+
+	json_patch_typeref: detachable SIMPLE_JSON_PATCH
+		require
+			type_ref_only_never_call: False
+		attribute
+		end
+
+	json_patch_result_typeref: detachable SIMPLE_JSON_PATCH_RESULT
+		require
+			type_ref_only_never_call: False
+		attribute
+		end
+
 invariant
 	-- Error list integrity
 	last_errors_attached: last_errors /= Void

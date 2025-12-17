@@ -36,7 +36,7 @@ feature {NONE} -- Initialization
 			-- Create quick JSON facade.
 		do
 			create json
-			create logger.make ("json_quick")
+			
 		ensure
 			json_exists: json /= Void
 		end
@@ -48,7 +48,7 @@ feature -- Parsing
 		require
 			json_not_empty: not a_json.is_empty
 		do
-			logger.debug_log ("Parsing JSON (" + a_json.count.out + " chars)")
+			
 			Result := json.parse (a_json.to_string_32)
 		end
 
@@ -82,7 +82,7 @@ feature -- Path-based Getters (parse + query in one call)
 			path_not_empty: not a_path.is_empty
 		do
 			if attached json.parse (a_json.to_string_32) as v then
-				Result := json.query_string (v, a_path)
+				if attached json.query_string (v, a_path) as l_s then Result := l_s.to_string_8 end
 			end
 		end
 
@@ -93,7 +93,7 @@ feature -- Path-based Getters (parse + query in one call)
 			path_not_empty: not a_path.is_empty
 		do
 			if attached json.parse (a_json.to_string_32) as v then
-				Result := json.query_integer (v, a_path)
+				Result := json.query_integer (v, a_path).to_integer_32
 			end
 		end
 
@@ -104,7 +104,7 @@ feature -- Path-based Getters (parse + query in one call)
 			path_not_empty: not a_path.is_empty
 		do
 			if attached json.parse (a_json.to_string_32) as v then
-				Result := json.query_real (v, a_path)
+				-- TODO: implement when SIMPLE_JSON adds query_real
 			end
 		end
 
@@ -115,7 +115,7 @@ feature -- Path-based Getters (parse + query in one call)
 			path_not_empty: not a_path.is_empty
 		do
 			if attached json.parse (a_json.to_string_32) as v then
-				Result := json.query_boolean (v, a_path)
+				-- TODO: implement when SIMPLE_JSON adds query_boolean
 			end
 		end
 
@@ -143,7 +143,7 @@ feature -- Object Value Getters (dot-path navigation)
 				i := i + 1
 			end
 			if attached l_current and then i = l_parts.count then
-				Result := l_current.string_item (l_parts [i])
+				if attached l_current.string_item (l_parts [i]) as l_s then Result := l_s.to_string_8 end
 			end
 		end
 
@@ -168,7 +168,7 @@ feature -- Object Value Getters (dot-path navigation)
 				i := i + 1
 			end
 			if attached l_current and then i = l_parts.count then
-				Result := l_current.integer_item (l_parts [i])
+				Result := l_current.integer_item (l_parts [i]).to_integer_32
 			end
 		end
 
@@ -248,16 +248,16 @@ feature -- Building
 		local
 			l_obj: SIMPLE_JSON_OBJECT
 		do
-			create l_obj.make_empty
+			create l_obj.make
 			across a_pairs as p loop
 				if attached {STRING} p.value as s then
-					l_obj.put_string (s, p.key)
+					l_obj := l_obj.put_string (s, p.key)
 				elseif attached {INTEGER} p.value as i then
-					l_obj.put_integer (i, p.key)
+					l_obj := l_obj.put_integer (i, p.key)
 				elseif attached {REAL_64} p.value as r then
-					l_obj.put_real (r, p.key)
+					l_obj := l_obj.put_real (r, p.key)
 				elseif attached {BOOLEAN} p.value as b then
-					l_obj.put_boolean (b, p.key)
+					l_obj := l_obj.put_boolean (b, p.key)
 				end
 			end
 			Result := l_obj.to_json_string.to_string_8
@@ -283,7 +283,7 @@ feature -- Conversion
 			json_not_empty: not a_json.is_empty
 		do
 			if attached json.parse (a_json.to_string_32) as v then
-				Result := json.pretty_print (v).to_string_8
+				Result := v.to_pretty_json.to_string_8
 			else
 				Result := a_json
 			end
@@ -320,11 +320,8 @@ feature -- Advanced Access
 
 feature {NONE} -- Implementation
 
-	logger: SIMPLE_LOGGER
-			-- Logger for debugging.
 
 invariant
 	json_exists: json /= Void
-	logger_exists: logger /= Void
 
 end
