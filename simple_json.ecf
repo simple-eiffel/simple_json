@@ -15,7 +15,7 @@
 			<concurrency support="scoop" use="thread"/>
 			<void_safety support="all"/>
 		</capability>
-		<variable name="SYSTEM_PATH" value="D:\prod\simple_json"/>
+		<variable name="SYSTEM_PATH" value="$SIMPLE_EIFFEL/simple_json"/>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<library name="decimal" location="$ISE_LIBRARY\contrib\library\gobo\library\math\library.ecf"/>
 		<library name="encoder" location="$ISE_LIBRARY\contrib\library\web\framework\ewf\text\encoder\encoder.ecf"/>
@@ -34,7 +34,7 @@
 		</option>
 		<setting name="console_application" value="true"/>
 		<setting name="total_order_on_reals" value="true"/>
-		<variable name="SYSTEM_PATH" value="D:\prod\simple_json"/>
+		<variable name="SYSTEM_PATH" value="$SIMPLE_EIFFEL/simple_json"/>
 		<library name="simple_testing" location="$SIMPLE_EIFFEL/simple_testing/simple_testing.ecf"/>
 		<library name="testing" location="$ISE_LIBRARY\library\testing\testing.ecf"/>
 		<cluster name="test" location=".\testing\" recursive="true"/>
@@ -43,6 +43,6 @@
 		<description>benchmarking code</description>
 		<root class="BENCHMARK_APP" feature="make"/>
 		<option profile="true"/>
-		<cluster name="benchmark" location="D:\prod\simple_json\testing_benchmark\" recursive="true"/>
+		<cluster name="benchmark" location="$SIMPLE_EIFFEL/simple_json/testing_benchmark/" recursive="true"/>
 	</target>
 </system>
