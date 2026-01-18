@@ -1,14 +1,19 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/simple-eiffel/.github/main/profile/assets/logo.png" alt="simple_ library logo" width="400">
+  <img src="docs/images/logo.png" alt="simple_json logo" width="200">
 </p>
 
-# simple_json
+<h1 align="center">simple_json</h1>
 
-**[Documentation](https://simple-eiffel.github.io/simple_json/)** | **[GitHub](https://github.com/simple-eiffel/simple_json)**
+<p align="center">
+  <a href="https://simple-eiffel.github.io/simple_json/">Documentation</a> •
+  <a href="https://github.com/simple-eiffel/simple_json">GitHub</a>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Eiffel](https://img.shields.io/badge/Eiffel-25.02-blue.svg)](https://www.eiffel.org/)
-[![Design by Contract](https://img.shields.io/badge/DbC-enforced-orange.svg)]()
+<p align="center">
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
+  <img src="https://img.shields.io/badge/Eiffel-25.02-purple.svg" alt="Eiffel 25.02">
+  <img src="https://img.shields.io/badge/DBC-Contracts-green.svg" alt="Design by Contract">
+</p>
 
 Modern JSON library for Eiffel with RFC compliance and JSON Schema validation.
 
@@ -16,7 +21,11 @@ Part of the [Simple Eiffel](https://github.com/simple-eiffel) ecosystem.
 
 ## Status
 
-**Production** - 216 tests passing, 100% coverage
+✅ **Production Ready** — v1.0.0
+- 216 tests passing, 100% coverage
+- JSON Schema Draft 7 validation
+- Full RFC compliance (6901, 6902, 7386)
+- Design by Contract throughout
 
 ## Overview
 
@@ -133,4 +142,8 @@ obj.put_decimal (price, "price")
 
 ## License
 
-MIT License
+MIT License - see [LICENSE](LICENSE) file.
+
+---
+
+Part of the [Simple Eiffel](https://github.com/simple-eiffel) ecosystem.
