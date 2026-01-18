@@ -266,9 +266,9 @@ feature -- Status report (multiple keys - F3 friction fix)
 			keys_not_void: a_keys /= Void
 		do
 			create Result.make (a_keys.count)
-			across a_keys as k loop
-				if not has_key (k) then
-					Result.extend (k)
+			across a_keys as ic_key loop
+				if not has_key (ic_key) then
+					Result.extend (ic_key)
 				end
 			end
 		ensure

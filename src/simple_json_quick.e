@@ -249,15 +249,15 @@ feature -- Building
 			l_obj: SIMPLE_JSON_OBJECT
 		do
 			create l_obj.make
-			across a_pairs as p loop
-				if attached {STRING} p.value as s then
-					l_obj := l_obj.put_string (s, p.key)
-				elseif attached {INTEGER} p.value as i then
-					l_obj := l_obj.put_integer (i, p.key)
-				elseif attached {REAL_64} p.value as r then
-					l_obj := l_obj.put_real (r, p.key)
-				elseif attached {BOOLEAN} p.value as b then
-					l_obj := l_obj.put_boolean (b, p.key)
+			across a_pairs as ic_pair loop
+				if attached {STRING} ic_pair.value as s then
+					l_obj := l_obj.put_string (s, ic_pair.key)
+				elseif attached {INTEGER} ic_pair.value as i then
+					l_obj := l_obj.put_integer (i, ic_pair.key)
+				elseif attached {REAL_64} ic_pair.value as r then
+					l_obj := l_obj.put_real (r, ic_pair.key)
+				elseif attached {BOOLEAN} ic_pair.value as b then
+					l_obj := l_obj.put_boolean (b, ic_pair.key)
 				end
 			end
 			Result := l_obj.to_json_string.to_string_8
