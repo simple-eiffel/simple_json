@@ -29,6 +29,13 @@ feature {NONE} -- Initialization
 			run_error_tracking_advanced_tests
 			run_decimal_tests
 
+			-- Hardening Tests
+			print ("%N=== ADVERSARIAL TESTS ===%N")
+			run_adversarial_tests
+
+			print ("%N=== STRESS TESTS ===%N")
+			run_stress_tests
+
 			print ("%N========================%N")
 			print ("Results: " + passed.out + " passed, " + failed.out + " failed%N")
 
@@ -310,6 +317,69 @@ feature {NONE} -- Test Runners
 			run_test (agent decimal_tests.test_decimal_round_trip, "test_decimal_round_trip")
 		end
 
+	run_adversarial_tests
+		do
+			create adversarial_tests
+			-- Malformed Input Tests
+			run_test (agent adversarial_tests.test_deeply_nested_objects, "test_deeply_nested_objects")
+			run_test (agent adversarial_tests.test_deeply_nested_arrays, "test_deeply_nested_arrays")
+			run_test (agent adversarial_tests.test_unclosed_object, "test_unclosed_object")
+			run_test (agent adversarial_tests.test_unclosed_array, "test_unclosed_array")
+			run_test (agent adversarial_tests.test_unclosed_string, "test_unclosed_string")
+			run_test (agent adversarial_tests.test_trailing_comma_object, "test_trailing_comma_object")
+			run_test (agent adversarial_tests.test_trailing_comma_array, "test_trailing_comma_array")
+			run_test (agent adversarial_tests.test_leading_zeros_number, "test_leading_zeros_number")
+			run_test (agent adversarial_tests.test_infinity_rejected, "test_infinity_rejected")
+			run_test (agent adversarial_tests.test_nan_rejected, "test_nan_rejected")
+			-- String Escape Tests
+			run_test (agent adversarial_tests.test_all_escape_sequences, "test_all_escape_sequences")
+			run_test (agent adversarial_tests.test_unicode_escape, "test_unicode_escape")
+			run_test (agent adversarial_tests.test_unicode_surrogate_pair, "test_unicode_surrogate_pair")
+			run_test (agent adversarial_tests.test_control_character_rejected, "test_control_character_rejected")
+			-- Type Coercion Tests
+			run_test (agent adversarial_tests.test_string_not_number, "test_string_not_number")
+			run_test (agent adversarial_tests.test_boolean_case_sensitive, "test_boolean_case_sensitive")
+			run_test (agent adversarial_tests.test_null_case_sensitive, "test_null_case_sensitive")
+			-- Duplicate Key Tests
+			run_test (agent adversarial_tests.test_duplicate_keys_last_wins, "test_duplicate_keys_last_wins")
+			-- JSON Pointer Edge Cases
+			run_test (agent adversarial_tests.test_pointer_empty_key, "test_pointer_empty_key")
+			run_test (agent adversarial_tests.test_pointer_tilde_escape, "test_pointer_tilde_escape")
+			-- JSON Patch Edge Cases
+			run_test (agent adversarial_tests.test_patch_remove_nonexistent, "test_patch_remove_nonexistent")
+			run_test (agent adversarial_tests.test_patch_test_failure, "test_patch_test_failure")
+			run_test (agent adversarial_tests.test_patch_atomic_rollback, "test_patch_atomic_rollback")
+			-- Merge Patch Edge Cases
+			run_test (agent adversarial_tests.test_merge_patch_null_deletion, "test_merge_patch_null_deletion")
+			run_test (agent adversarial_tests.test_merge_patch_array_replace, "test_merge_patch_array_replace")
+		end
+
+	run_stress_tests
+		do
+			create stress_tests
+			-- Volume Tests
+			run_test (agent stress_tests.test_100_objects_sequential, "test_100_objects_sequential")
+			run_test (agent stress_tests.test_large_array_1000_elements, "test_large_array_1000_elements")
+			run_test (agent stress_tests.test_large_object_100_keys, "test_large_object_100_keys")
+			run_test (agent stress_tests.test_long_string_10000_chars, "test_long_string_10000_chars")
+			-- Parse/Serialize Round-Trip Tests
+			run_test (agent stress_tests.test_round_trip_complex_object, "test_round_trip_complex_object")
+			run_test (agent stress_tests.test_round_trip_special_characters, "test_round_trip_special_characters")
+			-- Patch Stress Tests
+			run_test (agent stress_tests.test_many_patch_operations, "test_many_patch_operations")
+			-- Schema Validation Stress Tests
+			run_test (agent stress_tests.test_validate_large_array, "test_validate_large_array")
+			-- Memory/Performance Tests
+			run_test (agent stress_tests.test_repeated_parse_no_leak, "test_repeated_parse_no_leak")
+			run_test (agent stress_tests.test_error_recovery, "test_error_recovery")
+			-- Determinism Tests
+			run_test (agent stress_tests.test_deterministic_output, "test_deterministic_output")
+			run_test (agent stress_tests.test_different_data_different_output, "test_different_data_different_output")
+			-- JSONPath Stress Tests
+			run_test (agent stress_tests.test_query_deeply_nested, "test_query_deeply_nested")
+			run_test (agent stress_tests.test_query_large_array_wildcard, "test_query_large_array_wildcard")
+		end
+
 feature {NONE} -- Implementation
 
 	lib_tests: LIB_TESTS
@@ -323,6 +393,8 @@ feature {NONE} -- Implementation
 	error_tests: TEST_ERROR_TRACKING
 	error_advanced_tests: TEST_ERROR_TRACKING_ADVANCED
 	decimal_tests: LIB_TESTS
+	adversarial_tests: ADVERSARIAL_TESTS
+	stress_tests: STRESS_TESTS
 
 	passed: INTEGER
 	failed: INTEGER
