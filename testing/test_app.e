@@ -28,6 +28,7 @@ feature {NONE} -- Initialization
 			run_error_tracking_tests
 			run_error_tracking_advanced_tests
 			run_decimal_tests
+			run_serializer_tests
 
 			-- Hardening Tests
 			print ("%N=== ADVERSARIAL TESTS ===%N")
@@ -317,6 +318,15 @@ feature {NONE} -- Test Runners
 			run_test (agent decimal_tests.test_decimal_round_trip, "test_decimal_round_trip")
 		end
 
+	run_serializer_tests
+		do
+			create serializer_tests
+			run_test (agent serializer_tests.test_serialize_simple_object, "test_serialize_simple_object")
+			run_test (agent serializer_tests.test_serialize_nested_object, "test_serialize_nested_object")
+			run_test (agent serializer_tests.test_serialize_to_string, "test_serialize_to_string")
+			run_test (agent serializer_tests.test_exclude_field, "test_exclude_field")
+		end
+
 	run_adversarial_tests
 		do
 			create adversarial_tests
@@ -393,6 +403,7 @@ feature {NONE} -- Implementation
 	error_tests: TEST_ERROR_TRACKING
 	error_advanced_tests: TEST_ERROR_TRACKING_ADVANCED
 	decimal_tests: LIB_TESTS
+	serializer_tests: TEST_JSON_SERIALIZER
 	adversarial_tests: ADVERSARIAL_TESTS
 	stress_tests: STRESS_TESTS
 
