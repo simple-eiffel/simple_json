@@ -366,6 +366,8 @@ feature {NONE} -- Test Runners
 			run_test (agent adversarial_tests.test_serialize_array_of_objects, "test_serialize_array_of_objects")
 			run_test (agent adversarial_tests.test_serialize_empty_object, "test_serialize_empty_object")
 			run_test (agent adversarial_tests.test_serialize_with_null_field, "test_serialize_with_null_field")
+			-- UTF-8 BOM Tests
+			run_test (agent adversarial_tests.test_parse_file_with_utf8_bom, "test_parse_file_with_utf8_bom")
 		end
 
 	run_stress_tests

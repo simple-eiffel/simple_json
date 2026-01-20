@@ -90,7 +90,7 @@ feature -- Parsing
 			if l_file.exists and then l_file.is_readable then
 				l_file.open_read
 				l_file.read_stream (l_file.count)
-				l_content := utf_8_to_string_32 (l_file.last_string)
+				l_content := utf_8_to_string_32 (strip_utf8_bom (l_file.last_string))
 				l_file.close
 				Result := parse (l_content)
 			else
@@ -477,6 +477,20 @@ feature {NONE} -- Implementation
 			Result := l_zstring.to_string_32
 		end
 
+	strip_utf8_bom (a_bytes: STRING_8): STRING_8
+			-- Remove UTF-8 BOM (EF BB BF) if present at start of string
+		local
+			l_detector: SIMPLE_ENCODING_DETECTOR
+		do
+			create l_detector.make
+			if l_detector.has_utf8_bom (a_bytes) then
+				Result := a_bytes.substring (4, a_bytes.count)
+			else
+				Result := a_bytes
+			end
+		ensure
+			result_attached: Result /= Void
+		end
 
 	query_single_value (a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): detachable SIMPLE_JSON_VALUE
 			-- Navigate path and return single value

@@ -617,4 +617,44 @@ feature -- Merge Patch Edge Cases
 			end
 		end
 
+feature -- UTF-8 BOM Tests
+
+	test_parse_file_with_utf8_bom
+			-- Test that files with UTF-8 BOM are parsed correctly.
+		local
+			l_json: SIMPLE_JSON
+			l_file: PLAIN_TEXT_FILE
+			l_path: STRING_32
+			l_content: STRING_8
+		do
+			create l_json
+			l_path := "test_bom_temp.json"
+			-- Create file with UTF-8 BOM (EF BB BF) followed by JSON
+			create l_content.make (50)
+			l_content.append_character ('%/239/')  -- 0xEF
+			l_content.append_character ('%/187/')  -- 0xBB
+			l_content.append_character ('%/191/')  -- 0xBF
+			l_content.append ("{%"name%": %"test%"}")
+			-- Write file
+			create l_file.make_create_read_write (l_path)
+			l_file.put_string (l_content)
+			l_file.close
+			-- Parse file with BOM
+			if attached l_json.parse_file (l_path) as l_value then
+				assert ("bom_parsed", l_value.is_object)
+				if attached l_value.as_object.string_item ("name") as l_name then
+					assert ("name_correct", l_name.same_string ("test"))
+				else
+					assert ("name_attached", False)
+				end
+			else
+				assert ("bom_parse_succeeded", False)
+			end
+			-- Cleanup
+			create l_file.make_with_name (l_path)
+			if l_file.exists then
+				l_file.delete
+			end
+		end
+
 end
