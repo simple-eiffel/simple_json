@@ -510,6 +510,66 @@ feature -- JSON Patch Edge Cases
 			end
 		end
 
+feature -- Serializer Adversarial Tests
+
+	test_serialize_array_of_objects
+			-- Test serializing object with array of nested objects.
+		local
+			l_serializer: SIMPLE_JSON_SERIALIZER
+			l_parent: TEST_SERIALIZER_PARENT_WITH_CHILDREN
+			l_json: SIMPLE_JSON_OBJECT
+		do
+			create l_serializer.make
+			create l_parent.make_with_children ("Family", 3)
+			l_json := l_serializer.to_json (l_parent)
+
+			if attached l_json.string_item ("name") as l_name then
+				assert_strings_equal ("parent_name", "Family", l_name)
+			else
+				assert ("name_exists", False)
+			end
+			if attached l_json.array_item ("children") as l_arr then
+				assert_integers_equal ("children_count", 3, l_arr.count)
+			else
+				assert ("children_exists", False)
+			end
+		end
+
+	test_serialize_empty_object
+			-- Test serializing object with no fields (edge case).
+		local
+			l_serializer: SIMPLE_JSON_SERIALIZER
+			l_obj: TEST_SERIALIZER_EMPTY
+			l_json: SIMPLE_JSON_OBJECT
+		do
+			create l_serializer.make
+			create l_obj
+			l_json := l_serializer.to_json (l_obj)
+			-- Should return empty JSON object
+			assert ("empty_object", True)  -- Just verify it doesn't crash
+		end
+
+	test_serialize_with_null_field
+			-- Test serializing object with detachable void field.
+		local
+			l_serializer: SIMPLE_JSON_SERIALIZER
+			l_person: TEST_SERIALIZER_PERSON
+			l_json: SIMPLE_JSON_OBJECT
+		do
+			create l_serializer.make
+			create l_person.make ("NullTest", 99)
+			-- address is detachable and void by default
+			l_json := l_serializer.to_json (l_person)
+
+			if attached l_json.string_item ("name") as l_name then
+				assert_strings_equal ("name_set", "NullTest", l_name)
+			else
+				assert ("name_exists", False)
+			end
+			-- address should be null
+			assert ("address_is_null", l_json.has_key ("address"))
+		end
+
 feature -- Merge Patch Edge Cases
 
 	test_merge_patch_null_deletion

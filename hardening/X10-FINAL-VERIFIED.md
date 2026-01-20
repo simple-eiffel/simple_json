@@ -9,10 +9,12 @@
 
 | Category | Passed | Failed | Total |
 |----------|--------|--------|-------|
-| Core Tests | 214 | 0 | 214 |
-| Adversarial Tests | 25 | 0 | 25 |
+| Core Tests | 218 | 0 | 218 |
+| Adversarial Tests | 28 | 0 | 28 |
 | Stress Tests | 14 | 0 | 14 |
-| **Total** | **253** | **0** | **253** |
+| **Total** | **260** | **0** | **260** |
+
+*Note: Updated 2026-01-19 with reflection-based serializer tests*
 
 ### Adversarial Test Results
 

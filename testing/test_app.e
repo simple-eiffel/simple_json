@@ -362,6 +362,10 @@ feature {NONE} -- Test Runners
 			-- Merge Patch Edge Cases
 			run_test (agent adversarial_tests.test_merge_patch_null_deletion, "test_merge_patch_null_deletion")
 			run_test (agent adversarial_tests.test_merge_patch_array_replace, "test_merge_patch_array_replace")
+			-- Serializer Adversarial Tests
+			run_test (agent adversarial_tests.test_serialize_array_of_objects, "test_serialize_array_of_objects")
+			run_test (agent adversarial_tests.test_serialize_empty_object, "test_serialize_empty_object")
+			run_test (agent adversarial_tests.test_serialize_with_null_field, "test_serialize_with_null_field")
 		end
 
 	run_stress_tests
