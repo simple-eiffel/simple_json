@@ -248,12 +248,6 @@ feature -- Visitor Pattern
 
 feature {NONE} -- Implementation
 
-	utf_converter: UTF_CONVERTER
-			-- UTF conversion utility
-		once
-			create Result
-		end
-
 	escape_json_string (a_string: STRING_32): STRING_32
 			-- Escape special JSON characters while preserving Unicode characters
 			-- The input has already been unescaped (\\uNNNN codes → actual characters)

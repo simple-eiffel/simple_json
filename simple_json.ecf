@@ -17,11 +17,11 @@
 		</capability>
 		<variable name="SYSTEM_PATH" value="$SIMPLE_EIFFEL/simple_json"/>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
-		<library name="encoding" location="$ISE_LIBRARY\library\encoding\encoding.ecf"/>
 		<library name="json" location="$ISE_LIBRARY\contrib\library\text\parser\json\library\json.ecf"/>
 		<library name="logging" location="$ISE_LIBRARY\library\runtime\logging\logging.ecf"/>
 		<library name="simple_datetime" location="$SIMPLE_EIFFEL/simple_datetime/simple_datetime.ecf"/>
 		<library name="simple_decimal" location="$SIMPLE_EIFFEL/simple_decimal/simple_decimal.ecf"/>
+		<library name="simple_zstring" location="$SIMPLE_EIFFEL/simple_zstring/simple_zstring.ecf"/>
 		<library name="regexp" location="$GOBO_LIBRARY/regexp/library.ecf"/>
 		<cluster name="src" location=".\src\" recursive="true"/>
 	</target>

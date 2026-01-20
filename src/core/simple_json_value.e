@@ -248,7 +248,7 @@ feature -- Output
 	as_json_32: STRING_32
 			-- JSON string representation (STRING_32)
 		do
-			Result := utf_converter.utf_8_string_8_to_string_32 (json_value.representation)
+			Result := utf_8_to_string_32 (json_value.representation)
 		ensure
 			result_attached: Result /= Void
 		end
@@ -261,7 +261,7 @@ feature -- Conversion
 			l_utf8: STRING_8
 		do
 			l_utf8 := json_value.representation
-			Result := utf_converter.utf_8_string_8_to_string_32 (l_utf8)
+			Result := utf_8_to_string_32 (l_utf8)
 		end
 
 	representation: STRING_32
@@ -318,10 +318,13 @@ feature -- Pretty Printing
 
 feature {NONE} -- Implementation
 
-	utf_converter: UTF_CONVERTER
-			-- UTF conversion utility
-		once
-			create Result
+	utf_8_to_string_32 (a_utf8: STRING_8): STRING_32
+			-- Convert UTF-8 encoded STRING_8 to STRING_32
+		local
+			l_zstring: SIMPLE_ZSTRING
+		do
+			create l_zstring.make_from_utf_8 (a_utf8)
+			Result := l_zstring.to_string_32
 		end
 
 invariant

@@ -186,7 +186,7 @@ feature -- Test routines - File streaming
 			-- Create a temporary test file
 			l_file_path := "test_stream.json"
 			create l_file.make_create_read_write (l_file_path)
-			l_utf8 := utf_converter.utf_32_string_to_utf_8_string_8 ({STRING_32} "[1, 2, 3, 4, 5]")
+			l_utf8 := string_32_to_utf_8 ({STRING_32} "[1, 2, 3, 4, 5]")
 			l_file.put_string (l_utf8)
 			l_file.close
 
@@ -230,10 +230,13 @@ feature -- Test routines - Multiple iterations
 
 feature {NONE} -- Implementation
 
-	utf_converter: UTF_CONVERTER
-			-- UTF conversion utility
-		once
-			create Result
+	string_32_to_utf_8 (a_string: STRING_32): STRING_8
+			-- Convert STRING_32 to UTF-8 encoded STRING_8
+		local
+			l_zstring: SIMPLE_ZSTRING
+		do
+			create l_zstring.make_from_string (a_string)
+			Result := l_zstring.to_utf_8
 		end
 
 note

@@ -43,7 +43,7 @@ feature -- Parsing
 			last_json_text := a_json_text
 
 			-- Convert STRING_32 to UTF-8 STRING_8 for the parser
-			l_utf8 := utf_converter.utf_32_string_to_utf_8_string_8 (a_json_text)
+			l_utf8 := string_32_to_utf_8 (a_json_text)
 
 			create l_parser.make_with_string (l_utf8)
 			l_parser.parse_content
@@ -90,7 +90,7 @@ feature -- Parsing
 			if l_file.exists and then l_file.is_readable then
 				l_file.open_read
 				l_file.read_stream (l_file.count)
-				l_content := utf_converter.utf_8_string_8_to_string_32 (l_file.last_string)
+				l_content := utf_8_to_string_32 (l_file.last_string)
 				l_file.close
 				Result := parse (l_content)
 			else
@@ -112,7 +112,7 @@ feature -- Parsing
 			clear_errors
 			last_json_text := a_json_text
 
-			l_utf8 := utf_converter.utf_32_string_to_utf_8_string_8 (a_json_text)
+			l_utf8 := string_32_to_utf_8 (a_json_text)
 			create l_parser.make_with_string (l_utf8)
 			l_parser.parse_content
 			Result := l_parser.is_valid
@@ -459,10 +459,22 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	utf_converter: UTF_CONVERTER
-			-- UTF conversion utility
-		once
-			create Result
+	string_32_to_utf_8 (a_string: STRING_32): STRING_8
+			-- Convert STRING_32 to UTF-8 encoded STRING_8
+		local
+			l_zstring: SIMPLE_ZSTRING
+		do
+			create l_zstring.make_from_string (a_string)
+			Result := l_zstring.to_utf_8
+		end
+
+	utf_8_to_string_32 (a_utf8: STRING_8): STRING_32
+			-- Convert UTF-8 encoded STRING_8 to STRING_32
+		local
+			l_zstring: SIMPLE_ZSTRING
+		do
+			create l_zstring.make_from_utf_8 (a_utf8)
+			Result := l_zstring.to_string_32
 		end
 
 

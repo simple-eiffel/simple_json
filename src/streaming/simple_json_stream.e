@@ -133,7 +133,7 @@ feature {NONE} -- Implementation
 				if l_file.exists and then l_file.is_readable then
 					l_file.open_read
 					l_file.read_stream (l_file.count)
-					l_content := utf_converter.utf_8_string_8_to_string_32 (l_file.last_string)
+					l_content := utf_8_to_string_32 (l_file.last_string)
 					l_file.close
 					l_value := l_parser.parse (l_content)
 				else
@@ -199,10 +199,13 @@ feature {NONE} -- Implementation
 			elements_populated: elements.count = a_array.count
 		end
 
-	utf_converter: UTF_CONVERTER
-			-- UTF conversion utility
-		once
-			create Result
+	utf_8_to_string_32 (a_utf8: STRING_8): STRING_32
+			-- Convert UTF-8 encoded STRING_8 to STRING_32
+		local
+			l_zstring: SIMPLE_ZSTRING
+		do
+			create l_zstring.make_from_utf_8 (a_utf8)
+			Result := l_zstring.to_string_32
 		end
 
 invariant
