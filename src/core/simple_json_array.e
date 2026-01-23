@@ -2,6 +2,9 @@ note
 	description: "[
 		Simple, high-level wrapper for JSON_ARRAY with fluent API and Unicode support.
 		All strings are STRING_32 for proper Unicode/UTF-8 handling.
+
+		Model query:
+			- model: MML_SEQUENCE [SIMPLE_JSON_VALUE] for specification
 		]"
 	date: "$Date$"
 	revision: "$Revision$"
@@ -165,9 +168,9 @@ feature -- Status report
 feature -- Element change (Fluent API)
 
 	add_string (a_value: STRING_32): SIMPLE_JSON_ARRAY
-			-- Add string value (fluent)
+			-- Add string value (fluent).
+			-- Note: a_value is attached - void check redundant.
 		require
-			value_not_void: a_value /= Void
 			value_reasonable_length: a_value.count <= Max_reasonable_string_length
 		local
 			l_json_string: JSON_STRING
@@ -175,6 +178,10 @@ feature -- Element change (Fluent API)
 			create l_json_string.make_from_string_32 (a_value)
 			json_value.add (l_json_string)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_string: item (count).is_string
 		end
 
 	add_integer (a_value: INTEGER_64): SIMPLE_JSON_ARRAY
@@ -185,6 +192,11 @@ feature -- Element change (Fluent API)
 			create l_json_number.make_integer (a_value)
 			json_value.add (l_json_number)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_number: item (count).is_number
+			last_value: integer_item (count) = a_value
 		end
 
 	add_real (a_value: DOUBLE): SIMPLE_JSON_ARRAY
@@ -195,20 +207,27 @@ feature -- Element change (Fluent API)
 			create l_json_number.make_real (a_value)
 			json_value.add (l_json_number)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_number: item (count).is_number
 		end
 
 	add_decimal (a_value: SIMPLE_DECIMAL): SIMPLE_JSON_ARRAY
 			-- Add decimal value (fluent).
 			-- Use for precise decimal values without floating-point errors.
 			-- The decimal's exact string representation is preserved in JSON.
-		require
-			value_not_void: a_value /= Void
+			-- Note: a_value is attached - void check redundant.
 		local
 			l_json_decimal: JSON_DECIMAL
 		do
 			create l_json_decimal.make_decimal (a_value)
 			json_value.add (l_json_decimal)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_number: item (count).is_number
 		end
 
 	add_boolean (a_value: BOOLEAN): SIMPLE_JSON_ARRAY
@@ -219,6 +238,11 @@ feature -- Element change (Fluent API)
 			create l_json_boolean.make (a_value)
 			json_value.add (l_json_boolean)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_boolean: item (count).is_boolean
+			last_value: boolean_item (count) = a_value
 		end
 
 	add_null: SIMPLE_JSON_ARRAY
@@ -229,33 +253,47 @@ feature -- Element change (Fluent API)
 			create l_json_null
 			json_value.add (l_json_null)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_null: item (count).is_null
 		end
 
 	add_object (a_value: SIMPLE_JSON_OBJECT): SIMPLE_JSON_ARRAY
-			-- Add object value (fluent)
-		require
-			value_not_void: a_value /= Void
+			-- Add object value (fluent).
+			-- Note: a_value is attached - void check redundant.
 		do
 			json_value.add (a_value.json_value)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_object: item (count).is_object
+			nested_count: attached object_item (count) as l_nested implies l_nested.count = a_value.count
 		end
 
 	add_array (a_value: SIMPLE_JSON_ARRAY): SIMPLE_JSON_ARRAY
-			-- Add array value (fluent)
-		require
-			value_not_void: a_value /= Void
+			-- Add array value (fluent).
+			-- Note: a_value is attached - void check redundant.
 		do
 			json_value.add (a_value.json_value)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_array: item (count).is_array
+			nested_count: attached array_item (count) as l_nested implies l_nested.count = a_value.count
 		end
 
 	add_value (a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_ARRAY
-			-- Add any JSON value (fluent)
-		require
-			value_not_void: a_value /= Void
+			-- Add any JSON value (fluent).
+			-- Note: a_value is attached - void check redundant.
 		do
 			json_value.add (a_value.json_value)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
 		end
 
 feature -- Removal
@@ -264,6 +302,9 @@ feature -- Removal
 			-- Remove all items
 		do
 			json_value.wipe_out
+		ensure
+			empty: is_empty
+			count_zero: count = 0
 		end
 feature -- Constants
 

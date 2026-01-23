@@ -4,6 +4,10 @@ note
 
 		Allows chaining put() calls to build JSON:
 			json.object.put ("name", "Alice").put ("age", 30).to_json
+
+		Model queries:
+			- object_model: MML_MAP of key-value pairs when in object mode
+			- array_model: MML_SEQUENCE of values when in array mode
 	]"
 	author: "Larry Rix"
 	date: "$Date$"
@@ -25,6 +29,7 @@ feature {NONE} -- Initialization
 			is_object_mode := True
 		ensure
 			object_mode: is_object_mode
+			empty_object: json_object.count = 0
 		end
 
 	make_array
@@ -34,6 +39,7 @@ feature {NONE} -- Initialization
 			is_object_mode := False
 		ensure
 			array_mode: not is_object_mode
+			empty_array: json_array.count = 0
 		end
 
 feature -- Object Building (chainable)
@@ -43,7 +49,10 @@ feature -- Object Building (chainable)
 		require
 			is_object: is_object_mode
 			key_not_empty: not a_key.is_empty
+		local
+			l_old_count: INTEGER
 		do
+			l_old_count := json_object.count
 			if attached {STRING} a_value as s then
 				json_object := json_object.put_string (s, a_key)
 			elseif attached {STRING_32} a_value as s32 then
@@ -68,6 +77,8 @@ feature -- Object Building (chainable)
 			Result := Current
 		ensure
 			result_is_self: Result = Current
+			key_exists: json_object.has_key (a_key)
+			mode_preserved: is_object_mode
 		end
 
 	put_null (a_key: STRING): SIMPLE_JSON_BUILDER
@@ -80,6 +91,8 @@ feature -- Object Building (chainable)
 			Result := Current
 		ensure
 			result_is_self: Result = Current
+			key_exists: json_object.has_key (a_key)
+			mode_preserved: is_object_mode
 		end
 
 	put_object (a_key: STRING; a_builder: SIMPLE_JSON_BUILDER): SIMPLE_JSON_BUILDER
@@ -93,6 +106,10 @@ feature -- Object Building (chainable)
 			Result := Current
 		ensure
 			result_is_self: Result = Current
+			key_exists: json_object.has_key (a_key)
+			nested_object_preserved: attached json_object.object_item (a_key) as l_nested implies
+				l_nested.count = a_builder.json_object.count
+			mode_preserved: is_object_mode
 		end
 
 	put_array (a_key: STRING; a_builder: SIMPLE_JSON_BUILDER): SIMPLE_JSON_BUILDER
@@ -106,6 +123,10 @@ feature -- Object Building (chainable)
 			Result := Current
 		ensure
 			result_is_self: Result = Current
+			key_exists: json_object.has_key (a_key)
+			nested_array_preserved: attached json_object.array_item (a_key) as l_nested implies
+				l_nested.count = a_builder.json_array.count
+			mode_preserved: is_object_mode
 		end
 
 feature -- Array Building (chainable)
@@ -114,7 +135,10 @@ feature -- Array Building (chainable)
 			-- Add value to array.
 		require
 			is_array: not is_object_mode
+		local
+			l_old_count: INTEGER
 		do
+			l_old_count := json_array.count
 			if attached {STRING} a_value as s then
 				json_array := json_array.add_string (s)
 			elseif attached {STRING_32} a_value as s32 then
@@ -135,6 +159,8 @@ feature -- Array Building (chainable)
 			Result := Current
 		ensure
 			result_is_self: Result = Current
+			count_increased: json_array.count = old json_array.count + 1
+			mode_preserved: not is_object_mode
 		end
 
 	add_null: SIMPLE_JSON_BUILDER
@@ -146,6 +172,8 @@ feature -- Array Building (chainable)
 			Result := Current
 		ensure
 			result_is_self: Result = Current
+			count_increased: json_array.count = old json_array.count + 1
+			mode_preserved: not is_object_mode
 		end
 
 	add_object (a_builder: SIMPLE_JSON_BUILDER): SIMPLE_JSON_BUILDER
@@ -158,6 +186,10 @@ feature -- Array Building (chainable)
 			Result := Current
 		ensure
 			result_is_self: Result = Current
+			count_increased: json_array.count = old json_array.count + 1
+			nested_object_preserved: attached json_array.object_item (json_array.count) as l_nested implies
+				l_nested.count = a_builder.json_object.count
+			mode_preserved: not is_object_mode
 		end
 
 	add_array (a_builder: SIMPLE_JSON_BUILDER): SIMPLE_JSON_BUILDER
@@ -170,6 +202,10 @@ feature -- Array Building (chainable)
 			Result := Current
 		ensure
 			result_is_self: Result = Current
+			count_increased: json_array.count = old json_array.count + 1
+			nested_array_preserved: attached json_array.array_item (json_array.count) as l_nested implies
+				l_nested.count = a_builder.json_array.count
+			mode_preserved: not is_object_mode
 		end
 
 feature -- Output
@@ -184,6 +220,8 @@ feature -- Output
 			end
 		ensure
 			result_not_empty: not Result.is_empty
+			object_starts_with_brace: is_object_mode implies Result.starts_with ("{")
+			array_starts_with_bracket: (not is_object_mode) implies Result.starts_with ("[")
 		end
 
 	to_value: SIMPLE_JSON_VALUE
@@ -195,7 +233,8 @@ feature -- Output
 				Result := json_array
 			end
 		ensure
-			result_exists: Result /= Void
+			object_result_is_object: is_object_mode implies Result.is_object
+			array_result_is_array: (not is_object_mode) implies Result.is_array
 		end
 
 feature -- Status
@@ -216,5 +255,67 @@ feature -- Access
 		attribute
 			create Result.make
 		end
+
+feature -- Model queries
+
+	object_model: MML_MAP [STRING, detachable SIMPLE_JSON_VALUE]
+			-- Model of current object state as a map from keys to values.
+		require
+			is_object: is_object_mode
+		local
+			l_keys: ARRAY [STRING_32]
+			i: INTEGER
+		do
+			create Result
+			l_keys := json_object.keys
+			from i := l_keys.lower until i > l_keys.upper loop
+				Result := Result.updated (l_keys [i].to_string_8, json_object.item (l_keys [i]))
+				i := i + 1
+			end
+		ensure
+			count_matches: Result.count = json_object.count
+		end
+
+	array_model: MML_SEQUENCE [SIMPLE_JSON_VALUE]
+			-- Model of current array state as a sequence of values.
+		require
+			is_array: not is_object_mode
+		local
+			i: INTEGER
+		do
+			create Result
+			from i := 1 until i > json_array.count loop
+				Result := Result & json_array.item (i)
+				i := i + 1
+			end
+		ensure
+			count_matches: Result.count = json_array.count
+		end
+
+	object_key_count: INTEGER
+			-- Number of keys in the object (for postconditions).
+		require
+			is_object: is_object_mode
+		do
+			Result := json_object.count
+		end
+
+	array_element_count: INTEGER
+			-- Number of elements in the array (for postconditions).
+		require
+			is_array: not is_object_mode
+		do
+			Result := json_array.count
+		end
+
+invariant
+	-- Mode consistency: exactly one mode must be active
+	mode_exclusive: is_object_mode xor (not is_object_mode)
+
+	-- Object state when in object mode
+	object_valid_in_object_mode: is_object_mode implies json_object /= Void
+
+	-- Array state when in array mode
+	array_valid_in_array_mode: (not is_object_mode) implies json_array /= Void
 
 end

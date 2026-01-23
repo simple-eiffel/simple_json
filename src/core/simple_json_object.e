@@ -2,6 +2,9 @@ note
 	description: "[
 		Simple, high-level wrapper for JSON_OBJECT with fluent API and Unicode support.
 		All strings are STRING_32 for proper Unicode/UTF-8 handling.
+
+		Model query:
+			- model: MML_MAP [STRING_32, detachable SIMPLE_JSON_VALUE] for specification
 		]"
 	date: "$Date$"
 	revision: "$Revision$"
@@ -35,11 +38,12 @@ feature {NONE} -- Initialization
 		end
 
 	make_with_json_object (a_object: JSON_OBJECT)
-			-- Initialize with existing JSON object
-		require
-			object_not_void: a_object /= Void
+			-- Initialize with existing JSON object.
+			-- Note: a_object is attached - void check redundant.
 		do
 			make_value (a_object)
+		ensure
+			json_set: json_value = a_object
 		end
 
 	make_value (a_value: JSON_VALUE)
@@ -246,24 +250,25 @@ feature -- Status report (multiple keys - F3 friction fix)
 
 	has_all_keys (a_keys: ARRAY [STRING_32]): BOOLEAN
 			-- Does object have all specified keys?
-		require
-			keys_not_void: a_keys /= Void
+			-- Note: a_keys is attached - void check redundant.
 		do
 			Result := across a_keys as k all has_key (k) end
+		ensure
+			definition: Result = across a_keys as k all has_key (k) end
 		end
 
 	has_any_key (a_keys: ARRAY [STRING_32]): BOOLEAN
 			-- Does object have at least one of the specified keys?
-		require
-			keys_not_void: a_keys /= Void
+			-- Note: a_keys is attached - void check redundant.
 		do
 			Result := across a_keys as k some has_key (k) end
+		ensure
+			definition: Result = across a_keys as k some has_key (k) end
 		end
 
 	missing_keys (a_keys: ARRAY [STRING_32]): ARRAYED_LIST [STRING_32]
 			-- Which of the specified keys are missing?
-		require
-			keys_not_void: a_keys /= Void
+			-- Note: a_keys is attached - void check redundant.
 		do
 			create Result.make (a_keys.count)
 			across a_keys as ic_key loop
@@ -272,7 +277,9 @@ feature -- Status report (multiple keys - F3 friction fix)
 				end
 			end
 		ensure
-			result_attached: Result /= Void
+			no_void_elements: across Result as ic_r all ic_r /= Void end
+			all_missing: across Result as ic_r all not has_key (ic_r) end
+			none_extra: across a_keys as ic_a all has_key (ic_a) or Result.has (ic_a) end
 		end
 
 feature -- Element change (Fluent API)
@@ -291,6 +298,10 @@ feature -- Element change (Fluent API)
 			create l_json_value.make_from_string_32 (a_value)
 			json_value.replace (l_json_value, l_json_key)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			key_exists: has_key (a_key)
+			value_stored: attached string_item (a_key) as l_stored implies l_stored.same_string (a_value)
 		end
 
 	put_integer (a_value: INTEGER_64; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -304,6 +315,10 @@ feature -- Element change (Fluent API)
 			create l_json_key.make_from_string_32 (a_key)
 			json_value.replace_with_integer (a_value, l_json_key)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			key_exists: has_key (a_key)
+			value_stored: integer_item (a_key) = a_value
 		end
 
 	put_real (a_value: DOUBLE; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -317,16 +332,19 @@ feature -- Element change (Fluent API)
 			create l_json_key.make_from_string_32 (a_key)
 			json_value.replace_with_real (a_value, l_json_key)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			key_exists: has_key (a_key)
 		end
 
 	put_decimal (a_value: SIMPLE_DECIMAL; a_key: STRING_32): SIMPLE_JSON_OBJECT
 			-- Add decimal value with key (fluent).
 			-- Use for precise decimal values without floating-point errors.
 			-- The decimal's exact string representation is preserved in JSON.
+			-- Note: a_value is attached - void check redundant.
 		require
 			key_not_empty: not a_key.is_empty
 			key_reasonable_length: a_key.count <= Max_reasonable_key_length
-			value_not_void: a_value /= Void
 		local
 			l_json_key: JSON_STRING
 			l_json_decimal: JSON_DECIMAL
@@ -335,6 +353,9 @@ feature -- Element change (Fluent API)
 			create l_json_decimal.make_decimal (a_value)
 			json_value.replace (l_json_decimal, l_json_key)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			key_exists: has_key (a_key)
 		end
 
 	put_boolean (a_value: BOOLEAN; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -348,6 +369,10 @@ feature -- Element change (Fluent API)
 			create l_json_key.make_from_string_32 (a_key)
 			json_value.replace_with_boolean (a_value, l_json_key)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			key_exists: has_key (a_key)
+			value_stored: boolean_item (a_key) = a_value
 		end
 
 	put_null (a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -363,48 +388,65 @@ feature -- Element change (Fluent API)
 			create l_json_null
 			json_value.replace (l_json_null, l_json_key)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			key_exists: has_key (a_key)
+			is_null: attached item (a_key) as l_v implies l_v.is_null
 		end
 
 	put_object (a_value: SIMPLE_JSON_OBJECT; a_key: STRING_32): SIMPLE_JSON_OBJECT
-			-- Add object value with key (fluent)
+			-- Add object value with key (fluent).
+			-- Note: a_value is attached - void check redundant.
 		require
 			key_not_empty: not a_key.is_empty
 			key_reasonable_length: a_key.count <= Max_reasonable_key_length
-			value_not_void: a_value /= Void
 		local
 			l_json_key: JSON_STRING
 		do
 			create l_json_key.make_from_string_32 (a_key)
 			json_value.replace (a_value.json_value, l_json_key)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			key_exists: has_key (a_key)
+			is_object: attached item (a_key) as l_v implies l_v.is_object
+			nested_count: attached object_item (a_key) as l_nested implies l_nested.count = a_value.count
 		end
 
 	put_array (a_value: SIMPLE_JSON_ARRAY; a_key: STRING_32): SIMPLE_JSON_OBJECT
-			-- Add array value with key (fluent)
+			-- Add array value with key (fluent).
+			-- Note: a_value is attached - void check redundant.
 		require
 			key_not_empty: not a_key.is_empty
 			key_reasonable_length: a_key.count <= Max_reasonable_key_length
-			value_not_void: a_value /= Void
 		local
 			l_json_key: JSON_STRING
 		do
 			create l_json_key.make_from_string_32 (a_key)
 			json_value.replace (a_value.json_value, l_json_key)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			key_exists: has_key (a_key)
+			is_array: attached item (a_key) as l_v implies l_v.is_array
+			nested_count: attached array_item (a_key) as l_nested implies l_nested.count = a_value.count
 		end
 
 	put_value (a_value: SIMPLE_JSON_VALUE; a_key: STRING_32): SIMPLE_JSON_OBJECT
-			-- Add any JSON value with key (fluent)
+			-- Add any JSON value with key (fluent).
+			-- Note: a_value is attached - void check redundant.
 		require
 			key_not_empty: not a_key.is_empty
 			key_reasonable_length: a_key.count <= Max_reasonable_key_length
-			value_not_void: a_value /= Void
 		local
 			l_json_key: JSON_STRING
 		do
 			create l_json_key.make_from_string_32 (a_key)
 			json_value.replace (a_value.json_value, l_json_key)
 			Result := Current
+		ensure
+			result_is_current: Result = Current
+			key_exists: has_key (a_key)
 		end
 
 feature -- Removal
@@ -419,12 +461,18 @@ feature -- Removal
 		do
 			create l_json_key.make_from_string_32 (a_key)
 			json_value.remove (l_json_key)
+		ensure
+			key_removed: not has_key (a_key)
+			count_decreased: count <= old count
 		end
 
 	wipe_out
 			-- Remove all key-value pairs
 		do
 			json_value.wipe_out
+		ensure
+			empty: is_empty
+			count_zero: count = 0
 		end
 
 feature -- Iteration
