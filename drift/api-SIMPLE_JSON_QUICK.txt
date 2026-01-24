@@ -1,0 +1,377 @@
+note
+	description: "[
+				Zero-configuration JSON facade for beginners.
+		
+				One-liner JSON operations - parse, query, build.
+				For full control, use SIMPLE_JSON directly.
+		
+				Quick Start Examples:
+					create json.make
+		
+					-- Parse and query
+					if attached json.parse_object (json_string) as obj then
+						name := json.string_at (obj, "user.name")
+						age := json.integer_at (obj, "user.age")
+					end
+		
+					-- Build JSON
+					result := json.object.put ("name", "Alice").put ("age", 30).to_json
+		
+					-- One-liner parse + get
+					name := json.get_string (json_string, "$.user.name")
+	]"
+	author: "Larry Rix"
+	date: "$Date$"
+	revision: "$Revision$"
+
+class interface
+	SIMPLE_JSON_QUICK
+
+create 
+	make
+			-- Create quick JSON facade.
+		ensure
+			json_exists: json /= Void
+
+feature -- Access
+
+	generating_type: TYPE [detachable SIMPLE_JSON_QUICK]
+			-- Type of current object
+			-- (type of which it is a direct instance)
+			-- (from ANY)
+		ensure -- from ANY
+			generating_type_not_void: Result /= Void
+
+	generator: STRING_8
+			-- Name of current object's generating class
+			-- (base class of the type of which it is a direct instance)
+			-- (from ANY)
+		ensure -- from ANY
+			generator_not_void: Result /= Void
+			generator_not_empty: not Result.is_empty
+	
+feature -- Comparison
+
+	frozen deep_equal (a: detachable ANY; b: like arg #1): BOOLEAN
+			-- Are `a` and `b` either both void
+			-- or attached to isomorphic object structures?
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			shallow_implies_deep: standard_equal (a, b) implies Result
+			both_or_none_void: (a = Void) implies (Result = (b = Void))
+			same_type: (Result and (a /= Void)) implies (b /= Void and then a.same_type (b))
+			symmetric: Result implies deep_equal (b, a)
+
+	frozen equal (a: detachable ANY; b: like arg #1): BOOLEAN
+			-- Are `a` and `b` either both void or attached
+			-- to objects considered equal?
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			definition: Result = (a = Void and b = Void) or else ((a /= Void and b /= Void) and then a.is_equal (b))
+
+	frozen is_deep_equal alias "≡≡≡" (other: SIMPLE_JSON_QUICK): BOOLEAN
+			-- Are `Current` and `other` attached to isomorphic object structures?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			shallow_implies_deep: standard_is_equal (other) implies Result
+			same_type: Result implies same_type (other)
+			symmetric: Result implies other.is_deep_equal (Current)
+
+	is_equal (other: SIMPLE_JSON_QUICK): BOOLEAN
+			-- Is `other` attached to an object considered
+			-- equal to current object?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			symmetric: Result implies other ~ Current
+			consistent: standard_is_equal (other) implies Result
+
+	frozen standard_equal (a: detachable ANY; b: like arg #1): BOOLEAN
+			-- Are `a` and `b` either both void or attached to
+			-- field-by-field identical objects of the same type?
+			-- Always uses default object comparison criterion.
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			definition: Result = (a = Void and b = Void) or else ((a /= Void and b /= Void) and then a.standard_is_equal (b))
+
+	frozen standard_is_equal alias "≜" (other: SIMPLE_JSON_QUICK): BOOLEAN
+			-- Is `other` attached to an object of the same type
+			-- as current object, and field-by-field identical to it?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			same_type: Result implies same_type (other)
+			symmetric: Result implies other.standard_is_equal (Current)
+	
+feature -- Status report
+
+	conforms_to (other: ANY): BOOLEAN
+			-- Does type of current object conform to type
+			-- of `other` (as per Eiffel: The Language, chapter 13)?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+
+	same_type (other: ANY): BOOLEAN
+			-- Is type of current object identical to type of `other`?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			definition: Result = (conforms_to (other) and other.conforms_to (Current))
+	
+feature -- Conversion
+
+	prettify (a_json: STRING_8): STRING_8
+			-- Pretty-print JSON string.
+		require
+			json_not_empty: not a_json.is_empty
+
+	to_string (a_value: SIMPLE_JSON_VALUE): STRING_8
+			-- Convert JSON value to string.
+		require
+			value_not_void: a_value /= Void
+		ensure
+			result_not_empty: not Result.is_empty
+	
+feature -- Duplication
+
+	copy (other: SIMPLE_JSON_QUICK)
+			-- Update current object using fields of object attached
+			-- to `other`, so as to yield equal objects.
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+			type_identity: same_type (other)
+		ensure -- from ANY
+			is_equal: Current ~ other
+
+	frozen deep_copy (other: SIMPLE_JSON_QUICK)
+			-- Effect equivalent to that of:
+			--		`copy` (`other` . `deep_twin`)
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			deep_equal: deep_equal (Current, other)
+
+	frozen deep_twin: SIMPLE_JSON_QUICK
+			-- New object structure recursively duplicated from Current.
+			-- (from ANY)
+		ensure -- from ANY
+			deep_twin_not_void: Result /= Void
+			deep_equal: deep_equal (Current, Result)
+
+	frozen standard_copy (other: SIMPLE_JSON_QUICK)
+			-- Copy every field of `other` onto corresponding field
+			-- of current object.
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+			type_identity: same_type (other)
+		ensure -- from ANY
+			is_standard_equal: standard_is_equal (other)
+
+	frozen standard_twin: SIMPLE_JSON_QUICK
+			-- New object field-by-field identical to `other`.
+			-- Always uses default copying semantics.
+			-- (from ANY)
+		ensure -- from ANY
+			standard_twin_not_void: Result /= Void
+			equal: standard_equal (Result, Current)
+
+	frozen twin: SIMPLE_JSON_QUICK
+			-- New object equal to `Current`
+			-- `twin` calls `copy`; to change copying/twinning semantics, redefine `copy`.
+			-- (from ANY)
+		ensure -- from ANY
+			twin_not_void: Result /= Void
+			is_equal: Result ~ Current
+	
+feature -- Basic operations
+
+	frozen default: detachable SIMPLE_JSON_QUICK
+			-- Default value of object's type
+			-- (from ANY)
+
+	frozen default_pointer: POINTER
+			-- Default value of type `POINTER`
+			-- (Avoid the need to write `p`.`default` for
+			-- some `p` of type `POINTER`.)
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+
+	default_rescue
+			-- Process exception for routines with no Rescue clause.
+			-- (Default: do nothing.)
+			-- (from ANY)
+
+	frozen do_nothing
+			-- Execute a null action.
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+	
+feature -- Advanced Access
+
+	json: SIMPLE_JSON
+			-- Access underlying JSON handler for advanced operations.
+	
+feature -- Building
+
+	array: SIMPLE_JSON_BUILDER
+			-- Start building a JSON array.
+		ensure
+			result_exists: Result /= Void
+
+	from_pairs (a_pairs: ARRAY [TUPLE [key: STRING_8; value: ANY]]): STRING_8
+			-- Build JSON object from key-value pairs.
+			-- Example: json.from_pairs (<<["name", "Alice"], ["age", 30]>>)
+		require
+			pairs_not_empty: a_pairs.count > 0
+		ensure
+			result_not_empty: not Result.is_empty
+
+	object: SIMPLE_JSON_BUILDER
+			-- Start building a JSON object.
+		ensure
+			result_exists: Result /= Void
+	
+feature -- Object Value Getters (dot-path navigation)
+
+	boolean_at (a_object: SIMPLE_JSON_OBJECT; a_path: STRING_8): BOOLEAN
+			-- Get boolean at dot-separated path.
+		require
+			object_not_void: a_object /= Void
+			path_not_empty: not a_path.is_empty
+
+	integer_at (a_object: SIMPLE_JSON_OBJECT; a_path: STRING_8): INTEGER_32
+			-- Get integer at dot-separated path.
+		require
+			object_not_void: a_object /= Void
+			path_not_empty: not a_path.is_empty
+
+	real_at (a_object: SIMPLE_JSON_OBJECT; a_path: STRING_8): REAL_64
+			-- Get real at dot-separated path.
+		require
+			object_not_void: a_object /= Void
+			path_not_empty: not a_path.is_empty
+
+	string_at (a_object: SIMPLE_JSON_OBJECT; a_path: STRING_8): detachable STRING_8
+			-- Get string at dot-separated path.
+			-- Example: json.string_at (obj, "user.address.city")
+		require
+			object_not_void: a_object /= Void
+			path_not_empty: not a_path.is_empty
+	
+feature -- Output
+
+	Io: STD_FILES
+			-- Handle to standard file setup
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			io_not_void: Result /= Void
+
+	out: STRING_8
+			-- New string containing terse printable representation
+			-- of current object
+			-- (from ANY)
+		ensure -- from ANY
+			out_not_void: Result /= Void
+
+	print (o: detachable ANY)
+			-- Write terse external representation of `o`
+			-- on standard output.
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+
+	frozen tagged_out: STRING_8
+			-- New string containing terse printable representation
+			-- of current object
+			-- (from ANY)
+		ensure -- from ANY
+			tagged_out_not_void: Result /= Void
+	
+feature -- Parsing
+
+	parse (a_json: STRING_8): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON string to value.
+		require
+			json_not_empty: not a_json.is_empty
+
+	parse_array (a_json: STRING_8): detachable SIMPLE_JSON_ARRAY
+			-- Parse JSON string to array.
+		require
+			json_not_empty: not a_json.is_empty
+
+	parse_object (a_json: STRING_8): detachable SIMPLE_JSON_OBJECT
+			-- Parse JSON string to object.
+		require
+			json_not_empty: not a_json.is_empty
+	
+feature -- Path-based Getters (parse + query in one call)
+
+	get_boolean (a_json: STRING_8; a_path: STRING_8): BOOLEAN
+			-- Parse JSON and get boolean at JSONPath.
+		require
+			json_not_empty: not a_json.is_empty
+			path_not_empty: not a_path.is_empty
+
+	get_integer (a_json: STRING_8; a_path: STRING_8): INTEGER_32
+			-- Parse JSON and get integer at JSONPath.
+		require
+			json_not_empty: not a_json.is_empty
+			path_not_empty: not a_path.is_empty
+
+	get_real (a_json: STRING_8; a_path: STRING_8): REAL_64
+			-- Parse JSON and get real at JSONPath.
+		require
+			json_not_empty: not a_json.is_empty
+			path_not_empty: not a_path.is_empty
+
+	get_string (a_json: STRING_8; a_path: STRING_8): detachable STRING_8
+			-- Parse JSON and get string at JSONPath.
+			-- Example: json.get_string (data, "$.user.name")
+		require
+			json_not_empty: not a_json.is_empty
+			path_not_empty: not a_path.is_empty
+	
+feature -- Platform
+
+	Operating_environment: OPERATING_ENVIRONMENT
+			-- Objects available from the operating system
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			operating_environment_not_void: Result /= Void
+	
+feature -- Validation
+
+	is_array (a_json: STRING_8): BOOLEAN
+			-- Does string parse to JSON array?
+
+	is_object (a_json: STRING_8): BOOLEAN
+			-- Does string parse to JSON object?
+
+	is_valid (a_json: STRING_8): BOOLEAN
+			-- Is string valid JSON?
+	
+invariant
+	json_exists: json /= Void
+
+		-- from ANY
+	reflexive_equality: standard_is_equal (Current)
+	reflexive_conformance: conforms_to (Current)
+
+end -- class SIMPLE_JSON_QUICK
+

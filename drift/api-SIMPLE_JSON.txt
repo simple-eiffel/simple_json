@@ -1,0 +1,858 @@
+Eiffel Compilation Manager
+Version 25.02.9.8732 - win64
+
+Degree 6: Examining System
+System Recompiled.
+note
+	description: "[
+		Simple, high-level API for working with JSON using STRING_32/Unicode/UTF-8.
+		This class provides an easy-to-use interface over the Eiffel JSON library.
+		Includes comprehensive error tracking with line/column position information.
+	]"
+	date: "$Date$"
+	revision: "$Revision$"
+	eis: "name=JSON Specification", "protocol=URI", "src=https://www.json.org"
+	eis: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/core/simple_json.html"
+
+class interface
+	SIMPLE_JSON
+
+create 
+	default_create
+			-- Process instances of classes with no creation clause.
+			-- (Default: do nothing.)
+			-- (from ANY)
+
+feature -- Access
+
+	generating_type: TYPE [detachable SIMPLE_JSON]
+			-- Type of current object
+			-- (type of which it is a direct instance)
+			-- (from ANY)
+		ensure -- from ANY
+			generating_type_not_void: Result /= Void
+
+	generator: STRING_8
+			-- Name of current object's generating class
+			-- (base class of the type of which it is a direct instance)
+			-- (from ANY)
+		ensure -- from ANY
+			generator_not_void: Result /= Void
+			generator_not_empty: not Result.is_empty
+	
+feature -- Comparison
+
+	frozen deep_equal (a: detachable ANY; b: like arg #1): BOOLEAN
+			-- Are `a` and `b` either both void
+			-- or attached to isomorphic object structures?
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			shallow_implies_deep: standard_equal (a, b) implies Result
+			both_or_none_void: (a = Void) implies (Result = (b = Void))
+			same_type: (Result and (a /= Void)) implies (b /= Void and then a.same_type (b))
+			symmetric: Result implies deep_equal (b, a)
+
+	frozen equal (a: detachable ANY; b: like arg #1): BOOLEAN
+			-- Are `a` and `b` either both void or attached
+			-- to objects considered equal?
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			definition: Result = (a = Void and b = Void) or else ((a /= Void and b /= Void) and then a.is_equal (b))
+
+	frozen is_deep_equal alias "נננ" (other: SIMPLE_JSON): BOOLEAN
+			-- Are `Current` and `other` attached to isomorphic object structures?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			shallow_implies_deep: standard_is_equal (other) implies Result
+			same_type: Result implies same_type (other)
+			symmetric: Result implies other.is_deep_equal (Current)
+
+	is_equal (other: SIMPLE_JSON): BOOLEAN
+			-- Is `other` attached to an object considered
+			-- equal to current object?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			symmetric: Result implies other ~ Current
+			consistent: standard_is_equal (other) implies Result
+
+	frozen standard_equal (a: detachable ANY; b: like arg #1): BOOLEAN
+			-- Are `a` and `b` either both void or attached to
+			-- field-by-field identical objects of the same type?
+			-- Always uses default object comparison criterion.
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			definition: Result = (a = Void and b = Void) or else ((a /= Void and b /= Void) and then a.standard_is_equal (b))
+
+	frozen standard_is_equal alias "?" (other: SIMPLE_JSON): BOOLEAN
+			-- Is `other` attached to an object of the same type
+			-- as current object, and field-by-field identical to it?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			same_type: Result implies same_type (other)
+			symmetric: Result implies other.standard_is_equal (Current)
+	
+feature -- Status report
+
+	conforms_to (other: ANY): BOOLEAN
+			-- Does type of current object conform to type
+			-- of `other` (as per Eiffel: The Language, chapter 13)?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+
+	same_type (other: ANY): BOOLEAN
+			-- Is type of current object identical to type of `other`?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			definition: Result = (conforms_to (other) and other.conforms_to (Current))
+	
+feature -- Duplication
+
+	copy (other: SIMPLE_JSON)
+			-- Update current object using fields of object attached
+			-- to `other`, so as to yield equal objects.
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+			type_identity: same_type (other)
+		ensure -- from ANY
+			is_equal: Current ~ other
+
+	frozen deep_copy (other: SIMPLE_JSON)
+			-- Effect equivalent to that of:
+			--		`copy` (`other` . `deep_twin`)
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			deep_equal: deep_equal (Current, other)
+
+	frozen deep_twin: SIMPLE_JSON
+			-- New object structure recursively duplicated from Current.
+			-- (from ANY)
+		ensure -- from ANY
+			deep_twin_not_void: Result /= Void
+			deep_equal: deep_equal (Current, Result)
+
+	frozen standard_copy (other: SIMPLE_JSON)
+			-- Copy every field of `other` onto corresponding field
+			-- of current object.
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+			type_identity: same_type (other)
+		ensure -- from ANY
+			is_standard_equal: standard_is_equal (other)
+
+	frozen standard_twin: SIMPLE_JSON
+			-- New object field-by-field identical to `other`.
+			-- Always uses default copying semantics.
+			-- (from ANY)
+		ensure -- from ANY
+			standard_twin_not_void: Result /= Void
+			equal: standard_equal (Result, Current)
+
+	frozen twin: SIMPLE_JSON
+			-- New object equal to `Current`
+			-- `twin` calls `copy`; to change copying/twinning semantics, redefine `copy`.
+			-- (from ANY)
+		ensure -- from ANY
+			twin_not_void: Result /= Void
+			is_equal: Result ~ Current
+	
+feature -- Basic operations
+
+	frozen default: detachable SIMPLE_JSON
+			-- Default value of object's type
+			-- (from ANY)
+
+	frozen default_pointer: POINTER
+			-- Default value of type `POINTER`
+			-- (Avoid the need to write `p`.`default` for
+			-- some `p` of type `POINTER`.)
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+
+	default_rescue
+			-- Process exception for routines with no Rescue clause.
+			-- (Default: do nothing.)
+			-- (from ANY)
+
+	frozen do_nothing
+			-- Execute a null action.
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+	
+feature -- Building
+
+	bool_value (a_boolean: BOOLEAN): SIMPLE_JSON_VALUE
+			-- Create a JSON boolean value
+			-- Was declared in {SIMPLE_JSON} as synonym of `boolean_value`, `flag_value` and `json_boolean`.
+
+	boolean_value (a_boolean: BOOLEAN): SIMPLE_JSON_VALUE
+			-- Create a JSON boolean value
+			-- Was declared in {SIMPLE_JSON} as synonym of `bool_value`, `flag_value` and `json_boolean`.
+
+	build_object: SIMPLE_JSON_OBJECT
+			-- Create a new JSON object builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_object`, `create_object`, `empty_object`, `json_object`, `map` and `dictionary`.
+
+	collection: SIMPLE_JSON_ARRAY
+			-- Create a new JSON array builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_array`, `create_array`, `empty_array`, `json_array` and `list`.
+
+	create_array: SIMPLE_JSON_ARRAY
+			-- Create a new JSON array builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_array`, `empty_array`, `json_array`, `list` and `collection`.
+
+	create_object: SIMPLE_JSON_OBJECT
+			-- Create a new JSON object builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_object`, `empty_object`, `json_object`, `build_object`, `map` and `dictionary`.
+
+	dictionary: SIMPLE_JSON_OBJECT
+			-- Create a new JSON object builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_object`, `create_object`, `empty_object`, `json_object`, `build_object` and `map`.
+
+	double_value (a_number: REAL_64): SIMPLE_JSON_VALUE
+			-- Create a JSON number value
+			-- Was declared in {SIMPLE_JSON} as synonym of `number_value`, `float_value`, `real_value` and `json_number`.
+
+	empty_array: SIMPLE_JSON_ARRAY
+			-- Create a new JSON array builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_array`, `create_array`, `json_array`, `list` and `collection`.
+
+	empty_object: SIMPLE_JSON_OBJECT
+			-- Create a new JSON object builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_object`, `create_object`, `json_object`, `build_object`, `map` and `dictionary`.
+
+	flag_value (a_boolean: BOOLEAN): SIMPLE_JSON_VALUE
+			-- Create a JSON boolean value
+			-- Was declared in {SIMPLE_JSON} as synonym of `boolean_value`, `bool_value` and `json_boolean`.
+
+	float_value (a_number: REAL_64): SIMPLE_JSON_VALUE
+			-- Create a JSON number value
+			-- Was declared in {SIMPLE_JSON} as synonym of `number_value`, `real_value`, `double_value` and `json_number`.
+
+	int_value (a_integer: INTEGER_64): SIMPLE_JSON_VALUE
+			-- Create a JSON integer value
+			-- Was declared in {SIMPLE_JSON} as synonym of `integer_value`, `whole_number` and `json_integer`.
+
+	integer_value (a_integer: INTEGER_64): SIMPLE_JSON_VALUE
+			-- Create a JSON integer value
+			-- Was declared in {SIMPLE_JSON} as synonym of `int_value`, `whole_number` and `json_integer`.
+
+	json_array: SIMPLE_JSON_ARRAY
+			-- Create a new JSON array builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_array`, `create_array`, `empty_array`, `list` and `collection`.
+
+	json_boolean (a_boolean: BOOLEAN): SIMPLE_JSON_VALUE
+			-- Create a JSON boolean value
+			-- Was declared in {SIMPLE_JSON} as synonym of `boolean_value`, `bool_value` and `flag_value`.
+
+	json_integer (a_integer: INTEGER_64): SIMPLE_JSON_VALUE
+			-- Create a JSON integer value
+			-- Was declared in {SIMPLE_JSON} as synonym of `integer_value`, `int_value` and `whole_number`.
+
+	json_null: SIMPLE_JSON_VALUE
+			-- Create a JSON null value
+			-- Was declared in {SIMPLE_JSON} as synonym of `null_value` and `nothing_value`.
+
+	json_number (a_number: REAL_64): SIMPLE_JSON_VALUE
+			-- Create a JSON number value
+			-- Was declared in {SIMPLE_JSON} as synonym of `number_value`, `float_value`, `real_value` and `double_value`.
+
+	json_object: SIMPLE_JSON_OBJECT
+			-- Create a new JSON object builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_object`, `create_object`, `empty_object`, `build_object`, `map` and `dictionary`.
+
+	json_string (a_string: STRING_32): SIMPLE_JSON_VALUE
+			-- Create a JSON string value
+			-- Was declared in {SIMPLE_JSON} as synonym of `string_value`, `text_value` and `str`.
+
+	list: SIMPLE_JSON_ARRAY
+			-- Create a new JSON array builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_array`, `create_array`, `empty_array`, `json_array` and `collection`.
+
+	map: SIMPLE_JSON_OBJECT
+			-- Create a new JSON object builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `new_object`, `create_object`, `empty_object`, `json_object`, `build_object` and `dictionary`.
+
+	new_array: SIMPLE_JSON_ARRAY
+			-- Create a new JSON array builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `create_array`, `empty_array`, `json_array`, `list` and `collection`.
+
+	new_object: SIMPLE_JSON_OBJECT
+			-- Create a new JSON object builder
+			-- Was declared in {SIMPLE_JSON} as synonym of `create_object`, `empty_object`, `json_object`, `build_object`, `map` and `dictionary`.
+
+	nothing_value: SIMPLE_JSON_VALUE
+			-- Create a JSON null value
+			-- Was declared in {SIMPLE_JSON} as synonym of `null_value` and `json_null`.
+
+	null_value: SIMPLE_JSON_VALUE
+			-- Create a JSON null value
+			-- Was declared in {SIMPLE_JSON} as synonym of `nothing_value` and `json_null`.
+
+	number_value (a_number: REAL_64): SIMPLE_JSON_VALUE
+			-- Create a JSON number value
+			-- Was declared in {SIMPLE_JSON} as synonym of `float_value`, `real_value`, `double_value` and `json_number`.
+
+	real_value (a_number: REAL_64): SIMPLE_JSON_VALUE
+			-- Create a JSON number value
+			-- Was declared in {SIMPLE_JSON} as synonym of `number_value`, `float_value`, `double_value` and `json_number`.
+
+	str (a_string: STRING_32): SIMPLE_JSON_VALUE
+			-- Create a JSON string value
+			-- Was declared in {SIMPLE_JSON} as synonym of `string_value`, `text_value` and `json_string`.
+
+	string_value (a_string: STRING_32): SIMPLE_JSON_VALUE
+			-- Create a JSON string value
+			-- Was declared in {SIMPLE_JSON} as synonym of `text_value`, `str` and `json_string`.
+
+	text_value (a_string: STRING_32): SIMPLE_JSON_VALUE
+			-- Create a JSON string value
+			-- Was declared in {SIMPLE_JSON} as synonym of `string_value`, `str` and `json_string`.
+
+	whole_number (a_integer: INTEGER_64): SIMPLE_JSON_VALUE
+			-- Create a JSON integer value
+			-- Was declared in {SIMPLE_JSON} as synonym of `integer_value`, `int_value` and `json_integer`.
+	
+feature -- Error Tracking
+
+	clear_errors
+			-- Clear all error information
+		ensure
+			no_errors: not has_errors
+			empty_list: last_errors.is_empty
+
+	detailed_errors: STRING_32
+			-- All errors with detailed position information
+
+	error_count: INTEGER_32
+			-- Number of errors from last parse operation
+		ensure
+			definition: Result = last_errors.count
+
+	errors_as_string: STRING_32
+			-- All errors formatted as a single string
+
+	first_error: detachable SIMPLE_JSON_ERROR
+			-- First error from last parse operation, if any
+		ensure
+			has_error_implies_result: has_errors implies Result /= Void
+			no_error_implies_void: not has_errors implies Result = Void
+
+	has_errors: BOOLEAN
+			-- Were there errors during the last parse operation?
+		ensure
+			definition: Result = not last_errors.is_empty
+
+	last_errors: ARRAYED_LIST [SIMPLE_JSON_ERROR]
+			-- Errors from the last parse operation
+	
+feature -- JSON Escape Sequences
+
+	Hex_padding_zero: STRING_32 = "0"
+			-- Zero character used for padding hex strings
+			-- Ensures 4-digit format for Unicode escapes
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_escape_backslash: STRING_32 = "\\"
+			-- Escaped backslash: \\
+			-- Used when outputting backslash within JSON strings
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_escape_backspace: STRING_32 = "\b"
+			-- Escaped backspace: \b
+			-- Used for backspace characters in JSON strings
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_escape_formfeed: STRING_32 = "\f"
+			-- Escaped form feed: \f
+			-- Used for form feed characters in JSON strings
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_escape_newline: STRING_32 = "\n"
+			-- Escaped newline: \n
+			-- Used for newline characters in JSON strings
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_escape_quote: STRING_32 = "\%""
+			-- Escaped double quote: \"
+			-- Used when outputting quotes within JSON strings
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_escape_return: STRING_32 = "\r"
+			-- Escaped carriage return: \r
+			-- Used for carriage return characters in JSON strings
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_escape_tab: STRING_32 = "\t"
+			-- Escaped tab: \t
+			-- Used for tab characters in JSON strings
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_escape_unicode_prefix: STRING_32 = "\u"
+			-- Unicode escape sequence prefix: \u
+			-- Followed by 4 hex digits for Unicode code point
+			-- (from SIMPLE_JSON_CONSTANTS)
+	
+feature -- JSON Formatting Strings
+
+	Default_two_space_indent: STRING_32 = "  "
+			-- Standard two-space indentation for JSON pretty printing
+			-- Most common indentation style for JSON
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_close_brace: STRING_32 = "}"
+			-- Closing brace for JSON objects
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_close_bracket: STRING_32 = "]"
+			-- Closing bracket for JSON arrays
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_colon_space: STRING_32 = ": "
+			-- Standard separator between key and value in JSON objects
+			-- Format: "key": value
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_comma: STRING_32 = ","
+			-- Comma separator for array elements and object properties
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_empty_array: STRING_32 = "[]"
+			-- String representation of empty JSON array
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_empty_object: STRING_32 = "{}"
+			-- String representation of empty JSON object
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_false: STRING_32 = "false"
+			-- JSON boolean false literal
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_null_literal: STRING_32 = "null"
+			-- JSON null literal
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_open_brace: STRING_32 = "{"
+			-- Opening brace for JSON objects
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_open_bracket: STRING_32 = "["
+			-- Opening bracket for JSON arrays
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_quote: STRING_32 = "%""
+			-- Double quote character for JSON strings
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_true: STRING_32 = "true"
+			-- JSON boolean true literal
+			-- (from SIMPLE_JSON_CONSTANTS)
+	
+feature -- JSON Patch (RFC 6902)
+
+	apply_patch (a_document: SIMPLE_JSON_VALUE; a_patch_json: STRING_32): SIMPLE_JSON_PATCH_RESULT
+			-- Parse patch and apply to document
+		require
+			document_not_void: a_document /= Void
+			patch_not_empty: not a_patch_json.is_empty
+
+	create_patch: SIMPLE_JSON_PATCH
+			-- Create a new empty JSON Patch
+		ensure
+			empty: Result.is_empty
+
+	parse_patch (a_patch_json: STRING_32): detachable SIMPLE_JSON_PATCH
+			-- Parse JSON Patch document from string
+		require
+			patch_not_empty: not a_patch_json.is_empty
+	
+feature -- JSON Schema Keywords
+
+	Schema_keyword_items: STRING_32 = "items"
+			-- JSON Schema keyword for array item schema
+			-- Example: {"items": {"type": "number"}}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_max_items: STRING_32 = "maxItems"
+			-- JSON Schema keyword for maximum array length
+			-- Example: {"maxItems": 100}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_max_length: STRING_32 = "maxLength"
+			-- JSON Schema keyword for maximum string length
+			-- Example: {"maxLength": 255}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_maximum: STRING_32 = "maximum"
+			-- JSON Schema keyword for maximum numeric value
+			-- Example: {"maximum": 100}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_min_items: STRING_32 = "minItems"
+			-- JSON Schema keyword for minimum array length
+			-- Example: {"minItems": 1}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_min_length: STRING_32 = "minLength"
+			-- JSON Schema keyword for minimum string length
+			-- Example: {"minLength": 1}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_minimum: STRING_32 = "minimum"
+			-- JSON Schema keyword for minimum numeric value
+			-- Example: {"minimum": 0}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_pattern: STRING_32 = "pattern"
+			-- JSON Schema keyword for regex pattern matching
+			-- Example: {"pattern": "^[0-9]+$"}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_properties: STRING_32 = "properties"
+			-- JSON Schema keyword for object property definitions
+			-- Example: {"properties": {"name": {"type": "string"}}}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_required: STRING_32 = "required"
+			-- JSON Schema keyword for required properties array
+			-- Example: {"required": ["name", "email"]}
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Schema_keyword_type: STRING_32 = "type"
+			-- JSON Schema keyword for specifying value type
+			-- Example: {"type": "string"}
+			-- (from SIMPLE_JSON_CONSTANTS)
+	
+feature -- JSON Type Keywords
+
+	Json_type_array: STRING_32 = "array"
+			-- JSON type name for array values
+			-- Used in schema type validation
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_type_integer: STRING_32 = "integer"
+			-- JSON type name for integer values
+			-- Used in schema type validation
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_type_null: STRING_32 = "null"
+			-- JSON type name for null values
+			-- Used in schema type validation
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_type_number: STRING_32 = "number"
+			-- JSON type name for numeric values
+			-- Used in schema type validation
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_type_object: STRING_32 = "object"
+			-- JSON type name for object values
+			-- Used in schema type validation
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Json_type_string: STRING_32 = "string"
+			-- JSON type name for string values
+			-- Used in schema type validation
+			-- (from SIMPLE_JSON_CONSTANTS)
+	
+feature -- JSONPath Queries
+
+	query_integer (a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): INTEGER_64
+			-- Query for a single integer value using JSONPath.
+			-- Returns 0 if path not found or value is not an integer.
+			-- Example paths: "$.person.age", "$.counts[0]"
+		require
+			value_not_void: a_value /= Void
+			path_not_empty: not a_path.is_empty
+
+	query_integers (a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): ARRAYED_LIST [INTEGER_64]
+			-- Query for multiple integer values using JSONPath with wildcards.
+			-- Returns empty list if path not found or values are not integers.
+			-- Example paths: "$.counts[*]", "$.people[*].age"
+		require
+			value_not_void: a_value /= Void
+			path_not_empty: not a_path.is_empty
+
+	query_string (a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): detachable STRING_32
+			-- Query for a single string value using JSONPath.
+			-- Returns Void if path not found or value is not a string.
+			-- Example paths: "$.person.name", "$.person.address.street", "$.hobbies[0]"
+		require
+			value_not_void: a_value /= Void
+			path_not_empty: not a_path.is_empty
+
+	query_strings (a_value: SIMPLE_JSON_VALUE; a_path: STRING_32): ARRAYED_LIST [STRING_32]
+			-- Query for multiple string values using JSONPath with wildcards.
+			-- Returns empty list if path not found or values are not strings.
+			-- Example paths: "$.hobbies[*]", "$.people[*].name"
+		require
+			value_not_void: a_value /= Void
+			path_not_empty: not a_path.is_empty
+	
+feature -- Output
+
+	Io: STD_FILES
+			-- Handle to standard file setup
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			io_not_void: Result /= Void
+
+	out: STRING_8
+			-- New string containing terse printable representation
+			-- of current object
+			-- (from ANY)
+		ensure -- from ANY
+			out_not_void: Result /= Void
+
+	print (o: detachable ANY)
+			-- Write terse external representation of `o`
+			-- on standard output.
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+
+	frozen tagged_out: STRING_8
+			-- New string containing terse printable representation
+			-- of current object
+			-- (from ANY)
+		ensure -- from ANY
+			tagged_out_not_void: Result /= Void
+	
+feature -- Parsing
+
+	decode (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON text and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse`, `deserialize`, `load_json`, `from_string`, `parse_response`, `decode_payload` and `parse_message`.
+		require
+			not_empty: not a_json_text.is_empty
+		ensure
+			errors_cleared_on_success: Result /= Void implies not has_errors
+
+	decode_payload (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON text and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse`, `decode`, `deserialize`, `load_json`, `from_string`, `parse_response` and `parse_message`.
+		require
+			not_empty: not a_json_text.is_empty
+		ensure
+			errors_cleared_on_success: Result /= Void implies not has_errors
+
+	deserialize (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON text and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse`, `decode`, `load_json`, `from_string`, `parse_response`, `decode_payload` and `parse_message`.
+		require
+			not_empty: not a_json_text.is_empty
+		ensure
+			errors_cleared_on_success: Result /= Void implies not has_errors
+
+	deserialize_file (a_file_path: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON from file and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse_file`, `load_config`, `read_json_file` and `load_from_file`.
+		require
+			not_empty: not a_file_path.is_empty
+
+	from_string (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON text and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse`, `decode`, `deserialize`, `load_json`, `parse_response`, `decode_payload` and `parse_message`.
+		require
+			not_empty: not a_json_text.is_empty
+		ensure
+			errors_cleared_on_success: Result /= Void implies not has_errors
+
+	is_valid_json (a_json_text: STRING_32): BOOLEAN
+			-- Check if text is valid JSON without creating the value.
+			-- On invalid JSON, populates `last_errors` with details.
+		require
+			not_empty: not a_json_text.is_empty
+		ensure
+			valid_implies_no_errors: Result implies not has_errors
+
+	load_config (a_file_path: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON from file and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse_file`, `read_json_file`, `load_from_file` and `deserialize_file`.
+		require
+			not_empty: not a_file_path.is_empty
+
+	load_from_file (a_file_path: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON from file and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse_file`, `load_config`, `read_json_file` and `deserialize_file`.
+		require
+			not_empty: not a_file_path.is_empty
+
+	load_json (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON text and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse`, `decode`, `deserialize`, `from_string`, `parse_response`, `decode_payload` and `parse_message`.
+		require
+			not_empty: not a_json_text.is_empty
+		ensure
+			errors_cleared_on_success: Result /= Void implies not has_errors
+
+	parse (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON text and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `decode`, `deserialize`, `load_json`, `from_string`, `parse_response`, `decode_payload` and `parse_message`.
+		require
+			not_empty: not a_json_text.is_empty
+		ensure
+			errors_cleared_on_success: Result /= Void implies not has_errors
+
+	parse_file (a_file_path: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON from file and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `load_config`, `read_json_file`, `load_from_file` and `deserialize_file`.
+		require
+			not_empty: not a_file_path.is_empty
+
+	parse_message (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON text and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse`, `decode`, `deserialize`, `load_json`, `from_string`, `parse_response` and `decode_payload`.
+		require
+			not_empty: not a_json_text.is_empty
+		ensure
+			errors_cleared_on_success: Result /= Void implies not has_errors
+
+	parse_response (a_json_text: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON text and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse`, `decode`, `deserialize`, `load_json`, `from_string`, `decode_payload` and `parse_message`.
+		require
+			not_empty: not a_json_text.is_empty
+		ensure
+			errors_cleared_on_success: Result /= Void implies not has_errors
+
+	read_json_file (a_file_path: STRING_32): detachable SIMPLE_JSON_VALUE
+			-- Parse JSON from file and return a SIMPLE_JSON_VALUE wrapper.
+			-- On error, returns Void and populates `last_errors` with details.
+			-- Was declared in {SIMPLE_JSON} as synonym of `parse_file`, `load_config`, `load_from_file` and `deserialize_file`.
+		require
+			not_empty: not a_file_path.is_empty
+	
+feature -- Platform
+
+	Operating_environment: OPERATING_ENVIRONMENT
+			-- Objects available from the operating system
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			operating_environment_not_void: Result /= Void
+	
+feature -- Size and Buffer Constants
+
+	Default_elements_capacity: INTEGER_32 = 10
+			-- Default initial capacity for element lists in streaming operations
+			-- Provides reasonable starting size for most JSON arrays
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Default_error_list_size: INTEGER_32 = 5
+			-- Default initial capacity for error lists in streaming and simple operations
+			-- Used when creating error containers that typically have few errors
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Default_errors_capacity: INTEGER_32 = 10
+			-- Default initial capacity for error lists in schema validation
+			-- Used for operations that may generate multiple validation errors
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Default_path_segments_capacity: INTEGER_32 = 5
+			-- Default initial capacity for path segment arrays
+			-- Most JSON paths have relatively few segments
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Error_message_buffer_size: INTEGER_32 = 50
+			-- Standard buffer size for constructing error messages
+			-- Provides sufficient space for most error message strings
+			-- Used in schema validation error construction
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Item_path_buffer_size: INTEGER_32 = 20
+			-- Buffer size for item path construction in schema validation
+			-- Used when building paths for nested schema validation
+			-- (from SIMPLE_JSON_CONSTANTS)
+	
+feature -- String Processing Constants
+
+	Ascii_control_char_boundary: INTEGER_32 = 32
+			-- ASCII code boundary for control characters (0x00-0x1F)
+			-- Characters with code < 32 are control characters requiring escape
+			-- Character code 32 is space (first printable ASCII character)
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Hex_digit_count: INTEGER_32 = 4
+			-- Number of hex digits required for Unicode escape sequences (\uXXXX)
+			-- JSON standard requires exactly 4 hex digits for Unicode escapes
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Hex_last_four_offset: INTEGER_32 = 3
+			-- Offset for extracting last 4 characters from hex string
+			-- substring(count - 3, count) gives the last 4 characters
+			-- Used when padding hex strings to ensure 4-digit format
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Max_reasonable_indent_count: INTEGER_32 = 8
+			-- Maximum reasonable number of spaces for indentation
+			-- Prevents excessive indentation that would harm readability
+			-- Typical values: 2, 4, or 8 spaces
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Position_prefix_length: INTEGER_32 = 11
+			-- Length of the string "(position: " used in error messages
+			-- Used to calculate string offsets when extracting position information
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Substring_skip_first_char: INTEGER_32 = 2
+			-- Offset to skip first character in substring operations
+			-- Used when removing leading slash from JSON Pointer paths
+			-- substring(2, count) skips the first character
+			-- (from SIMPLE_JSON_CONSTANTS)
+
+	Substring_skip_first_two_chars: INTEGER_32 = 3
+			-- Offset to skip first two characters in substring operations
+			-- Used when removing array bracket markers like "[-"
+			-- substring(3, count) skips the first two characters
+			-- (from SIMPLE_JSON_CONSTANTS)
+	
+invariant
+	last_errors_attached: last_errors /= Void
+	has_errors_definition: has_errors = not last_errors.is_empty
+	error_count_definition: error_count = last_errors.count
+	no_void_errors: across
+			last_errors as ic_err
+		all
+			ic_err /= Void
+		end
+	has_errors_implies_first_error: has_errors implies first_error /= Void
+	no_errors_implies_no_first_error: not has_errors implies first_error = Void
+
+		-- from ANY
+	reflexive_equality: standard_is_equal (Current)
+	reflexive_conformance: conforms_to (Current)
+
+end -- class SIMPLE_JSON
+

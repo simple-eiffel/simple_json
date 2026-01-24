@@ -1,0 +1,606 @@
+note
+	description: "[
+				Simple, high-level wrapper for JSON_ARRAY with fluent API and Unicode support.
+				All strings are STRING_32 for proper Unicode/UTF-8 handling.
+		
+				Model query:
+					- model: MML_SEQUENCE [SIMPLE_JSON_VALUE] for specification
+	]"
+	date: "$Date$"
+	revision: "$Revision$"
+	eis: "name=Documentation", "protocol=URI", "src=file://$(SYSTEM_PATH)/docs/docs/core/simple_json_array.html"
+
+class interface
+	SIMPLE_JSON_ARRAY
+
+create 
+	make
+			-- Initialize with empty JSON array
+
+	make_with_json_array (a_array: JSON_ARRAY)
+			-- Initialize with existing JSON array
+		require
+			array_not_void: a_array /= Void
+
+feature -- Access
+
+	array_item (i: INTEGER_32): detachable SIMPLE_JSON_ARRAY
+			-- Get array value at index (returns Void if not an array)
+		require
+			valid_index: valid_index (i)
+
+	boolean_item (i: INTEGER_32): BOOLEAN
+			-- Get boolean value at index (returns False if not found or not a boolean)
+		require
+			valid_index: valid_index (i)
+
+	decimal_item (i: INTEGER_32): detachable SIMPLE_DECIMAL
+			-- Get decimal value at index (returns Void if not found or not a number).
+			-- Use for precise decimal arithmetic without floating-point errors.
+		require
+			valid_index: valid_index (i)
+
+	generating_type: TYPE [detachable SIMPLE_JSON_ARRAY]
+			-- Type of current object
+			-- (type of which it is a direct instance)
+			-- (from ANY)
+		ensure -- from ANY
+			generating_type_not_void: Result /= Void
+
+	generator: STRING_8
+			-- Name of current object's generating class
+			-- (base class of the type of which it is a direct instance)
+			-- (from ANY)
+		ensure -- from ANY
+			generator_not_void: Result /= Void
+			generator_not_empty: not Result.is_empty
+
+	integer_item (i: INTEGER_32): INTEGER_64
+			-- Get integer value at index (returns 0 if not found or not a number)
+		require
+			valid_index: valid_index (i)
+
+	item alias "[]" (i: INTEGER_32): SIMPLE_JSON_VALUE
+			-- Get item at index (1-based)
+		require
+			valid_index: valid_index (i)
+
+	json_value: JSON_ARRAY
+			-- Underlying JSON array
+
+	object_item (i: INTEGER_32): detachable SIMPLE_JSON_OBJECT
+			-- Get object value at index (returns Void if not an object)
+		require
+			valid_index: valid_index (i)
+
+	real_item (i: INTEGER_32): REAL_64
+			-- Get real value at index (returns 0.0 if not found or not a number)
+		require
+			valid_index: valid_index (i)
+
+	string_item (i: INTEGER_32): detachable STRING_32
+			-- Get string value at index (returns Void if not a string)
+		require
+			valid_index: valid_index (i)
+	
+feature -- Measurement
+
+	count: INTEGER_32
+			-- Number of items
+
+	is_empty: BOOLEAN
+			-- Is array empty?
+	
+feature -- Comparison
+
+	frozen deep_equal (a: detachable ANY; b: like arg #1): BOOLEAN
+			-- Are `a` and `b` either both void
+			-- or attached to isomorphic object structures?
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			shallow_implies_deep: standard_equal (a, b) implies Result
+			both_or_none_void: (a = Void) implies (Result = (b = Void))
+			same_type: (Result and (a /= Void)) implies (b /= Void and then a.same_type (b))
+			symmetric: Result implies deep_equal (b, a)
+
+	frozen equal (a: detachable ANY; b: like arg #1): BOOLEAN
+			-- Are `a` and `b` either both void or attached
+			-- to objects considered equal?
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			definition: Result = (a = Void and b = Void) or else ((a /= Void and b /= Void) and then a.is_equal (b))
+
+	frozen is_deep_equal alias "≡≡≡" (other: SIMPLE_JSON_ARRAY): BOOLEAN
+			-- Are `Current` and `other` attached to isomorphic object structures?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			shallow_implies_deep: standard_is_equal (other) implies Result
+			same_type: Result implies same_type (other)
+			symmetric: Result implies other.is_deep_equal (Current)
+
+	is_equal (other: SIMPLE_JSON_ARRAY): BOOLEAN
+			-- Is `other` attached to an object considered
+			-- equal to current object?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			symmetric: Result implies other ~ Current
+			consistent: standard_is_equal (other) implies Result
+
+	frozen standard_equal (a: detachable ANY; b: like arg #1): BOOLEAN
+			-- Are `a` and `b` either both void or attached to
+			-- field-by-field identical objects of the same type?
+			-- Always uses default object comparison criterion.
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			definition: Result = (a = Void and b = Void) or else ((a /= Void and b /= Void) and then a.standard_is_equal (b))
+
+	frozen standard_is_equal alias "≜" (other: SIMPLE_JSON_ARRAY): BOOLEAN
+			-- Is `other` attached to an object of the same type
+			-- as current object, and field-by-field identical to it?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			same_type: Result implies same_type (other)
+			symmetric: Result implies other.standard_is_equal (Current)
+	
+feature -- Status report
+
+	conforms_to (other: ANY): BOOLEAN
+			-- Does type of current object conform to type
+			-- of `other` (as per Eiffel: The Language, chapter 13)?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+
+	same_type (other: ANY): BOOLEAN
+			-- Is type of current object identical to type of `other`?
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			definition: Result = (conforms_to (other) and other.conforms_to (Current))
+
+	valid_index (i: INTEGER_32): BOOLEAN
+			-- Is `i` a valid index?
+	
+feature -- Removal
+
+	wipe_out
+			-- Remove all items
+		ensure
+			empty: is_empty
+			count_zero: count = 0
+	
+feature -- Conversion
+
+	representation: STRING_32
+			-- Synonym for to_json_string
+			-- (from SIMPLE_JSON_VALUE)
+
+	to_json_string: STRING_32
+			-- Convert to JSON string representation (STRING_32)
+			-- (from SIMPLE_JSON_VALUE)
+	
+feature -- Duplication
+
+	copy (other: SIMPLE_JSON_ARRAY)
+			-- Update current object using fields of object attached
+			-- to `other`, so as to yield equal objects.
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+			type_identity: same_type (other)
+		ensure -- from ANY
+			is_equal: Current ~ other
+
+	frozen deep_copy (other: SIMPLE_JSON_ARRAY)
+			-- Effect equivalent to that of:
+			--		`copy` (`other` . `deep_twin`)
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+		ensure -- from ANY
+			deep_equal: deep_equal (Current, other)
+
+	frozen deep_twin: SIMPLE_JSON_ARRAY
+			-- New object structure recursively duplicated from Current.
+			-- (from ANY)
+		ensure -- from ANY
+			deep_twin_not_void: Result /= Void
+			deep_equal: deep_equal (Current, Result)
+
+	frozen standard_copy (other: SIMPLE_JSON_ARRAY)
+			-- Copy every field of `other` onto corresponding field
+			-- of current object.
+			-- (from ANY)
+		require -- from ANY
+			other_not_void: other /= Void
+			type_identity: same_type (other)
+		ensure -- from ANY
+			is_standard_equal: standard_is_equal (other)
+
+	frozen standard_twin: SIMPLE_JSON_ARRAY
+			-- New object field-by-field identical to `other`.
+			-- Always uses default copying semantics.
+			-- (from ANY)
+		ensure -- from ANY
+			standard_twin_not_void: Result /= Void
+			equal: standard_equal (Result, Current)
+
+	frozen twin: SIMPLE_JSON_ARRAY
+			-- New object equal to `Current`
+			-- `twin` calls `copy`; to change copying/twinning semantics, redefine `copy`.
+			-- (from ANY)
+		ensure -- from ANY
+			twin_not_void: Result /= Void
+			is_equal: Result ~ Current
+	
+feature -- Basic operations
+
+	frozen default: detachable SIMPLE_JSON_ARRAY
+			-- Default value of object's type
+			-- (from ANY)
+
+	frozen default_pointer: POINTER
+			-- Default value of type `POINTER`
+			-- (Avoid the need to write `p`.`default` for
+			-- some `p` of type `POINTER`.)
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+
+	default_rescue
+			-- Process exception for routines with no Rescue clause.
+			-- (Default: do nothing.)
+			-- (from ANY)
+
+	frozen do_nothing
+			-- Execute a null action.
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+	
+feature -- Array access
+
+	array_value: SIMPLE_JSON_ARRAY
+			-- Synonym for as_array
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_array: is_array
+
+	as_array: SIMPLE_JSON_ARRAY
+			-- Get value as array
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_array: is_array
+	
+feature -- Boolean access
+
+	as_boolean: BOOLEAN
+			-- Get value as boolean
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_boolean: is_boolean
+
+	boolean_value: BOOLEAN
+			-- Synonym for as_boolean
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_boolean: is_boolean
+	
+feature -- Constants
+
+	Max_reasonable_array_size: INTEGER_32 = 1000000
+			-- Maximum reasonable array size (defense against memory exhaustion)
+			-- Public: used in class invariants
+
+	Max_reasonable_string_length: INTEGER_32 = 10000000
+			-- Maximum reasonable string value (10MB, defense against DoS)
+			-- Public: used in preconditions for string operations
+	
+feature -- Decimal access
+
+	as_decimal: SIMPLE_DECIMAL
+			-- Get value as SIMPLE_DECIMAL for precise arithmetic.
+			-- Preserves exact precision from JSON source.
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_number: is_number
+		ensure -- from SIMPLE_JSON_VALUE
+			result_attached: Result /= Void
+
+	decimal_value: SIMPLE_DECIMAL
+			-- Synonym for as_decimal
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_number: is_number
+	
+feature -- Element change (Fluent API)
+
+	add_array (a_value: SIMPLE_JSON_ARRAY): SIMPLE_JSON_ARRAY
+			-- Add array value (fluent).
+			-- Note: a_value is attached - void check redundant.
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_array: item (count).is_array
+			nested_count: attached array_item (count) as l_nested implies l_nested.count = a_value.count
+
+	add_boolean (a_value: BOOLEAN): SIMPLE_JSON_ARRAY
+			-- Add boolean value (fluent)
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_boolean: item (count).is_boolean
+			last_value: boolean_item (count) = a_value
+
+	add_decimal (a_value: SIMPLE_DECIMAL): SIMPLE_JSON_ARRAY
+			-- Add decimal value (fluent).
+			-- Use for precise decimal values without floating-point errors.
+			-- The decimal's exact string representation is preserved in JSON.
+			-- Note: a_value is attached - void check redundant.
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_number: item (count).is_number
+
+	add_integer (a_value: INTEGER_64): SIMPLE_JSON_ARRAY
+			-- Add integer value (fluent)
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_number: item (count).is_number
+			last_value: integer_item (count) = a_value
+
+	add_null: SIMPLE_JSON_ARRAY
+			-- Add null value (fluent)
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_null: item (count).is_null
+
+	add_object (a_value: SIMPLE_JSON_OBJECT): SIMPLE_JSON_ARRAY
+			-- Add object value (fluent).
+			-- Note: a_value is attached - void check redundant.
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_object: item (count).is_object
+			nested_count: attached object_item (count) as l_nested implies l_nested.count = a_value.count
+
+	add_real (a_value: REAL_64): SIMPLE_JSON_ARRAY
+			-- Add real value (fluent)
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_number: item (count).is_number
+
+	add_string (a_value: STRING_32): SIMPLE_JSON_ARRAY
+			-- Add string value (fluent).
+			-- Note: a_value is attached - void check redundant.
+		require
+			value_reasonable_length: a_value.count <= Max_reasonable_string_length
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+			last_is_string: item (count).is_string
+
+	add_value (a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_ARRAY
+			-- Add any JSON value (fluent).
+			-- Note: a_value is attached - void check redundant.
+		ensure
+			result_is_current: Result = Current
+			count_increased: count = old count + 1
+	
+feature -- Number access
+
+	as_integer: INTEGER_64
+			-- Get value as integer
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_number: is_number
+
+	as_natural: NATURAL_64
+			-- Get value as natural
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_number: is_number
+
+	as_real: REAL_64
+			-- Get value as double
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_number: is_number
+
+	integer_value: INTEGER_64
+			-- Synonym for as_integer
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_number: is_number
+
+	real_value: REAL_64
+			-- Synonym for as_real
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_number: is_number
+	
+feature -- Object access
+
+	as_object: SIMPLE_JSON_OBJECT
+			-- Get value as object
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_object: is_object
+
+	object_value: SIMPLE_JSON_OBJECT
+			-- Synonym for as_object
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_object: is_object
+	
+feature -- Output
+
+	as_json: STRING_8
+			-- JSON string representation (STRING_8)
+			-- (from SIMPLE_JSON_VALUE)
+		ensure -- from SIMPLE_JSON_VALUE
+			result_attached: Result /= Void
+
+	as_json_32: STRING_32
+			-- JSON string representation (STRING_32)
+			-- (from SIMPLE_JSON_VALUE)
+		ensure -- from SIMPLE_JSON_VALUE
+			result_attached: Result /= Void
+
+	Io: STD_FILES
+			-- Handle to standard file setup
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			io_not_void: Result /= Void
+
+	out: STRING_8
+			-- New string containing terse printable representation
+			-- of current object
+			-- (from ANY)
+		ensure -- from ANY
+			out_not_void: Result /= Void
+
+	print (o: detachable ANY)
+			-- Write terse external representation of `o`
+			-- on standard output.
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+
+	frozen tagged_out: STRING_8
+			-- New string containing terse printable representation
+			-- of current object
+			-- (from ANY)
+		ensure -- from ANY
+			tagged_out_not_void: Result /= Void
+	
+feature -- Platform
+
+	Operating_environment: OPERATING_ENVIRONMENT
+			-- Objects available from the operating system
+			-- (from ANY)
+		ensure -- from ANY
+			instance_free: class
+			operating_environment_not_void: Result /= Void
+	
+feature -- Pretty Printing
+
+	to_pretty_json: STRING_32
+			-- Convert to pretty-printed JSON with 2-space indentation
+			-- (from SIMPLE_JSON_VALUE)
+
+	to_pretty_json_with_indent (a_indent: STRING_32): STRING_32
+			-- Convert to pretty-printed JSON with custom indentation
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			indent_not_void: a_indent /= Void
+			indent_not_empty: not a_indent.is_empty
+
+	to_pretty_json_with_spaces (a_count: INTEGER_32): STRING_32
+			-- Convert to pretty-printed JSON with specified number of spaces
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			positive_count: a_count > 0
+			reasonable_count: a_count <= 8
+
+	to_pretty_json_with_tabs: STRING_32
+			-- Convert to pretty-printed JSON with tab indentation
+			-- (from SIMPLE_JSON_VALUE)
+	
+feature -- String access (STRING_32 only)
+
+	as_string_32: STRING_32
+			-- Get value as STRING_32 (Unicode)
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_string: is_string
+
+	string_value: STRING_32
+			-- Synonym for as_string_32
+			-- (from SIMPLE_JSON_VALUE)
+		require -- from SIMPLE_JSON_VALUE
+			is_string: is_string
+	
+feature -- Type checking
+
+	is_array: BOOLEAN
+			-- Is this an array value?
+			-- (from SIMPLE_JSON_VALUE)
+
+	is_boolean: BOOLEAN
+			-- Is this a boolean value?
+			-- (from SIMPLE_JSON_VALUE)
+
+	is_integer: BOOLEAN
+			-- Is this an integer number value?
+			-- (from SIMPLE_JSON_VALUE)
+
+	is_null: BOOLEAN
+			-- Is this a null value?
+			-- (from SIMPLE_JSON_VALUE)
+
+	is_number: BOOLEAN
+			-- Is this a number value?
+			-- (from SIMPLE_JSON_VALUE)
+
+	is_object: BOOLEAN
+			-- Is this an object value?
+			-- (from SIMPLE_JSON_VALUE)
+
+	is_string: BOOLEAN
+			-- Is this a string value?
+			-- (from SIMPLE_JSON_VALUE)
+	
+invariant
+	json_value_is_array: attached {JSON_ARRAY} json_value
+	count_non_negative: count >= 0
+	empty_definition: is_empty = (count = 0)
+	valid_index_lower_bound: across
+			1 |..| count as ic
+		all
+			valid_index (ic)
+		end
+	invalid_index_zero: not valid_index (0)
+	invalid_index_beyond_count: not valid_index (count + 1)
+	every_index_has_value: across
+			1 |..| count as ic
+		all
+			attached json_value.i_th (ic)
+		end
+
+		-- from SIMPLE_JSON_VALUE
+	json_value_attached: json_value /= Void
+	valid_json_type: is_string or is_number or is_boolean or is_null or is_object or is_array
+	string_excludes_others: is_string implies (not is_number and not is_boolean and not is_null and not is_object and not is_array)
+	number_excludes_others: is_number implies (not is_string and not is_boolean and not is_null and not is_object and not is_array)
+	boolean_excludes_others: is_boolean implies (not is_string and not is_number and not is_null and not is_object and not is_array)
+	null_excludes_others: is_null implies (not is_string and not is_number and not is_boolean and not is_object and not is_array)
+	object_excludes_others: is_object implies (not is_string and not is_number and not is_boolean and not is_null and not is_array)
+	array_excludes_others: is_array implies (not is_string and not is_number and not is_boolean and not is_null and not is_object)
+	string_type_accurate: is_string = (attached {JSON_STRING} json_value)
+	number_type_accurate: is_number = json_value.is_number
+	boolean_type_accurate: is_boolean = (attached {JSON_BOOLEAN} json_value)
+	null_type_accurate: is_null = json_value.is_null
+	object_type_accurate: is_object = json_value.is_object
+	array_type_accurate: is_array = json_value.Is_array
+
+		-- from ANY
+	reflexive_equality: standard_is_equal (Current)
+	reflexive_conformance: conforms_to (Current)
+
+end -- class SIMPLE_JSON_ARRAY
+
