@@ -33,10 +33,8 @@ create
 
 feature {NONE} -- Initialization
 
-	make_decimal (a_decimal: SIMPLE_DECIMAL)
+	make_decimal (a_decimal: attached SIMPLE_DECIMAL)
 			-- Create from SIMPLE_DECIMAL, preserving exact string representation.
-		require
-			decimal_not_void: a_decimal /= Void
 		do
 			item := a_decimal.to_string
 			numeric_type := double_type
