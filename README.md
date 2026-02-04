@@ -1,19 +1,12 @@
-<p align="center">
-  <img src="docs/images/logo.svg" alt="simple_json logo" width="200">
-</p>
+# simple_json
 
-<h1 align="center">simple_json</h1>
+[Documentation](https://simple-eiffel.github.io/simple_json/) •
+[GitHub](https://github.com/simple-eiffel/simple_json) •
+[Issues](https://github.com/simple-eiffel/simple_json/issues)
 
-<p align="center">
-  <a href="https://simple-eiffel.github.io/simple_json/">Documentation</a> •
-  <a href="https://github.com/simple-eiffel/simple_json">GitHub</a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
-  <img src="https://img.shields.io/badge/Eiffel-25.02-purple.svg" alt="Eiffel 25.02">
-  <img src="https://img.shields.io/badge/DBC-Contracts-green.svg" alt="Design by Contract">
-</p>
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Eiffel 25.02](https://img.shields.io/badge/Eiffel-25.02-purple.svg)
+![DBC: Contracts](https://img.shields.io/badge/DBC-Contracts-green.svg)
 
 Modern JSON library for Eiffel with RFC compliance and JSON Schema validation.
 
