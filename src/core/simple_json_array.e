@@ -78,91 +78,91 @@ feature -- Measurement
 
 feature -- Access
 
-	item alias "[]" (i: INTEGER): SIMPLE_JSON_VALUE
+	item alias "[]" (a_i: INTEGER): SIMPLE_JSON_VALUE
 			-- Get item at index (1-based)
 		require
-			valid_index: valid_index (i)
+			valid_index: valid_index (a_i)
 		do
-			create Result.make (json_value.i_th (i))
+			create Result.make (json_value.i_th (a_i))
 		end
 
-	string_item (i: INTEGER): detachable STRING_32
+	string_item (a_i: INTEGER): detachable STRING_32
 			-- Get string value at index (returns Void if not a string)
 		require
-			valid_index: valid_index (i)
+			valid_index: valid_index (a_i)
 		do
-			if attached item (i) as l_value and then l_value.is_string then
+			if attached item (a_i) as l_value and then l_value.is_string then
 				Result := l_value.as_string_32
 			end
 		end
 
-	integer_item (i: INTEGER): INTEGER_64
+	integer_item (a_i: INTEGER): INTEGER_64
 			-- Get integer value at index (returns 0 if not found or not a number)
 		require
-			valid_index: valid_index (i)
+			valid_index: valid_index (a_i)
 		do
-			if attached item (i) as l_value and then l_value.is_number then
+			if attached item (a_i) as l_value and then l_value.is_number then
 				Result := l_value.as_integer
 			end
 		end
 
-	real_item (i: INTEGER): DOUBLE
+	real_item (a_i: INTEGER): DOUBLE
 			-- Get real value at index (returns 0.0 if not found or not a number)
 		require
-			valid_index: valid_index (i)
+			valid_index: valid_index (a_i)
 		do
-			if attached item (i) as l_value and then l_value.is_number then
+			if attached item (a_i) as l_value and then l_value.is_number then
 				Result := l_value.as_real
 			end
 		end
 
-	decimal_item (i: INTEGER): detachable SIMPLE_DECIMAL
+	decimal_item (a_i: INTEGER): detachable SIMPLE_DECIMAL
 			-- Get decimal value at index (returns Void if not found or not a number).
 			-- Use for precise decimal arithmetic without floating-point errors.
 		require
-			valid_index: valid_index (i)
+			valid_index: valid_index (a_i)
 		do
-			if attached item (i) as l_value and then l_value.is_number then
+			if attached item (a_i) as l_value and then l_value.is_number then
 				Result := l_value.as_decimal
 			end
 		end
 
-	boolean_item (i: INTEGER): BOOLEAN
+	boolean_item (a_i: INTEGER): BOOLEAN
 			-- Get boolean value at index (returns False if not found or not a boolean)
 		require
-			valid_index: valid_index (i)
+			valid_index: valid_index (a_i)
 		do
-			if attached item (i) as l_value and then l_value.is_boolean then
+			if attached item (a_i) as l_value and then l_value.is_boolean then
 				Result := l_value.as_boolean
 			end
 		end
 
-	object_item (i: INTEGER): detachable SIMPLE_JSON_OBJECT
+	object_item (a_i: INTEGER): detachable SIMPLE_JSON_OBJECT
 			-- Get object value at index (returns Void if not an object)
 		require
-			valid_index: valid_index (i)
+			valid_index: valid_index (a_i)
 		do
-			if attached item (i) as l_value and then l_value.is_object then
+			if attached item (a_i) as l_value and then l_value.is_object then
 				Result := l_value.as_object
 			end
 		end
 
-	array_item (i: INTEGER): detachable SIMPLE_JSON_ARRAY
+	array_item (a_i: INTEGER): detachable SIMPLE_JSON_ARRAY
 			-- Get array value at index (returns Void if not an array)
 		require
-			valid_index: valid_index (i)
+			valid_index: valid_index (a_i)
 		do
-			if attached item (i) as l_value and then l_value.is_array then
+			if attached item (a_i) as l_value and then l_value.is_array then
 				Result := l_value.as_array
 			end
 		end
 
 feature -- Status report
 
-	valid_index (i: INTEGER): BOOLEAN
+	valid_index (a_i: INTEGER): BOOLEAN
 			-- Is `i' a valid index?
 		do
-			Result := json_value.valid_index (i)
+			Result := json_value.valid_index (a_i)
 		end
 
 feature -- Element change (Fluent API)
