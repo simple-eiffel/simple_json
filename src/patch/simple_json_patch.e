@@ -174,7 +174,7 @@ feature -- Operations
 				check operation_result_not_void: l_result /= Void end
 				check result_has_status: l_result.is_success or l_result.is_failure end
 
-				if l_result.is_success and attached l_result.modified_document as l_doc then
+				if l_result.is_success and attached l_result.modified_document as al_l_doc then
 					check success_has_document: l_result.modified_document /= Void end
 					-- Continue with modified document
 					l_current := l_doc

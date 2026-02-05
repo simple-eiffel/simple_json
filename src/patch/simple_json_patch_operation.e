@@ -111,11 +111,11 @@ feature -- Conversion
 				.put_string (op, "op")
 				.put_string (path, "path")
 
-			if attached value as l_value then
+			if attached value as al_l_value then
 				Result := Result.put_value (l_value, "value")
 			end
 
-			if attached from_path as l_from then
+			if attached from_path as al_l_from then
 				Result := Result.put_string (l_from, "from")
 			end
 		end

@@ -127,7 +127,7 @@ feature {NONE} -- Implementation
 		do
 			create l_parser
 
-			if is_from_file and then attached file_path as l_path then
+			if is_from_file and then attached file_path as al_l_path then
 				-- Read from file
 				create l_file.make_with_name (l_path)
 				if l_file.exists and then l_file.is_readable then
@@ -141,7 +141,7 @@ feature {NONE} -- Implementation
 				end
 			else
 				-- Parse from string
-				check attached json_text as l_text then
+				check attached json_text as al_l_text then
 					l_value := l_parser.parse (l_text)
 				end
 			end

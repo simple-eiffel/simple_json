@@ -65,15 +65,15 @@ feature -- Operations
 			l_pointer: SIMPLE_JSON_POINTER
 			l_source_value: detachable SIMPLE_JSON_VALUE
 		do
-			if attached from_path as l_from then
+			if attached from_path as al_l_from then
 				-- Get the value at source location
 				create l_pointer
 				if l_pointer.parse_path (l_from) then
 					l_source_value := l_pointer.navigate (a_document)
 
-					if attached l_source_value as l_val then
+					if attached l_source_value as al_l_val then
 						-- Add to destination (source remains unchanged)
-						if attached {SIMPLE_JSON_PATCH_ADD} create {SIMPLE_JSON_PATCH_ADD}.make (path, l_val) as l_add then
+						if attached {SIMPLE_JSON_PATCH_ADD} create {SIMPLE_JSON_PATCH_ADD}.make (path, l_val) as al_l_add then
 							Result := l_add.apply (a_document)
 						else
 							create Result.make_failure ("Internal error creating add operation")

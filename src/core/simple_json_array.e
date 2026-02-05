@@ -50,7 +50,7 @@ feature {NONE} -- Initialization
 		require else
 			value_is_array: attached {JSON_ARRAY} a_value
 		do
-			check attached {JSON_ARRAY} a_value as l_array then
+			check attached {JSON_ARRAY} a_value as al_l_array then
 				json_value := l_array
 			end
 		ensure then

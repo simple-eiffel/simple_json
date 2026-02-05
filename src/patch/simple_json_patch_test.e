@@ -67,7 +67,7 @@ feature -- Operations
 		do
 			create l_pointer
 
-			if l_pointer.parse_path (path) and attached value as l_val then
+			if l_pointer.parse_path (path) and attached value as al_l_val then
 				-- Navigate to target
 				l_existing := l_pointer.navigate (a_document)
 

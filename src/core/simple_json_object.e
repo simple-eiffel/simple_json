@@ -51,7 +51,7 @@ feature {NONE} -- Initialization
 		require else
 			value_is_object: attached {JSON_OBJECT} a_value
 		do
-			check attached {JSON_OBJECT} a_value as l_object then
+			check attached {JSON_OBJECT} a_value as al_l_object then
 				json_value := l_object
 			end
 		ensure then
@@ -102,7 +102,7 @@ feature -- Access (Unicode keys)
 			l_json_key: JSON_STRING
 		do
 			create l_json_key.make_from_string_32 (a_key)
-			if attached json_value.item (l_json_key) as l_value then
+			if attached json_value.item (l_json_key) as al_l_value then
 				create Result.make (l_value)
 			end
 		end

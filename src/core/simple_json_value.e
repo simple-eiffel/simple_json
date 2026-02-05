@@ -47,8 +47,8 @@ feature -- Type checking
 	is_integer: BOOLEAN
 			-- Is this an integer number value?
 		do
-			if attached {JSON_NUMBER} json_value as l_number then
-				Result := l_number.is_integer
+			if attached {JSON_NUMBER} json_value as al_l_number then
+				Result := al_l_number.is_integer
 			end
 		end
 
@@ -83,8 +83,8 @@ feature -- String access (STRING_32 only)
 		require
 			is_string: is_string
 		do
-			if attached {JSON_STRING} json_value as l_string then
-				Result := l_string.unescaped_string_32
+			if attached {JSON_STRING} json_value as al_l_string then
+				Result := al_l_string.unescaped_string_32
 			else
 				create Result.make_empty
 			end
@@ -105,8 +105,8 @@ feature -- Number access
 		require
 			is_number: is_number
 		do
-			if attached {JSON_NUMBER} json_value as l_number then
-				Result := l_number.integer_64_item
+			if attached {JSON_NUMBER} json_value as al_l_number then
+				Result := al_l_number.integer_64_item
 			end
 		end
 
@@ -115,8 +115,8 @@ feature -- Number access
 		require
 			is_number: is_number
 		do
-			if attached {JSON_NUMBER} json_value as l_number then
-				Result := l_number.natural_64_item
+			if attached {JSON_NUMBER} json_value as al_l_number then
+				Result := al_l_number.natural_64_item
 			end
 		end
 
@@ -125,8 +125,8 @@ feature -- Number access
 		require
 			is_number: is_number
 		do
-			if attached {JSON_NUMBER} json_value as l_number then
-				Result := l_number.real_64_item
+			if attached {JSON_NUMBER} json_value as al_l_number then
+				Result := al_l_number.real_64_item
 			end
 		end
 
@@ -154,8 +154,8 @@ feature -- Decimal access
 		require
 			is_number: is_number
 		do
-			if attached {JSON_NUMBER} json_value as l_number then
-				create Result.make (l_number.representation)
+			if attached {JSON_NUMBER} json_value as al_l_number then
+				create Result.make (al_l_number.representation)
 			else
 				create Result.make_zero
 			end
@@ -178,8 +178,8 @@ feature -- Boolean access
 		require
 			is_boolean: is_boolean
 		do
-			if attached {JSON_BOOLEAN} json_value as l_boolean then
-				Result := l_boolean.item
+			if attached {JSON_BOOLEAN} json_value as al_l_boolean then
+				Result := al_l_boolean.item
 			end
 		end
 
@@ -198,7 +198,7 @@ feature -- Object access
 		require
 			is_object: is_object
 		do
-			if attached {JSON_OBJECT} json_value as l_object then
+			if attached {JSON_OBJECT} json_value as al_l_object then
 				create Result.make_with_json_object (l_object)
 			else
 				create Result.make -- Empty object
@@ -220,7 +220,7 @@ feature -- Array access
 		require
 			is_array: is_array
 		do
-			if attached {JSON_ARRAY} json_value as l_array then
+			if attached {JSON_ARRAY} json_value as al_l_array then
 				create Result.make_with_json_array (l_array)
 			else
 				create Result.make -- Empty array

@@ -9,7 +9,7 @@ note
 			create json.make
 
 			-- Parse and query
-			if attached json.parse_object (json_string) as obj then
+			if attached json.parse_object (json_string) as al_obj then
 				name := json.string_at (obj, "user.name")
 				age := json.integer_at (obj, "user.age")
 			end
@@ -57,8 +57,8 @@ feature -- Parsing
 		require
 			json_not_empty: not a_json.is_empty
 		do
-			if attached json.parse (a_json.to_string_32) as v then
-				Result := v.as_object
+			if attached json.parse (a_json.to_string_32) as al_v then
+				Result := al_v.as_object
 			end
 		end
 
@@ -67,8 +67,8 @@ feature -- Parsing
 		require
 			json_not_empty: not a_json.is_empty
 		do
-			if attached json.parse (a_json.to_string_32) as v then
-				Result := v.as_array
+			if attached json.parse (a_json.to_string_32) as al_v then
+				Result := al_v.as_array
 			end
 		end
 
@@ -81,8 +81,8 @@ feature -- Path-based Getters (parse + query in one call)
 			json_not_empty: not a_json.is_empty
 			path_not_empty: not a_path.is_empty
 		do
-			if attached json.parse (a_json.to_string_32) as v then
-				if attached json.query_string (v, a_path) as l_s then Result := l_s.to_string_8 end
+			if attached json.parse (a_json.to_string_32) as al_v then
+				if attached json.query_string (v, a_path) as al_l_s then Result := l_s.to_string_8 end
 			end
 		end
 
@@ -92,7 +92,7 @@ feature -- Path-based Getters (parse + query in one call)
 			json_not_empty: not a_json.is_empty
 			path_not_empty: not a_path.is_empty
 		do
-			if attached json.parse (a_json.to_string_32) as v then
+			if attached json.parse (a_json.to_string_32) as al_v then
 				Result := json.query_integer (v, a_path).to_integer_32
 			end
 		end
@@ -103,7 +103,7 @@ feature -- Path-based Getters (parse + query in one call)
 			json_not_empty: not a_json.is_empty
 			path_not_empty: not a_path.is_empty
 		do
-			if attached json.parse (a_json.to_string_32) as v then
+			if attached json.parse (a_json.to_string_32) as al_v then
 				-- TODO: implement when SIMPLE_JSON adds query_real
 			end
 		end
@@ -114,7 +114,7 @@ feature -- Path-based Getters (parse + query in one call)
 			json_not_empty: not a_json.is_empty
 			path_not_empty: not a_path.is_empty
 		do
-			if attached json.parse (a_json.to_string_32) as v then
+			if attached json.parse (a_json.to_string_32) as al_v then
 				-- TODO: implement when SIMPLE_JSON adds query_boolean
 			end
 		end
@@ -135,7 +135,7 @@ feature -- Object Value Getters (dot-path navigation)
 			l_parts := a_path.split ('.')
 			l_current := a_object
 			from i := 1 until i > l_parts.count - 1 or l_current = Void loop
-				if attached l_current.object_item (l_parts [i]) as next_obj then
+				if attached l_current.object_item (l_parts [i]) as al_next_obj then
 					l_current := next_obj
 				else
 					l_current := Void
@@ -143,7 +143,7 @@ feature -- Object Value Getters (dot-path navigation)
 				i := i + 1
 			end
 			if attached l_current and then i = l_parts.count then
-				if attached l_current.string_item (l_parts [i]) as l_s then Result := l_s.to_string_8 end
+				if attached l_current.string_item (l_parts [i]) as al_l_s then Result := l_s.to_string_8 end
 			end
 		end
 
@@ -160,7 +160,7 @@ feature -- Object Value Getters (dot-path navigation)
 			l_parts := a_path.split ('.')
 			l_current := a_object
 			from i := 1 until i > l_parts.count - 1 or l_current = Void loop
-				if attached l_current.object_item (l_parts [i]) as next_obj then
+				if attached l_current.object_item (l_parts [i]) as al_next_obj then
 					l_current := next_obj
 				else
 					l_current := Void
@@ -185,7 +185,7 @@ feature -- Object Value Getters (dot-path navigation)
 			l_parts := a_path.split ('.')
 			l_current := a_object
 			from i := 1 until i > l_parts.count - 1 or l_current = Void loop
-				if attached l_current.object_item (l_parts [i]) as next_obj then
+				if attached l_current.object_item (l_parts [i]) as al_next_obj then
 					l_current := next_obj
 				else
 					l_current := Void
@@ -210,7 +210,7 @@ feature -- Object Value Getters (dot-path navigation)
 			l_parts := a_path.split ('.')
 			l_current := a_object
 			from i := 1 until i > l_parts.count - 1 or l_current = Void loop
-				if attached l_current.object_item (l_parts [i]) as next_obj then
+				if attached l_current.object_item (l_parts [i]) as al_next_obj then
 					l_current := next_obj
 				else
 					l_current := Void
@@ -250,13 +250,13 @@ feature -- Building
 		do
 			create l_obj.make
 			across a_pairs as ic_pair loop
-				if attached {STRING} ic_pair.value as s then
+				if attached {STRING} ic_pair.value as al_s then
 					l_obj := l_obj.put_string (s, ic_pair.key)
-				elseif attached {INTEGER} ic_pair.value as i then
+				elseif attached {INTEGER} ic_pair.value as al_i then
 					l_obj := l_obj.put_integer (i, ic_pair.key)
-				elseif attached {REAL_64} ic_pair.value as r then
+				elseif attached {REAL_64} ic_pair.value as al_r then
 					l_obj := l_obj.put_real (r, ic_pair.key)
-				elseif attached {BOOLEAN} ic_pair.value as b then
+				elseif attached {BOOLEAN} ic_pair.value as al_b then
 					l_obj := l_obj.put_boolean (b, ic_pair.key)
 				end
 			end
@@ -282,8 +282,8 @@ feature -- Conversion
 		require
 			json_not_empty: not a_json.is_empty
 		do
-			if attached json.parse (a_json.to_string_32) as v then
-				Result := v.to_pretty_json.to_string_8
+			if attached json.parse (a_json.to_string_32) as al_v then
+				Result := al_v.to_pretty_json.to_string_8
 			else
 				Result := a_json
 			end
@@ -300,16 +300,16 @@ feature -- Validation
 	is_object (a_json: STRING): BOOLEAN
 			-- Does string parse to JSON object?
 		do
-			if attached json.parse (a_json.to_string_32) as v then
-				Result := v.is_object
+			if attached json.parse (a_json.to_string_32) as al_v then
+				Result := al_v.is_object
 			end
 		end
 
 	is_array (a_json: STRING): BOOLEAN
 			-- Does string parse to JSON array?
 		do
-			if attached json.parse (a_json.to_string_32) as v then
-				Result := v.is_array
+			if attached json.parse (a_json.to_string_32) as al_v then
+				Result := al_v.is_array
 			end
 		end
 

@@ -125,27 +125,27 @@ feature {NONE} -- Implementation
 			l_name := a_name.to_string_32
 			if a_value = Void then
 				a_json.put_null (l_name).do_nothing
-			elseif attached {READABLE_STRING_GENERAL} a_value as l_str then
+			elseif attached {READABLE_STRING_GENERAL} a_value as al_l_str then
 				a_json.put_string (l_str.to_string_32, l_name).do_nothing
-			elseif attached {INTEGER_64_REF} a_value as l_int then
+			elseif attached {INTEGER_64_REF} a_value as al_l_int then
 				a_json.put_integer (l_int.item, l_name).do_nothing
-			elseif attached {INTEGER_32_REF} a_value as l_int32 then
+			elseif attached {INTEGER_32_REF} a_value as al_l_int32 then
 				a_json.put_integer (l_int32.item, l_name).do_nothing
-			elseif attached {INTEGER_REF} a_value as l_int_ref then
+			elseif attached {INTEGER_REF} a_value as al_l_int_ref then
 				a_json.put_integer (l_int_ref.item, l_name).do_nothing
-			elseif attached {NATURAL_64_REF} a_value as l_nat then
+			elseif attached {NATURAL_64_REF} a_value as al_l_nat then
 				a_json.put_integer (l_nat.item.to_integer_64, l_name).do_nothing
-			elseif attached {REAL_64_REF} a_value as l_real then
+			elseif attached {REAL_64_REF} a_value as al_l_real then
 				a_json.put_real (l_real.item, l_name).do_nothing
-			elseif attached {REAL_32_REF} a_value as l_real32 then
+			elseif attached {REAL_32_REF} a_value as al_l_real32 then
 				a_json.put_real (l_real32.item, l_name).do_nothing
-			elseif attached {BOOLEAN_REF} a_value as l_bool then
+			elseif attached {BOOLEAN_REF} a_value as al_l_bool then
 				a_json.put_boolean (l_bool.item, l_name).do_nothing
-			elseif attached {SIMPLE_DATE_TIME} a_value as l_datetime then
+			elseif attached {SIMPLE_DATE_TIME} a_value as al_l_datetime then
 				a_json.put_string (l_datetime.to_iso8601, l_name).do_nothing
-			elseif attached {SIMPLE_DECIMAL} a_value as l_decimal then
+			elseif attached {SIMPLE_DECIMAL} a_value as al_l_decimal then
 				a_json.put_decimal (l_decimal, l_name).do_nothing
-			elseif attached {ITERABLE [ANY]} a_value as l_iterable then
+			elseif attached {ITERABLE [ANY]} a_value as al_l_iterable then
 				a_json.put_array (iterable_to_json_array (l_iterable), l_name).do_nothing
 			else
 				-- Recursively serialize nested objects
@@ -160,7 +160,7 @@ feature {NONE} -- Implementation
 		do
 			create Result.make
 			across a_iterable as ic loop
-				if attached ic as l_item then
+				if attached ic as al_l_item then
 					add_item_to_array (Result, l_item)
 				else
 					Result.add_null.do_nothing
@@ -176,21 +176,21 @@ feature {NONE} -- Implementation
 			array_exists: a_array /= Void
 			item_exists: a_item /= Void
 		do
-			if attached {READABLE_STRING_GENERAL} a_item as l_str then
-				a_array.add_string (l_str.to_string_32).do_nothing
-			elseif attached {INTEGER_64_REF} a_item as l_int then
+			if attached {READABLE_STRING_GENERAL} a_item as al_l_str then
+				a_array.add_string (al_l_str.to_string_32).do_nothing
+			elseif attached {INTEGER_64_REF} a_item as al_l_int then
 				a_array.add_integer (l_int.item).do_nothing
-			elseif attached {INTEGER_32_REF} a_item as l_int32 then
+			elseif attached {INTEGER_32_REF} a_item as al_l_int32 then
 				a_array.add_integer (l_int32.item).do_nothing
-			elseif attached {INTEGER_REF} a_item as l_int_ref then
+			elseif attached {INTEGER_REF} a_item as al_l_int_ref then
 				a_array.add_integer (l_int_ref.item).do_nothing
-			elseif attached {REAL_64_REF} a_item as l_real then
+			elseif attached {REAL_64_REF} a_item as al_l_real then
 				a_array.add_real (l_real.item).do_nothing
-			elseif attached {BOOLEAN_REF} a_item as l_bool then
+			elseif attached {BOOLEAN_REF} a_item as al_l_bool then
 				a_array.add_boolean (l_bool.item).do_nothing
-			elseif attached {SIMPLE_DECIMAL} a_item as l_decimal then
+			elseif attached {SIMPLE_DECIMAL} a_item as al_l_decimal then
 				a_array.add_decimal (l_decimal).do_nothing
-			elseif attached {ITERABLE [ANY]} a_item as l_iterable then
+			elseif attached {ITERABLE [ANY]} a_item as al_l_iterable then
 				a_array.add_array (iterable_to_json_array (l_iterable)).do_nothing
 			else
 				-- Recursively serialize nested objects

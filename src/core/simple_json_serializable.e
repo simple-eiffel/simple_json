@@ -21,8 +21,8 @@ note
 				make_from_json (a_json: SIMPLE_JSON_OBJECT)
 					do
 						id := a_json.integer_item ("id")
-						if attached a_json.string_item ("name") as n then
-							name := n.to_string_8
+						if attached a_json.string_item ("name") as al_n then
+							name := al_n.to_string_8
 						end
 					end
 

@@ -40,7 +40,7 @@ feature {NONE} -- Initialization
 
 			if attached l_parsed as al_parsed then
 				if al_parsed.is_object then
-					if attached {JSON_OBJECT} al_parsed.json_value as l_json_obj then
+					if attached {JSON_OBJECT} al_parsed.json_value as al_l_json_obj then
 						create schema_object.make_with_json_object (l_json_obj)
 					else
 						create schema_object.make  -- Empty schema
@@ -66,8 +66,8 @@ feature -- Schema properties
 			-- Does schema specify a type that is a string?
 		do
 			if schema_object.has_key ("type") then
-				if attached schema_object.item ("type") as l_val then
-					Result := l_val.is_string
+				if attached schema_object.item ("type") as al_l_val then
+					Result := al_l_val.is_string
 				end
 			end
 		end
@@ -77,7 +77,7 @@ feature -- Schema properties
 		require
 			has_type: has_type
 		do
-			if attached schema_object.item ("type") as l_type then
+			if attached schema_object.item ("type") as al_l_type then
 				check is_string: l_type.is_string end
 				Result := l_type.as_string_32
 			end
@@ -87,8 +87,8 @@ feature -- Schema properties
 			-- Does schema have properties that is an object?
 		do
 			if schema_object.has_key ("properties") then
-				if attached schema_object.item ("properties") as l_val then
-					Result := l_val.is_object
+				if attached schema_object.item ("properties") as al_l_val then
+					Result := al_l_val.is_object
 				end
 			end
 		end
@@ -98,9 +98,9 @@ feature -- Schema properties
 		require
 			has_properties: has_properties
 		do
-			if attached schema_object.item ("properties") as l_props then
+			if attached schema_object.item ("properties") as al_l_props then
 				check is_object: l_props.is_object end
-				if attached {JSON_OBJECT} l_props.json_value as l_json_obj then
+				if attached {JSON_OBJECT} l_props.json_value as al_l_json_obj then
 					create Result.make_with_json_object (l_json_obj)
 				end
 			end
@@ -110,8 +110,8 @@ feature -- Schema properties
 			-- Does schema specify required properties that is an array?
 		do
 			if schema_object.has_key ("required") then
-				if attached schema_object.item ("required") as l_val then
-					Result := l_val.is_array
+				if attached schema_object.item ("required") as al_l_val then
+					Result := al_l_val.is_array
 				end
 			end
 		end
@@ -121,9 +121,9 @@ feature -- Schema properties
 		require
 			has_required: has_required
 		do
-			if attached schema_object.item ("required") as l_req then
+			if attached schema_object.item ("required") as al_l_req then
 				check is_array: l_req.is_array end
-				if attached {JSON_ARRAY} l_req.json_value as l_json_arr then
+				if attached {JSON_ARRAY} l_req.json_value as al_l_json_arr then
 					create Result.make_with_json_array (l_json_arr)
 				end
 			end
@@ -133,8 +133,8 @@ feature -- Schema properties
 			-- Does schema specify minimum value that is a number?
 		do
 			if schema_object.has_key ("minimum") then
-				if attached schema_object.item ("minimum") as l_val then
-					Result := l_val.is_number
+				if attached schema_object.item ("minimum") as al_l_val then
+					Result := al_l_val.is_number
 				end
 			end
 		end
@@ -144,7 +144,7 @@ feature -- Schema properties
 		require
 			has_minimum: has_minimum
 		do
-			if attached schema_object.item ("minimum") as l_min then
+			if attached schema_object.item ("minimum") as al_l_min then
 				check is_number: l_min.is_number end
 				-- Handle integers separately to avoid precondition violation
 				if l_min.is_integer then
@@ -159,8 +159,8 @@ feature -- Schema properties
 			-- Does schema specify maximum value that is a number?
 		do
 			if schema_object.has_key ("maximum") then
-				if attached schema_object.item ("maximum") as l_val then
-					Result := l_val.is_number
+				if attached schema_object.item ("maximum") as al_l_val then
+					Result := al_l_val.is_number
 				end
 			end
 		end
@@ -170,7 +170,7 @@ feature -- Schema properties
 		require
 			has_maximum: has_maximum
 		do
-			if attached schema_object.item ("maximum") as l_max then
+			if attached schema_object.item ("maximum") as al_l_max then
 				check is_number: l_max.is_number end
 				-- Handle integers separately to avoid precondition violation
 				if l_max.is_integer then
@@ -185,8 +185,8 @@ feature -- Schema properties
 			-- Does schema specify minLength that is a number?
 		do
 			if schema_object.has_key ("minLength") then
-				if attached schema_object.item ("minLength") as l_val then
-					Result := l_val.is_number
+				if attached schema_object.item ("minLength") as al_l_val then
+					Result := al_l_val.is_number
 				end
 			end
 		end
@@ -196,7 +196,7 @@ feature -- Schema properties
 		require
 			has_min_length: has_min_length
 		do
-			if attached schema_object.item ("minLength") as l_min then
+			if attached schema_object.item ("minLength") as al_l_min then
 				check is_number: l_min.is_number end
 				-- Handle reals by converting to integer
 				if l_min.is_integer then
@@ -211,8 +211,8 @@ feature -- Schema properties
 			-- Does schema specify maxLength that is a number?
 		do
 			if schema_object.has_key ("maxLength") then
-				if attached schema_object.item ("maxLength") as l_val then
-					Result := l_val.is_number
+				if attached schema_object.item ("maxLength") as al_l_val then
+					Result := al_l_val.is_number
 				end
 			end
 		end
@@ -222,7 +222,7 @@ feature -- Schema properties
 		require
 			has_max_length: has_max_length
 		do
-			if attached schema_object.item ("maxLength") as l_max then
+			if attached schema_object.item ("maxLength") as al_l_max then
 				check is_number: l_max.is_number end
 				-- Handle reals by converting to integer
 				if l_max.is_integer then
@@ -237,8 +237,8 @@ feature -- Schema properties
 			-- Does schema specify a regex pattern that is a string?
 		do
 			if schema_object.has_key ("pattern") then
-				if attached schema_object.item ("pattern") as l_val then
-					Result := l_val.is_string
+				if attached schema_object.item ("pattern") as al_l_val then
+					Result := al_l_val.is_string
 				end
 			end
 		end
@@ -248,7 +248,7 @@ feature -- Schema properties
 		require
 			has_pattern: has_pattern
 		do
-			if attached schema_object.item ("pattern") as l_pattern then
+			if attached schema_object.item ("pattern") as al_l_pattern then
 				check is_string: l_pattern.is_string end
 				Result := l_pattern.as_string_32
 			end
@@ -258,8 +258,8 @@ feature -- Schema properties
 			-- Does schema specify minItems that is a number?
 		do
 			if schema_object.has_key ("minItems") then
-				if attached schema_object.item ("minItems") as l_val then
-					Result := l_val.is_number
+				if attached schema_object.item ("minItems") as al_l_val then
+					Result := al_l_val.is_number
 				end
 			end
 		end
@@ -269,7 +269,7 @@ feature -- Schema properties
 		require
 			has_min_items: has_min_items
 		do
-			if attached schema_object.item ("minItems") as l_min then
+			if attached schema_object.item ("minItems") as al_l_min then
 				check is_number: l_min.is_number end
 				-- Handle reals by converting to integer
 				if l_min.is_integer then
@@ -284,8 +284,8 @@ feature -- Schema properties
 			-- Does schema specify maxItems that is a number?
 		do
 			if schema_object.has_key ("maxItems") then
-				if attached schema_object.item ("maxItems") as l_val then
-					Result := l_val.is_number
+				if attached schema_object.item ("maxItems") as al_l_val then
+					Result := al_l_val.is_number
 				end
 			end
 		end
@@ -295,7 +295,7 @@ feature -- Schema properties
 		require
 			has_max_items: has_max_items
 		do
-			if attached schema_object.item ("maxItems") as l_max then
+			if attached schema_object.item ("maxItems") as al_l_max then
 				check is_number: l_max.is_number end
 				-- Handle reals by converting to integer
 				if l_max.is_integer then
@@ -310,8 +310,8 @@ feature -- Schema properties
 			-- Does schema specify items schema that is an object?
 		do
 			if schema_object.has_key ("items") then
-				if attached schema_object.item ("items") as l_val then
-					Result := l_val.is_object
+				if attached schema_object.item ("items") as al_l_val then
+					Result := al_l_val.is_object
 				end
 			end
 		end
@@ -323,9 +323,9 @@ feature -- Schema properties
 		local
 			l_json: SIMPLE_JSON
 		do
-			if attached schema_object.item ("items") as l_items then
+			if attached schema_object.item ("items") as al_l_items then
 				check is_object: l_items.is_object end
-				if attached {JSON_OBJECT} l_items.json_value as l_json_obj then
+				if attached {JSON_OBJECT} l_items.json_value as al_l_json_obj then
 					create Result.make (create {SIMPLE_JSON_OBJECT}.make_with_json_object (l_json_obj))
 				end
 			end

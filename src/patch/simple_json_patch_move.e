@@ -67,20 +67,20 @@ feature -- Operations
 			l_remove_result: SIMPLE_JSON_PATCH_RESULT
 			l_add_result: SIMPLE_JSON_PATCH_RESULT
 		do
-			if attached from_path as l_from then
+			if attached from_path as al_l_from then
 				-- First, get the value at source location
 				create l_pointer
 				if l_pointer.parse_path (l_from) then
 					l_source_value := l_pointer.navigate (a_document)
 
-					if attached l_source_value as l_val then
+					if attached l_source_value as al_l_val then
 						-- Remove from source
-						if attached {SIMPLE_JSON_PATCH_REMOVE} create {SIMPLE_JSON_PATCH_REMOVE}.make (l_from) as l_remove then
+						if attached {SIMPLE_JSON_PATCH_REMOVE} create {SIMPLE_JSON_PATCH_REMOVE}.make (l_from) as al_l_remove then
 							l_remove_result := l_remove.apply (a_document)
 
-							if l_remove_result.is_success and attached l_remove_result.modified_document as l_doc_after_remove then
+							if l_remove_result.is_success and attached l_remove_result.modified_document as al_l_doc_after_remove then
 								-- Add to destination
-								if attached {SIMPLE_JSON_PATCH_ADD} create {SIMPLE_JSON_PATCH_ADD}.make (path, l_val) as l_add then
+								if attached {SIMPLE_JSON_PATCH_ADD} create {SIMPLE_JSON_PATCH_ADD}.make (path, l_val) as al_l_add then
 									l_add_result := l_add.apply (l_doc_after_remove)
 									Result := l_add_result
 								else

@@ -256,7 +256,7 @@ feature {NONE} -- Implementation
 		local
 			i: INTEGER
 			c: CHARACTER_32
-			hex: STRING
+			l_hex: STRING
 		do
 			create Result.make (a_string.count)
 			from

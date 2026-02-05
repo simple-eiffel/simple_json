@@ -70,7 +70,7 @@ feature -- Operations
 
 			-- Handle root replacement
 			if path.is_equal ("/") or path.is_equal ("") then
-				if attached value as l_val then
+				if attached value as al_l_val then
 					create Result.make_success (l_val)
 				else
 					create Result.make_failure ("No value provided for add operation")
@@ -81,7 +81,7 @@ feature -- Operations
 					-- Get parent container
 					l_parent := l_pointer.navigate_to_parent (a_document)
 
-					if attached l_parent and attached value as l_val then
+					if attached l_parent and attached value as al_l_val then
 						l_key := l_pointer.last_segment
 
 						-- Handle object property addition
@@ -129,7 +129,7 @@ feature {NONE} -- Implementation
 			-- For now, use simple clone
 			l_json_str := a_doc.to_json_string
 			create l_json
-			if attached l_json.parse (l_json_str) as l_cloned then
+			if attached l_json.parse (l_json_str) as al_l_cloned then
 				Result := l_cloned
 			else
 				Result := a_doc
@@ -148,7 +148,7 @@ feature {NONE} -- Implementation
 			-- TODO: Implement efficient append
 			l_json_str := a_doc.to_json_string
 			create l_json
-			if attached l_json.parse (l_json_str) as l_cloned then
+			if attached l_json.parse (l_json_str) as al_l_cloned then
 				Result := l_cloned
 			else
 				Result := a_doc
@@ -168,7 +168,7 @@ feature {NONE} -- Implementation
 			-- TODO: Implement efficient insertion
 			l_json_str := a_doc.to_json_string
 			create l_json
-			if attached l_json.parse (l_json_str) as l_cloned then
+			if attached l_json.parse (l_json_str) as al_l_cloned then
 				Result := l_cloned
 			else
 				Result := a_doc

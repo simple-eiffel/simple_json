@@ -221,7 +221,7 @@ feature {NONE} -- String validation
 
 			-- pattern (using RX_PCRE_REGULAR_EXPRESSION)
 			if a_schema.has_pattern then
-				if attached a_schema.pattern as l_pattern then
+				if attached a_schema.pattern as al_l_pattern then
 					validate_pattern (l_string, l_pattern, a_path, a_errors)
 				end
 			end
@@ -332,16 +332,16 @@ feature {NONE} -- Object validation
 			l_prop_name: STRING_32
 			l_nested_result: SIMPLE_JSON_SCHEMA_VALIDATION_RESULT
 		do
-			if attached {JSON_OBJECT} a_instance.json_value as l_json_obj then
+			if attached {JSON_OBJECT} a_instance.json_value as al_l_json_obj then
 				create l_object.make_with_json_object (l_json_obj)
 
 				-- required properties
 				if a_schema.has_required then
-					if attached a_schema.required as l_required then
+					if attached a_schema.required as al_l_required then
 						across
 							1 |..| l_required.count as ic
 						loop
-							if attached l_required.string_item (ic.item) as l_req_prop then
+							if attached l_required.string_item (ic.item) as al_l_req_prop then
 								if not l_object.has_key (l_req_prop) then
 									create l_msg.make (Error_message_buffer_size)
 									l_msg.append_string_general ("Required property missing: ")
@@ -357,15 +357,15 @@ feature {NONE} -- Object validation
 
 				-- properties validation (recursive)
 				if a_schema.has_properties then
-					if attached a_schema.properties as l_props then
+					if attached a_schema.properties as al_l_props then
 						across
 							l_object.keys as ic_key
 						loop
 							l_prop_name := ic_key
-							if attached l_props.item (l_prop_name) as l_prop_schema_value then
+							if attached al_l_props.item (l_prop_name) as al_l_prop_schema_value then
 								if l_prop_schema_value.is_object then
-									if attached {JSON_OBJECT} l_prop_schema_value.json_value as l_prop_schema_obj then
-										if attached l_object.item (l_prop_name) as l_prop_value then
+									if attached {JSON_OBJECT} l_prop_schema_value.json_value as al_l_prop_schema_obj then
+										if attached l_object.item (l_prop_name) as al_l_prop_value then
 											-- Create nested schema and validate recursively
 											l_nested_result := validate (l_prop_value, create {SIMPLE_JSON_SCHEMA}.make (create {SIMPLE_JSON_OBJECT}.make_with_json_object (l_prop_schema_obj)))
 											-- Collect errors from nested validation
@@ -405,7 +405,7 @@ feature {NONE} -- Array validation
 			l_item_path: STRING_32
 			l_nested_result: SIMPLE_JSON_SCHEMA_VALIDATION_RESULT
 		do
-			if attached {JSON_ARRAY} a_instance.json_value as l_json_arr then
+			if attached {JSON_ARRAY} a_instance.json_value as al_l_json_arr then
 				create l_array.make_with_json_array (l_json_arr)
 				l_count := l_array.count
 
@@ -439,7 +439,7 @@ feature {NONE} -- Array validation
 
 				-- items validation (recursive)
 				if a_schema.has_items then
-					if attached a_schema.items_schema as l_item_schema then
+					if attached a_schema.items_schema as al_l_item_schema then
 						across
 							1 |..| l_count as ic
 						loop

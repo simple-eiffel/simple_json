@@ -48,7 +48,7 @@ feature -- Parsing
 			create l_parser.make_with_string (l_utf8)
 			l_parser.parse_content
 
-			if l_parser.is_valid and then attached l_parser.parsed_json_value as l_value then
+			if l_parser.is_valid and then attached l_parser.parsed_json_value as al_l_value then
 				create Result.make (l_value)
 			else
 				-- Try wrapping in array for primitive values
@@ -57,7 +57,7 @@ feature -- Parsing
 				create l_parser.make_with_string (l_wrapped)
 				l_parser.parse_content
 
-				if l_parser.is_valid and then attached l_parser.parsed_json_array as l_arr then
+				if l_parser.is_valid and then attached l_parser.parsed_json_array as al_l_arr then
 					l_array := l_arr
 					if l_array.count = 1 then
 						create Result.make (l_array.i_th (1))
@@ -761,11 +761,11 @@ feature -- JSON Patch (RFC 6902)
 						l_op_obj := l_item.as_object
 
 						-- Get operation name
-						if attached l_op_obj.string_item ("op") as l_op then
+						if attached l_op_obj.string_item ("op") as al_l_op then
 							l_op_name := l_op
 
 							-- Get path
-							if attached l_op_obj.string_item ("path") as l_p then
+							if attached l_op_obj.string_item ("path") as al_l_p then
 								l_path := l_p
 
 								-- Get optional value
@@ -773,7 +773,7 @@ feature -- JSON Patch (RFC 6902)
 
 								-- Get optional from
 								l_from := ""
-								if attached l_op_obj.string_item ("from") as l_f then
+								if attached l_op_obj.string_item ("from") as al_l_f then
 									l_from := l_f
 								end
 
@@ -812,8 +812,8 @@ feature -- JSON Patch (RFC 6902)
 			document_not_void: a_document /= Void
 			patch_not_empty: not a_patch_json.is_empty
 		do
-			if attached parse_patch (a_patch_json) as l_patch then
-				Result := l_patch.apply (a_document)
+			if attached parse_patch (a_patch_json) as al_l_patch then
+				Result := al_l_patch.apply (a_document)
 			else
 				create Result.make_failure ("Failed to parse patch document")
 			end
