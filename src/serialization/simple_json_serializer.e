@@ -86,6 +86,7 @@ feature -- Configuration
 			excluded_fields.extend (a_prefix)
 		ensure
 			field_excluded: excluded_fields.has (a_prefix)
+			old_preserved: exclusions_model.front (old excluded_fields.count) |=| old exclusions_model
 		end
 
 	clear_exclusions
@@ -94,6 +95,20 @@ feature -- Configuration
 			excluded_fields.wipe_out
 		ensure
 			no_exclusions: excluded_fields.is_empty
+			model_empty: exclusions_model.is_empty
+		end
+
+feature -- Model Queries
+
+	exclusions_model: MML_SEQUENCE [STRING]
+			-- Mathematical model of field exclusion prefixes.
+		do
+			create Result
+			across excluded_fields as ic loop
+				Result := Result & ic
+			end
+		ensure
+			count_matches: Result.count = excluded_fields.count
 		end
 
 feature {NONE} -- Implementation
@@ -126,27 +141,27 @@ feature {NONE} -- Implementation
 			if a_value = Void then
 				a_json.put_null (l_name).do_nothing
 			elseif attached {READABLE_STRING_GENERAL} a_value as al_l_str then
-				a_json.put_string (l_str.to_string_32, l_name).do_nothing
+				a_json.put_string (al_l_str.to_string_32, l_name).do_nothing
 			elseif attached {INTEGER_64_REF} a_value as al_l_int then
-				a_json.put_integer (l_int.item, l_name).do_nothing
+				a_json.put_integer (al_l_int.item, l_name).do_nothing
 			elseif attached {INTEGER_32_REF} a_value as al_l_int32 then
-				a_json.put_integer (l_int32.item, l_name).do_nothing
+				a_json.put_integer (al_l_int32.item, l_name).do_nothing
 			elseif attached {INTEGER_REF} a_value as al_l_int_ref then
-				a_json.put_integer (l_int_ref.item, l_name).do_nothing
+				a_json.put_integer (al_l_int_ref.item, l_name).do_nothing
 			elseif attached {NATURAL_64_REF} a_value as al_l_nat then
-				a_json.put_integer (l_nat.item.to_integer_64, l_name).do_nothing
+				a_json.put_integer (al_l_nat.item.to_integer_64, l_name).do_nothing
 			elseif attached {REAL_64_REF} a_value as al_l_real then
-				a_json.put_real (l_real.item, l_name).do_nothing
+				a_json.put_real (al_l_real.item, l_name).do_nothing
 			elseif attached {REAL_32_REF} a_value as al_l_real32 then
-				a_json.put_real (l_real32.item, l_name).do_nothing
+				a_json.put_real (al_l_real32.item, l_name).do_nothing
 			elseif attached {BOOLEAN_REF} a_value as al_l_bool then
-				a_json.put_boolean (l_bool.item, l_name).do_nothing
+				a_json.put_boolean (al_l_bool.item, l_name).do_nothing
 			elseif attached {SIMPLE_DATE_TIME} a_value as al_l_datetime then
-				a_json.put_string (l_datetime.to_iso8601, l_name).do_nothing
+				a_json.put_string (al_l_datetime.to_iso8601, l_name).do_nothing
 			elseif attached {SIMPLE_DECIMAL} a_value as al_l_decimal then
-				a_json.put_decimal (l_decimal, l_name).do_nothing
+				a_json.put_decimal (al_l_decimal, l_name).do_nothing
 			elseif attached {ITERABLE [ANY]} a_value as al_l_iterable then
-				a_json.put_array (iterable_to_json_array (l_iterable), l_name).do_nothing
+				a_json.put_array (iterable_to_json_array (al_l_iterable), l_name).do_nothing
 			else
 				-- Recursively serialize nested objects
 				a_json.put_object (to_json (a_value), l_name).do_nothing
@@ -161,7 +176,7 @@ feature {NONE} -- Implementation
 			create Result.make
 			across a_iterable as ic loop
 				if attached ic as al_l_item then
-					add_item_to_array (Result, l_item)
+					add_item_to_array (Result, al_l_item)
 				else
 					Result.add_null.do_nothing
 				end
@@ -179,19 +194,19 @@ feature {NONE} -- Implementation
 			if attached {READABLE_STRING_GENERAL} a_item as al_l_str then
 				a_array.add_string (al_l_str.to_string_32).do_nothing
 			elseif attached {INTEGER_64_REF} a_item as al_l_int then
-				a_array.add_integer (l_int.item).do_nothing
+				a_array.add_integer (al_l_int.item).do_nothing
 			elseif attached {INTEGER_32_REF} a_item as al_l_int32 then
-				a_array.add_integer (l_int32.item).do_nothing
+				a_array.add_integer (al_l_int32.item).do_nothing
 			elseif attached {INTEGER_REF} a_item as al_l_int_ref then
-				a_array.add_integer (l_int_ref.item).do_nothing
+				a_array.add_integer (al_l_int_ref.item).do_nothing
 			elseif attached {REAL_64_REF} a_item as al_l_real then
-				a_array.add_real (l_real.item).do_nothing
+				a_array.add_real (al_l_real.item).do_nothing
 			elseif attached {BOOLEAN_REF} a_item as al_l_bool then
-				a_array.add_boolean (l_bool.item).do_nothing
+				a_array.add_boolean (al_l_bool.item).do_nothing
 			elseif attached {SIMPLE_DECIMAL} a_item as al_l_decimal then
-				a_array.add_decimal (l_decimal).do_nothing
+				a_array.add_decimal (al_l_decimal).do_nothing
 			elseif attached {ITERABLE [ANY]} a_item as al_l_iterable then
-				a_array.add_array (iterable_to_json_array (l_iterable)).do_nothing
+				a_array.add_array (iterable_to_json_array (al_l_iterable)).do_nothing
 			else
 				-- Recursively serialize nested objects
 				a_array.add_object (to_json (a_item)).do_nothing
@@ -200,5 +215,6 @@ feature {NONE} -- Implementation
 
 invariant
 	excluded_fields_exists: excluded_fields /= Void
+	model_count: exclusions_model.count = excluded_fields.count
 
 end

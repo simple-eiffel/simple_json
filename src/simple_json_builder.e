@@ -54,25 +54,25 @@ feature -- Object Building (chainable)
 		do
 			l_old_count := json_object.count
 			if attached {STRING} a_value as al_s then
-				json_object := json_object.put_string (s, a_key)
+				json_object := json_object.put_string (al_s, a_key)
 			elseif attached {STRING_32} a_value as al_s32 then
-				json_object := json_object.put_string (s32.to_string_8, a_key)
+				json_object := json_object.put_string (al_s32.to_string_8, a_key)
 			elseif attached {INTEGER} a_value as al_i then
-				json_object := json_object.put_integer (i, a_key)
+				json_object := json_object.put_integer (al_i, a_key)
 			elseif attached {INTEGER_64} a_value as al_i64 then
-				json_object := json_object.put_integer (i64, a_key)
+				json_object := json_object.put_integer (al_i64, a_key)
 			elseif attached {REAL_64} a_value as al_r then
-				json_object := json_object.put_real (r, a_key)
+				json_object := json_object.put_real (al_r, a_key)
 			elseif attached {REAL_32} a_value as al_r32 then
-				json_object := json_object.put_real (r32.to_double, a_key)
+				json_object := json_object.put_real (al_r32.to_double, a_key)
 			elseif attached {BOOLEAN} a_value as al_b then
-				json_object := json_object.put_boolean (b, a_key)
+				json_object := json_object.put_boolean (al_b, a_key)
 			elseif attached {SIMPLE_JSON_VALUE} a_value as al_jv then
-				json_object := json_object.put_value (jv, a_key)
+				json_object := json_object.put_value (al_jv, a_key)
 			elseif attached {SIMPLE_JSON_OBJECT} a_value as al_jo then
-				json_object := json_object.put_object (jo, a_key)
+				json_object := json_object.put_object (al_jo, a_key)
 			elseif attached {SIMPLE_JSON_ARRAY} a_value as al_ja then
-				json_object := json_object.put_array (ja, a_key)
+				json_object := json_object.put_array (al_ja, a_key)
 			end
 			Result := Current
 		ensure
@@ -140,21 +140,21 @@ feature -- Array Building (chainable)
 		do
 			l_old_count := json_array.count
 			if attached {STRING} a_value as al_s then
-				json_array := json_array.add_string (s)
+				json_array := json_array.add_string (al_s)
 			elseif attached {STRING_32} a_value as al_s32 then
-				json_array := json_array.add_string (s32.to_string_8)
+				json_array := json_array.add_string (al_s32.to_string_8)
 			elseif attached {INTEGER} a_value as al_i then
-				json_array := json_array.add_integer (i)
+				json_array := json_array.add_integer (al_i)
 			elseif attached {INTEGER_64} a_value as al_i64 then
-				json_array := json_array.add_integer (i64)
+				json_array := json_array.add_integer (al_i64)
 			elseif attached {REAL_64} a_value as al_r then
-				json_array := json_array.add_real (r)
+				json_array := json_array.add_real (al_r)
 			elseif attached {REAL_32} a_value as al_r32 then
-				json_array := json_array.add_real (r32.to_double)
+				json_array := json_array.add_real (al_r32.to_double)
 			elseif attached {BOOLEAN} a_value as al_b then
-				json_array := json_array.add_boolean (b)
+				json_array := json_array.add_boolean (al_b)
 			elseif attached {SIMPLE_JSON_VALUE} a_value as al_jv then
-				json_array := json_array.add_value (jv)
+				json_array := json_array.add_value (al_jv)
 			end
 			Result := Current
 		ensure

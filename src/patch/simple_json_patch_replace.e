@@ -73,8 +73,8 @@ feature -- Operations
 				if attached l_existing and attached value as al_l_val then
 					-- Target exists, perform replacement (same as add)
 					-- Delegate to add operation
-					if attached {SIMPLE_JSON_PATCH_ADD} create {SIMPLE_JSON_PATCH_ADD}.make (path, l_val) as al_l_add then
-						Result := l_add.apply (a_document)
+					if attached {SIMPLE_JSON_PATCH_ADD} create {SIMPLE_JSON_PATCH_ADD}.make (path, al_l_val) as al_l_add then
+						Result := al_l_add.apply (a_document)
 					else
 						create Result.make_failure ("Internal error in replace operation")
 					end

@@ -34,6 +34,19 @@ feature -- Access
 			Result := segments.last
 		end
 
+feature -- Model Queries
+
+	segments_model: MML_SEQUENCE [STRING_32]
+			-- Mathematical model of path segments in order.
+		do
+			create Result
+			across segments as ic loop
+				Result := Result & ic
+			end
+		ensure
+			count_matches: Result.count = segments.count
+		end
+
 feature -- Parsing
 
 	parse_path (a_path: STRING_32): BOOLEAN
@@ -216,6 +229,9 @@ invariant
 	-- Segment quality
 	no_void_segments: across segments as ic_seg all ic_seg /= Void end
 	no_empty_segments: across segments as ic_seg all not ic_seg.is_empty end
+
+	-- Model consistency
+	model_count: segments_model.count = segments.count
 
 note
 	copyright: "2025, Larry Rix"

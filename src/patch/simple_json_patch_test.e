@@ -73,7 +73,7 @@ feature -- Operations
 
 				if attached l_existing then
 					-- Compare values
-					l_match := values_equal (l_existing, l_val)
+					l_match := values_equal (l_existing, al_l_val)
 
 					if l_match then
 						-- Test passed - return unchanged document

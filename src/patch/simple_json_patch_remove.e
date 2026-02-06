@@ -95,7 +95,7 @@ feature -- Operations
 							-- Verify removal actually happened
 							if attached l_pointer.navigate_to_parent (l_modified) as al_l_modified_parent then
 								if al_l_modified_parent.is_object then
-									check key_was_removed: not l_modified_parent.as_object.has_key (l_key) end
+									check key_was_removed: not al_l_modified_parent.as_object.has_key (l_key) end
 								end
 							end
 
@@ -121,7 +121,7 @@ feature -- Operations
 								-- Verify removal actually happened
 								if attached l_pointer.navigate_to_parent (l_modified) as al_l_modified_parent then
 									if al_l_modified_parent.is_array then
-										check array_item_removed: l_modified_parent.as_array.count = l_parent.as_array.count - 1 end
+										check array_item_removed: al_l_modified_parent.as_array.count = l_parent.as_array.count - 1 end
 									end
 								end
 
@@ -167,7 +167,7 @@ feature {NONE} -- Implementation
 				-- Navigate to parent in cloned document
 				create l_pointer
 				if l_pointer.parse_path (a_path) then
-					l_parent := l_pointer.navigate_to_parent (l_cloned)
+					l_parent := l_pointer.navigate_to_parent (al_l_cloned)
 
 					-- Actually remove the key
 					if attached l_parent and then l_parent.is_object then
@@ -180,7 +180,7 @@ feature {NONE} -- Implementation
 					end
 				end
 
-				Result := l_cloned
+				Result := al_l_cloned
 			else
 				Result := a_doc
 			end
@@ -200,7 +200,7 @@ feature {NONE} -- Implementation
 			if attached l_json.parse (l_json_str) as al_l_cloned then
 				-- Navigate and remove
 				-- TODO: Implement efficient removal
-				Result := l_cloned
+				Result := al_l_cloned
 			else
 				Result := a_doc
 			end

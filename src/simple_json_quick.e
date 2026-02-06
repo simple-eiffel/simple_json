@@ -82,7 +82,7 @@ feature -- Path-based Getters (parse + query in one call)
 			path_not_empty: not a_path.is_empty
 		do
 			if attached json.parse (a_json.to_string_32) as al_v then
-				if attached json.query_string (v, a_path) as al_l_s then Result := l_s.to_string_8 end
+				if attached json.query_string (al_v, a_path) as al_l_s then Result := al_l_s.to_string_8 end
 			end
 		end
 
@@ -93,7 +93,7 @@ feature -- Path-based Getters (parse + query in one call)
 			path_not_empty: not a_path.is_empty
 		do
 			if attached json.parse (a_json.to_string_32) as al_v then
-				Result := json.query_integer (v, a_path).to_integer_32
+				Result := json.query_integer (al_v, a_path).to_integer_32
 			end
 		end
 
@@ -136,14 +136,14 @@ feature -- Object Value Getters (dot-path navigation)
 			l_current := a_object
 			from i := 1 until i > l_parts.count - 1 or l_current = Void loop
 				if attached l_current.object_item (l_parts [i]) as al_next_obj then
-					l_current := next_obj
+					l_current := al_next_obj
 				else
 					l_current := Void
 				end
 				i := i + 1
 			end
 			if attached l_current and then i = l_parts.count then
-				if attached l_current.string_item (l_parts [i]) as al_l_s then Result := l_s.to_string_8 end
+				if attached l_current.string_item (l_parts [i]) as al_l_s then Result := al_l_s.to_string_8 end
 			end
 		end
 
@@ -161,7 +161,7 @@ feature -- Object Value Getters (dot-path navigation)
 			l_current := a_object
 			from i := 1 until i > l_parts.count - 1 or l_current = Void loop
 				if attached l_current.object_item (l_parts [i]) as al_next_obj then
-					l_current := next_obj
+					l_current := al_next_obj
 				else
 					l_current := Void
 				end
@@ -186,7 +186,7 @@ feature -- Object Value Getters (dot-path navigation)
 			l_current := a_object
 			from i := 1 until i > l_parts.count - 1 or l_current = Void loop
 				if attached l_current.object_item (l_parts [i]) as al_next_obj then
-					l_current := next_obj
+					l_current := al_next_obj
 				else
 					l_current := Void
 				end
@@ -211,7 +211,7 @@ feature -- Object Value Getters (dot-path navigation)
 			l_current := a_object
 			from i := 1 until i > l_parts.count - 1 or l_current = Void loop
 				if attached l_current.object_item (l_parts [i]) as al_next_obj then
-					l_current := next_obj
+					l_current := al_next_obj
 				else
 					l_current := Void
 				end
@@ -251,13 +251,13 @@ feature -- Building
 			create l_obj.make
 			across a_pairs as ic_pair loop
 				if attached {STRING} ic_pair.value as al_s then
-					l_obj := l_obj.put_string (s, ic_pair.key)
+					l_obj := l_obj.put_string (al_s, ic_pair.key)
 				elseif attached {INTEGER} ic_pair.value as al_i then
-					l_obj := l_obj.put_integer (i, ic_pair.key)
+					l_obj := l_obj.put_integer (al_i, ic_pair.key)
 				elseif attached {REAL_64} ic_pair.value as al_r then
-					l_obj := l_obj.put_real (r, ic_pair.key)
+					l_obj := l_obj.put_real (al_r, ic_pair.key)
 				elseif attached {BOOLEAN} ic_pair.value as al_b then
-					l_obj := l_obj.put_boolean (b, ic_pair.key)
+					l_obj := l_obj.put_boolean (al_b, ic_pair.key)
 				end
 			end
 			Result := l_obj.to_json_string.to_string_8

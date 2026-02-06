@@ -62,6 +62,19 @@ feature -- Access
 			definition: Result = operations.is_empty
 		end
 
+feature -- Model Queries
+
+	operations_model: MML_SEQUENCE [SIMPLE_JSON_PATCH_OPERATION]
+			-- Mathematical model of patch operations in order.
+		do
+			create Result
+			across operations as ic loop
+				Result := Result & ic
+			end
+		ensure
+			count_matches: Result.count = operations.count
+		end
+
 feature -- Building (Fluent API)
 
 	add (a_path: STRING_32; a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_PATCH
@@ -76,6 +89,7 @@ feature -- Building (Fluent API)
 		ensure
 			operation_added: operations.count = old operations.count + 1
 			returns_current: Result = Current
+			prefix_unchanged: operations_model.front (old count) |=| old operations_model
 		end
 
 	remove (a_path: STRING_32): SIMPLE_JSON_PATCH
@@ -89,6 +103,7 @@ feature -- Building (Fluent API)
 		ensure
 			operation_added: operations.count = old operations.count + 1
 			returns_current: Result = Current
+			prefix_unchanged: operations_model.front (old count) |=| old operations_model
 		end
 
 	replace (a_path: STRING_32; a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_PATCH
@@ -103,6 +118,7 @@ feature -- Building (Fluent API)
 		ensure
 			operation_added: operations.count = old operations.count + 1
 			returns_current: Result = Current
+			prefix_unchanged: operations_model.front (old count) |=| old operations_model
 		end
 
 	move (a_from: STRING_32; a_to: STRING_32): SIMPLE_JSON_PATCH
@@ -118,6 +134,7 @@ feature -- Building (Fluent API)
 		ensure
 			operation_added: operations.count = old operations.count + 1
 			returns_current: Result = Current
+			prefix_unchanged: operations_model.front (old count) |=| old operations_model
 		end
 
 	copy_value (a_from: STRING_32; a_to: STRING_32): SIMPLE_JSON_PATCH
@@ -133,6 +150,7 @@ feature -- Building (Fluent API)
 		ensure
 			operation_added: operations.count = old operations.count + 1
 			returns_current: Result = Current
+			prefix_unchanged: operations_model.front (old count) |=| old operations_model
 		end
 
 	test (a_path: STRING_32; a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_PATCH
@@ -147,6 +165,7 @@ feature -- Building (Fluent API)
 		ensure
 			operation_added: operations.count = old operations.count + 1
 			returns_current: Result = Current
+			prefix_unchanged: operations_model.front (old count) |=| old operations_model
 		end
 
 feature -- Operations
@@ -177,7 +196,7 @@ feature -- Operations
 				if l_result.is_success and attached l_result.modified_document as al_l_doc then
 					check success_has_document: l_result.modified_document /= Void end
 					-- Continue with modified document
-					l_current := l_doc
+					l_current := al_l_doc
 				else
 					check operation_failed: l_result.is_failure end
 					check failure_has_error: l_result.has_error end
@@ -234,6 +253,9 @@ invariant
 	-- Operations quality
 	no_void_operations: across operations as ic_op all ic_op /= Void end
 	all_operations_valid: across operations as ic_op all ic_op.is_valid end
+
+	-- Model consistency
+	model_count: operations_model.count = operations.count
 
 note
 	copyright: "2025, Larry Rix"

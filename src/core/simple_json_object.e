@@ -52,7 +52,7 @@ feature {NONE} -- Initialization
 			value_is_object: attached {JSON_OBJECT} a_value
 		do
 			check attached {JSON_OBJECT} a_value as al_l_object then
-				json_value := l_object
+				json_value := al_l_object
 			end
 		ensure then
 			value_set: json_value = a_value
@@ -103,7 +103,7 @@ feature -- Access (Unicode keys)
 		do
 			create l_json_key.make_from_string_32 (a_key)
 			if attached json_value.item (l_json_key) as al_l_value then
-				create Result.make (l_value)
+				create Result.make (al_l_value)
 			end
 		end
 
@@ -282,6 +282,24 @@ feature -- Status report (multiple keys - F3 friction fix)
 			none_extra: across a_keys as ic_a all has_key (ic_a) or Result.has (ic_a) end
 		end
 
+feature -- Model Queries
+
+	entries_model: MML_MAP [STRING_32, detachable SIMPLE_JSON_VALUE]
+			-- Mathematical model of all key-value entries.
+		local
+			l_keys: ARRAY [STRING_32]
+			i: INTEGER
+		do
+			create Result
+			l_keys := keys
+			from i := l_keys.lower until i > l_keys.upper loop
+				Result := Result.updated (l_keys [i], item (l_keys [i]))
+				i := i + 1
+			end
+		ensure
+			count_matches: Result.count = count
+		end
+
 feature -- Element change (Fluent API)
 
 	put_string (a_value: STRING_32; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -302,6 +320,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
 			value_stored: attached string_item (a_key) as l_stored implies l_stored.same_string (a_value)
+			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
 		end
 
 	put_integer (a_value: INTEGER_64; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -319,6 +338,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
 			value_stored: integer_item (a_key) = a_value
+			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
 		end
 
 	put_real (a_value: DOUBLE; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -335,6 +355,7 @@ feature -- Element change (Fluent API)
 		ensure
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
+			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
 		end
 
 	put_decimal (a_value: SIMPLE_DECIMAL; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -356,6 +377,7 @@ feature -- Element change (Fluent API)
 		ensure
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
+			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
 		end
 
 	put_boolean (a_value: BOOLEAN; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -373,6 +395,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
 			value_stored: boolean_item (a_key) = a_value
+			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
 		end
 
 	put_null (a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -392,6 +415,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
 			is_null: attached item (a_key) as l_v implies l_v.is_null
+			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
 		end
 
 	put_object (a_value: SIMPLE_JSON_OBJECT; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -411,6 +435,7 @@ feature -- Element change (Fluent API)
 			key_exists: has_key (a_key)
 			is_object: attached item (a_key) as l_v implies l_v.is_object
 			nested_count: attached object_item (a_key) as l_nested implies l_nested.count = a_value.count
+			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
 		end
 
 	put_array (a_value: SIMPLE_JSON_ARRAY; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -430,6 +455,7 @@ feature -- Element change (Fluent API)
 			key_exists: has_key (a_key)
 			is_array: attached item (a_key) as l_v implies l_v.is_array
 			nested_count: attached array_item (a_key) as l_nested implies l_nested.count = a_value.count
+			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
 		end
 
 	put_value (a_value: SIMPLE_JSON_VALUE; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -447,6 +473,7 @@ feature -- Element change (Fluent API)
 		ensure
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
+			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
 		end
 
 feature -- Removal
@@ -464,6 +491,7 @@ feature -- Removal
 		ensure
 			key_removed: not has_key (a_key)
 			count_decreased: count <= old count
+			model_domain: entries_model.domain |=| old entries_model.domain.removed (a_key)
 		end
 
 	wipe_out
@@ -473,6 +501,7 @@ feature -- Removal
 		ensure
 			empty: is_empty
 			count_zero: count = 0
+			model_empty: entries_model.is_empty
 		end
 
 feature -- Iteration
@@ -535,5 +564,8 @@ invariant
 	-- Key existence and consistency
 	every_key_exists: across keys as ic_key all has_key (ic_key) end
 	every_key_has_value: across keys as ic_key all item (ic_key) /= Void end
+
+	-- Model consistency
+	model_count: entries_model.count = count
 
 end

@@ -129,7 +129,7 @@ feature {NONE} -- Implementation
 
 			if is_from_file and then attached file_path as al_l_path then
 				-- Read from file
-				create l_file.make_with_name (l_path)
+				create l_file.make_with_name (al_l_path)
 				if l_file.exists and then l_file.is_readable then
 					l_file.open_read
 					l_file.read_stream (l_file.count)
@@ -137,12 +137,12 @@ feature {NONE} -- Implementation
 					l_file.close
 					l_value := l_parser.parse (l_content)
 				else
-					errors.extend (create {SIMPLE_JSON_ERROR}.make ("Cannot read file: " + l_path))
+					errors.extend (create {SIMPLE_JSON_ERROR}.make ({STRING_32} "Cannot read file: " + al_l_path))
 				end
 			else
 				-- Parse from string
 				check attached json_text as al_l_text then
-					l_value := l_parser.parse (l_text)
+					l_value := l_parser.parse (al_l_text)
 				end
 			end
 

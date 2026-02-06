@@ -51,7 +51,7 @@ feature {NONE} -- Initialization
 			value_is_array: attached {JSON_ARRAY} a_value
 		do
 			check attached {JSON_ARRAY} a_value as al_l_array then
-				json_value := l_array
+				json_value := al_l_array
 			end
 		ensure then
 			value_set: json_value = a_value
@@ -165,6 +165,22 @@ feature -- Status report
 			Result := json_value.valid_index (a_i)
 		end
 
+feature -- Model Queries
+
+	elements_model: MML_SEQUENCE [SIMPLE_JSON_VALUE]
+			-- Mathematical model of array elements in order.
+		local
+			i: INTEGER
+		do
+			create Result
+			from i := 1 until i > count loop
+				Result := Result & item (i)
+				i := i + 1
+			end
+		ensure
+			count_matches: Result.count = count
+		end
+
 feature -- Element change (Fluent API)
 
 	add_string (a_value: STRING_32): SIMPLE_JSON_ARRAY
@@ -182,6 +198,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_string: item (count).is_string
+			prefix_unchanged: elements_model.front (old count) |=| old elements_model
 		end
 
 	add_integer (a_value: INTEGER_64): SIMPLE_JSON_ARRAY
@@ -197,6 +214,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_number: item (count).is_number
 			last_value: integer_item (count) = a_value
+			prefix_unchanged: elements_model.front (old count) |=| old elements_model
 		end
 
 	add_real (a_value: DOUBLE): SIMPLE_JSON_ARRAY
@@ -211,6 +229,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_number: item (count).is_number
+			prefix_unchanged: elements_model.front (old count) |=| old elements_model
 		end
 
 	add_decimal (a_value: SIMPLE_DECIMAL): SIMPLE_JSON_ARRAY
@@ -228,6 +247,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_number: item (count).is_number
+			prefix_unchanged: elements_model.front (old count) |=| old elements_model
 		end
 
 	add_boolean (a_value: BOOLEAN): SIMPLE_JSON_ARRAY
@@ -243,6 +263,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_boolean: item (count).is_boolean
 			last_value: boolean_item (count) = a_value
+			prefix_unchanged: elements_model.front (old count) |=| old elements_model
 		end
 
 	add_null: SIMPLE_JSON_ARRAY
@@ -257,6 +278,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_null: item (count).is_null
+			prefix_unchanged: elements_model.front (old count) |=| old elements_model
 		end
 
 	add_object (a_value: SIMPLE_JSON_OBJECT): SIMPLE_JSON_ARRAY
@@ -270,6 +292,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_object: item (count).is_object
 			nested_count: attached object_item (count) as l_nested implies l_nested.count = a_value.count
+			prefix_unchanged: elements_model.front (old count) |=| old elements_model
 		end
 
 	add_array (a_value: SIMPLE_JSON_ARRAY): SIMPLE_JSON_ARRAY
@@ -283,6 +306,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_array: item (count).is_array
 			nested_count: attached array_item (count) as l_nested implies l_nested.count = a_value.count
+			prefix_unchanged: elements_model.front (old count) |=| old elements_model
 		end
 
 	add_value (a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_ARRAY
@@ -294,6 +318,7 @@ feature -- Element change (Fluent API)
 		ensure
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
+			prefix_unchanged: elements_model.front (old count) |=| old elements_model
 		end
 
 feature -- Removal
@@ -305,6 +330,7 @@ feature -- Removal
 		ensure
 			empty: is_empty
 			count_zero: count = 0
+			model_empty: elements_model.is_empty
 		end
 feature -- Constants
 
@@ -333,5 +359,8 @@ invariant
 	every_index_has_value: across 1 |..| count as ic all
 		attached json_value.i_th (ic)
 	end
+
+	-- Model consistency
+	model_count: elements_model.count = count
 
 end

@@ -49,7 +49,7 @@ feature -- Parsing
 			l_parser.parse_content
 
 			if l_parser.is_valid and then attached l_parser.parsed_json_value as al_l_value then
-				create Result.make (l_value)
+				create Result.make (al_l_value)
 			else
 				-- Try wrapping in array for primitive values
 				-- JSON parser only accepts objects/arrays at top level
@@ -58,7 +58,7 @@ feature -- Parsing
 				l_parser.parse_content
 
 				if l_parser.is_valid and then attached l_parser.parsed_json_array as al_l_arr then
-					l_array := l_arr
+					l_array := al_l_arr
 					if l_array.count = 1 then
 						create Result.make (l_array.i_th (1))
 					end
@@ -762,11 +762,11 @@ feature -- JSON Patch (RFC 6902)
 
 						-- Get operation name
 						if attached l_op_obj.string_item ("op") as al_l_op then
-							l_op_name := l_op
+							l_op_name := al_l_op
 
 							-- Get path
 							if attached l_op_obj.string_item ("path") as al_l_p then
-								l_path := l_p
+								l_path := al_l_p
 
 								-- Get optional value
 								l_val := l_op_obj.item ("value")
@@ -774,7 +774,7 @@ feature -- JSON Patch (RFC 6902)
 								-- Get optional from
 								l_from := ""
 								if attached l_op_obj.string_item ("from") as al_l_f then
-									l_from := l_f
+									l_from := al_l_f
 								end
 
 								-- Create appropriate operation

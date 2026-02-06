@@ -199,7 +199,7 @@ feature -- Object access
 			is_object: is_object
 		do
 			if attached {JSON_OBJECT} json_value as al_l_object then
-				create Result.make_with_json_object (l_object)
+				create Result.make_with_json_object (al_l_object)
 			else
 				create Result.make -- Empty object
 			end
@@ -221,7 +221,7 @@ feature -- Array access
 			is_array: is_array
 		do
 			if attached {JSON_ARRAY} json_value as al_l_array then
-				create Result.make_with_json_array (l_array)
+				create Result.make_with_json_array (al_l_array)
 			else
 				create Result.make -- Empty array
 			end

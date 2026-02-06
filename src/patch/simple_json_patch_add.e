@@ -71,7 +71,7 @@ feature -- Operations
 			-- Handle root replacement
 			if path.is_equal ("/") or path.is_equal ("") then
 				if attached value as al_l_val then
-					create Result.make_success (l_val)
+					create Result.make_success (al_l_val)
 				else
 					create Result.make_failure ("No value provided for add operation")
 				end
@@ -86,17 +86,17 @@ feature -- Operations
 
 						-- Handle object property addition
 						if l_parent.is_object then
-							l_modified := clone_and_add_to_object (a_document, path, l_key, l_val)
+							l_modified := clone_and_add_to_object (a_document, path, l_key, al_l_val)
 							create Result.make_success (l_modified)
 						-- Handle array element addition
 						elseif l_parent.is_array then
 							if l_key.is_equal ("-") then
 								-- Append to array
-								l_modified := clone_and_append_to_array (a_document, path, l_val)
+								l_modified := clone_and_append_to_array (a_document, path, al_l_val)
 								create Result.make_success (l_modified)
 							elseif is_valid_array_index (l_key) then
 								-- Insert at index
-								l_modified := clone_and_insert_into_array (a_document, path, l_key.to_integer, l_val)
+								l_modified := clone_and_insert_into_array (a_document, path, l_key.to_integer, al_l_val)
 								create Result.make_success (l_modified)
 							else
 								create Result.make_failure ("Invalid array index: " + l_key.to_string_8)
@@ -130,7 +130,7 @@ feature {NONE} -- Implementation
 			l_json_str := a_doc.to_json_string
 			create l_json
 			if attached l_json.parse (l_json_str) as al_l_cloned then
-				Result := l_cloned
+				Result := al_l_cloned
 			else
 				Result := a_doc
 			end
@@ -149,7 +149,7 @@ feature {NONE} -- Implementation
 			l_json_str := a_doc.to_json_string
 			create l_json
 			if attached l_json.parse (l_json_str) as al_l_cloned then
-				Result := l_cloned
+				Result := al_l_cloned
 			else
 				Result := a_doc
 			end
@@ -169,7 +169,7 @@ feature {NONE} -- Implementation
 			l_json_str := a_doc.to_json_string
 			create l_json
 			if attached l_json.parse (l_json_str) as al_l_cloned then
-				Result := l_cloned
+				Result := al_l_cloned
 			else
 				Result := a_doc
 			end

@@ -41,7 +41,7 @@ feature {NONE} -- Initialization
 			if attached l_parsed as al_parsed then
 				if al_parsed.is_object then
 					if attached {JSON_OBJECT} al_parsed.json_value as al_l_json_obj then
-						create schema_object.make_with_json_object (l_json_obj)
+						create schema_object.make_with_json_object (al_l_json_obj)
 					else
 						create schema_object.make  -- Empty schema
 					end
@@ -78,8 +78,8 @@ feature -- Schema properties
 			has_type: has_type
 		do
 			if attached schema_object.item ("type") as al_l_type then
-				check is_string: l_type.is_string end
-				Result := l_type.as_string_32
+				check is_string: al_l_type.is_string end
+				Result := al_l_type.as_string_32
 			end
 		end
 
@@ -99,9 +99,9 @@ feature -- Schema properties
 			has_properties: has_properties
 		do
 			if attached schema_object.item ("properties") as al_l_props then
-				check is_object: l_props.is_object end
-				if attached {JSON_OBJECT} l_props.json_value as al_l_json_obj then
-					create Result.make_with_json_object (l_json_obj)
+				check is_object: al_l_props.is_object end
+				if attached {JSON_OBJECT} al_l_props.json_value as al_l_json_obj then
+					create Result.make_with_json_object (al_l_json_obj)
 				end
 			end
 		end
@@ -122,9 +122,9 @@ feature -- Schema properties
 			has_required: has_required
 		do
 			if attached schema_object.item ("required") as al_l_req then
-				check is_array: l_req.is_array end
-				if attached {JSON_ARRAY} l_req.json_value as al_l_json_arr then
-					create Result.make_with_json_array (l_json_arr)
+				check is_array: al_l_req.is_array end
+				if attached {JSON_ARRAY} al_l_req.json_value as al_l_json_arr then
+					create Result.make_with_json_array (al_l_json_arr)
 				end
 			end
 		end
@@ -145,12 +145,12 @@ feature -- Schema properties
 			has_minimum: has_minimum
 		do
 			if attached schema_object.item ("minimum") as al_l_min then
-				check is_number: l_min.is_number end
+				check is_number: al_l_min.is_number end
 				-- Handle integers separately to avoid precondition violation
-				if l_min.is_integer then
-					Result := l_min.as_integer.to_double
+				if al_l_min.is_integer then
+					Result := al_l_min.as_integer.to_double
 				else
-					Result := l_min.as_real
+					Result := al_l_min.as_real
 				end
 			end
 		end
@@ -171,12 +171,12 @@ feature -- Schema properties
 			has_maximum: has_maximum
 		do
 			if attached schema_object.item ("maximum") as al_l_max then
-				check is_number: l_max.is_number end
+				check is_number: al_l_max.is_number end
 				-- Handle integers separately to avoid precondition violation
-				if l_max.is_integer then
-					Result := l_max.as_integer.to_double
+				if al_l_max.is_integer then
+					Result := al_l_max.as_integer.to_double
 				else
-					Result := l_max.as_real
+					Result := al_l_max.as_real
 				end
 			end
 		end
@@ -197,12 +197,12 @@ feature -- Schema properties
 			has_min_length: has_min_length
 		do
 			if attached schema_object.item ("minLength") as al_l_min then
-				check is_number: l_min.is_number end
+				check is_number: al_l_min.is_number end
 				-- Handle reals by converting to integer
-				if l_min.is_integer then
-					Result := l_min.as_integer.to_integer_32
+				if al_l_min.is_integer then
+					Result := al_l_min.as_integer.to_integer_32
 				else
-					Result := l_min.as_real.truncated_to_integer
+					Result := al_l_min.as_real.truncated_to_integer
 				end
 			end
 		end
@@ -223,12 +223,12 @@ feature -- Schema properties
 			has_max_length: has_max_length
 		do
 			if attached schema_object.item ("maxLength") as al_l_max then
-				check is_number: l_max.is_number end
+				check is_number: al_l_max.is_number end
 				-- Handle reals by converting to integer
-				if l_max.is_integer then
-					Result := l_max.as_integer.to_integer_32
+				if al_l_max.is_integer then
+					Result := al_l_max.as_integer.to_integer_32
 				else
-					Result := l_max.as_real.truncated_to_integer
+					Result := al_l_max.as_real.truncated_to_integer
 				end
 			end
 		end
@@ -249,8 +249,8 @@ feature -- Schema properties
 			has_pattern: has_pattern
 		do
 			if attached schema_object.item ("pattern") as al_l_pattern then
-				check is_string: l_pattern.is_string end
-				Result := l_pattern.as_string_32
+				check is_string: al_l_pattern.is_string end
+				Result := al_l_pattern.as_string_32
 			end
 		end
 
@@ -270,12 +270,12 @@ feature -- Schema properties
 			has_min_items: has_min_items
 		do
 			if attached schema_object.item ("minItems") as al_l_min then
-				check is_number: l_min.is_number end
+				check is_number: al_l_min.is_number end
 				-- Handle reals by converting to integer
-				if l_min.is_integer then
-					Result := l_min.as_integer.to_integer_32
+				if al_l_min.is_integer then
+					Result := al_l_min.as_integer.to_integer_32
 				else
-					Result := l_min.as_real.truncated_to_integer
+					Result := al_l_min.as_real.truncated_to_integer
 				end
 			end
 		end
@@ -296,12 +296,12 @@ feature -- Schema properties
 			has_max_items: has_max_items
 		do
 			if attached schema_object.item ("maxItems") as al_l_max then
-				check is_number: l_max.is_number end
+				check is_number: al_l_max.is_number end
 				-- Handle reals by converting to integer
-				if l_max.is_integer then
-					Result := l_max.as_integer.to_integer_32
+				if al_l_max.is_integer then
+					Result := al_l_max.as_integer.to_integer_32
 				else
-					Result := l_max.as_real.truncated_to_integer
+					Result := al_l_max.as_real.truncated_to_integer
 				end
 			end
 		end
@@ -320,13 +320,11 @@ feature -- Schema properties
 			-- Schema for array items
 		require
 			has_items: has_items
-		local
-			l_json: SIMPLE_JSON
 		do
 			if attached schema_object.item ("items") as al_l_items then
-				check is_object: l_items.is_object end
-				if attached {JSON_OBJECT} l_items.json_value as al_l_json_obj then
-					create Result.make (create {SIMPLE_JSON_OBJECT}.make_with_json_object (l_json_obj))
+				check is_object: al_l_items.is_object end
+				if attached {JSON_OBJECT} al_l_items.json_value as al_l_json_obj then
+					create Result.make (create {SIMPLE_JSON_OBJECT}.make_with_json_object (al_l_json_obj))
 				end
 			end
 		end

@@ -284,15 +284,15 @@ feature {NONE} -- Implementation
 					-- For control characters (0x00-0x1F), use \uXXXX
 					if c.code < Ascii_control_char_boundary then
 						Result.append ("\u")
-						hex := c.code.to_hex_string
+						l_hex := c.code.to_hex_string
 						-- Pad with zeros to get 4 digits
 						from
 						until
-							hex.count >= Hex_digit_count
+							l_hex.count >= Hex_digit_count
 						loop
-							hex.prepend (Hex_padding_zero.to_string_8)
+							l_hex.prepend (Hex_padding_zero.to_string_8)
 						end
-						Result.append (hex.substring (hex.count - Hex_last_four_offset, hex.count))
+						Result.append (l_hex.substring (l_hex.count - Hex_last_four_offset, l_hex.count))
 					else
 						-- Preserve all other characters including Unicode
 						Result.append_character (c)

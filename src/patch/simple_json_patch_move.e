@@ -70,18 +70,18 @@ feature -- Operations
 			if attached from_path as al_l_from then
 				-- First, get the value at source location
 				create l_pointer
-				if l_pointer.parse_path (l_from) then
+				if l_pointer.parse_path (al_l_from) then
 					l_source_value := l_pointer.navigate (a_document)
 
 					if attached l_source_value as al_l_val then
 						-- Remove from source
-						if attached {SIMPLE_JSON_PATCH_REMOVE} create {SIMPLE_JSON_PATCH_REMOVE}.make (l_from) as al_l_remove then
-							l_remove_result := l_remove.apply (a_document)
+						if attached {SIMPLE_JSON_PATCH_REMOVE} create {SIMPLE_JSON_PATCH_REMOVE}.make (al_l_from) as al_l_remove then
+							l_remove_result := al_l_remove.apply (a_document)
 
 							if l_remove_result.is_success and attached l_remove_result.modified_document as al_l_doc_after_remove then
 								-- Add to destination
-								if attached {SIMPLE_JSON_PATCH_ADD} create {SIMPLE_JSON_PATCH_ADD}.make (path, l_val) as al_l_add then
-									l_add_result := l_add.apply (l_doc_after_remove)
+								if attached {SIMPLE_JSON_PATCH_ADD} create {SIMPLE_JSON_PATCH_ADD}.make (path, al_l_val) as al_l_add then
+									l_add_result := al_l_add.apply (al_l_doc_after_remove)
 									Result := l_add_result
 								else
 									create Result.make_failure ("Internal error creating add operation")
@@ -93,10 +93,10 @@ feature -- Operations
 							create Result.make_failure ("Internal error creating remove operation")
 						end
 					else
-						create Result.make_failure ("Source value not found at path: " + l_from.to_string_8)
+						create Result.make_failure ("Source value not found at path: " + al_l_from.to_string_8)
 					end
 				else
-					create Result.make_failure ("Invalid from path: " + l_from.to_string_8)
+					create Result.make_failure ("Invalid from path: " + al_l_from.to_string_8)
 				end
 			else
 				create Result.make_failure ("No from path specified for move operation")
