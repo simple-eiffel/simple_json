@@ -101,6 +101,30 @@ feature -- Error tracking
 			result_attached: Result /= Void
 		end
 
+feature -- Model Queries
+
+	elements_model: MML_SEQUENCE [SIMPLE_JSON_VALUE]
+			-- Mathematical model of parsed elements in order.
+		do
+			create Result
+			across elements as ic loop
+				Result := Result & ic
+			end
+		ensure
+			count_matches: Result.count = elements.count
+		end
+
+	stream_errors_model: MML_SEQUENCE [SIMPLE_JSON_ERROR]
+			-- Mathematical model of stream errors in order.
+		do
+			create Result
+			across errors as ic loop
+				Result := Result & ic
+			end
+		ensure
+			count_matches: Result.count = errors.count
+		end
+
 feature {SIMPLE_JSON_STREAM_CURSOR} -- Implementation
 
 	elements: LIST [SIMPLE_JSON_VALUE]
@@ -229,6 +253,10 @@ invariant
 
 	-- Element list quality (no void elements)
 	no_void_elements: across elements as ic_elem all ic_elem /= Void end
+
+	-- Model consistency
+	elements_model_count: elements_model.count = elements.count
+	errors_model_count: stream_errors_model.count = errors.count
 
 	-- Parse state consistency
 	-- If parsed successfully, we should have elements (unless array was empty)

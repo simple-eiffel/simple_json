@@ -58,6 +58,24 @@ feature -- Access
 			no_errors_if_valid: is_valid implies Result = 0
 		end
 
+feature -- Model Queries
+
+	errors_model: MML_SEQUENCE [SIMPLE_JSON_SCHEMA_VALIDATION_ERROR]
+			-- Mathematical model of validation errors in order.
+		local
+			i: INTEGER
+		do
+			create Result
+			from i := errors.lower until i > errors.upper loop
+				Result := Result & errors [i]
+				i := i + 1
+			end
+		ensure
+			count_matches: Result.count = error_count
+		end
+
+feature -- Conversion
+
 	error_messages: ARRAY [STRING_32]
 			-- Human-readable error messages
 		local
@@ -104,5 +122,8 @@ invariant
 
 	-- Error array quality (no void errors)
 	no_void_errors: across errors as ic_err all ic_err /= Void end
+
+	-- Model consistency
+	model_count: errors_model.count = error_count
 
 end

@@ -1,0 +1,103 @@
+# Phase 1m MML Coverage Report
+# Project: D:\prod\simple_json
+# Date: 2026-02-06 (updated - Tier 3 complete)
+# Mode: retrofit
+
+## Collection Attributes Found
+| Class | Attribute | Type | MML Type |
+|-------|-----------|------|----------|
+| SIMPLE_JSON_OBJECT | json_value | JSON_OBJECT (HASH_TABLE) | MML_MAP [STRING_32, detachable SIMPLE_JSON_VALUE] |
+| SIMPLE_JSON_ARRAY | json_value | JSON_ARRAY (list) | MML_SEQUENCE [SIMPLE_JSON_VALUE] |
+| SIMPLE_JSON_PATCH | operations | ARRAYED_LIST [SIMPLE_JSON_PATCH_OPERATION] | MML_SEQUENCE [SIMPLE_JSON_PATCH_OPERATION] |
+| SIMPLE_JSON_POINTER | segments | ARRAYED_LIST [STRING_32] | MML_SEQUENCE [STRING_32] |
+| SIMPLE_JSON_SERIALIZER | excluded_fields | ARRAYED_LIST [STRING] | MML_SEQUENCE [STRING] |
+| SIMPLE_JSON_BUILDER | json_object/json_array | SIMPLE_JSON_OBJECT/SIMPLE_JSON_ARRAY | MML_MAP/MML_SEQUENCE (pre-existing) |
+| SIMPLE_JSON_MERGE_PATCH | validation_errors | ARRAYED_LIST [STRING] | MML_SEQUENCE [STRING] |
+| SIMPLE_JSON_SCHEMA_VALIDATION_RESULT | errors | ARRAY [SIMPLE_JSON_SCHEMA_VALIDATION_ERROR] | MML_SEQUENCE [SIMPLE_JSON_SCHEMA_VALIDATION_ERROR] |
+| SIMPLE_JSON | last_errors | ARRAYED_LIST [SIMPLE_JSON_ERROR] | MML_SEQUENCE [SIMPLE_JSON_ERROR] |
+| SIMPLE_JSON_STREAM | elements | LIST [SIMPLE_JSON_VALUE] | MML_SEQUENCE [SIMPLE_JSON_VALUE] |
+| SIMPLE_JSON_STREAM | errors | ARRAYED_LIST [SIMPLE_JSON_ERROR] | MML_SEQUENCE [SIMPLE_JSON_ERROR] |
+
+## Model Queries Added/Verified
+| Class | Query | MML Type | Status |
+|-------|-------|----------|--------|
+| SIMPLE_JSON_OBJECT | entries_model | MML_MAP [STRING_32, detachable SIMPLE_JSON_VALUE] | ADDED (pass 1) |
+| SIMPLE_JSON_ARRAY | elements_model | MML_SEQUENCE [SIMPLE_JSON_VALUE] | ADDED (pass 1) |
+| SIMPLE_JSON_PATCH | operations_model | MML_SEQUENCE [SIMPLE_JSON_PATCH_OPERATION] | ADDED (pass 1) |
+| SIMPLE_JSON_POINTER | segments_model | MML_SEQUENCE [STRING_32] | ADDED (pass 1) |
+| SIMPLE_JSON_SERIALIZER | exclusions_model | MML_SEQUENCE [STRING] | ADDED (pass 1) |
+| SIMPLE_JSON_BUILDER | object_model | MML_MAP [STRING, detachable SIMPLE_JSON_VALUE] | VERIFIED (pre-existing) |
+| SIMPLE_JSON_BUILDER | array_model | MML_SEQUENCE [SIMPLE_JSON_VALUE] | VERIFIED (pre-existing) |
+| SIMPLE_JSON_MERGE_PATCH | validation_errors_model | MML_SEQUENCE [STRING] | ADDED (pass 2) |
+| SIMPLE_JSON_SCHEMA_VALIDATION_RESULT | errors_model | MML_SEQUENCE [SIMPLE_JSON_SCHEMA_VALIDATION_ERROR] | ADDED (pass 2) |
+| SIMPLE_JSON | errors_model | MML_SEQUENCE [SIMPLE_JSON_ERROR] | ADDED (pass 2) |
+| SIMPLE_JSON_STREAM | elements_model | MML_SEQUENCE [SIMPLE_JSON_VALUE] | ADDED (pass 2) |
+| SIMPLE_JSON_STREAM | stream_errors_model | MML_SEQUENCE [SIMPLE_JSON_ERROR] | ADDED (pass 2) |
+
+## Contracts Strengthened
+
+### Pass 1 (Tier 1+2 - high-mutation classes)
+- Postconditions added/enriched: 25
+  - SIMPLE_JSON_OBJECT: 9 put_* keys_frame + 1 remove model_domain + 1 wipe_out model_empty = 11
+  - SIMPLE_JSON_ARRAY: 9 add_* prefix_unchanged + 1 wipe_out model_empty = 10
+  - SIMPLE_JSON_PATCH: 6 builder prefix_unchanged = 6
+  - SIMPLE_JSON_SERIALIZER: 1 exclude_field old_preserved + 1 clear_exclusions model_empty = 2
+- Frame conditions added: 25
+- Invariants added: 5 (model_count on each Tier 1+2 class)
+
+### Pass 2 (Tier 3 - internal/immutable collections)
+- Postconditions enriched: 3
+  - SIMPLE_JSON.clear_errors: model_empty postcondition
+  - SIMPLE_JSON.add_error: count_increased + prefix_unchanged frame condition
+- Frame conditions added: 1 (add_error prefix_unchanged)
+- Invariants added: 5
+  - SIMPLE_JSON_MERGE_PATCH: model_count
+  - SIMPLE_JSON_SCHEMA_VALIDATION_RESULT: model_count
+  - SIMPLE_JSON: model_count
+  - SIMPLE_JSON_STREAM: elements_model_count, errors_model_count
+
+### Totals
+- Model queries: 12 (7 pass 1, 5 pass 2)
+- Postconditions: 28
+- Frame conditions: 26
+- Invariants: 10
+
+## Compilation
+Command: /d/prod/ec.sh test -config simple_json.ecf -target simple_json_tests
+Output: System Recompiled. Zero warnings. C compilation completed.
+Status: PASS
+
+## Test Execution
+Command: ./EIFGENs/simple_json_tests/F_code/simple_json.exe
+Result: 261 passed, 0 failed - ALL TESTS PASSED
+
+## Coverage Assessment
+FULL - All tiers complete
+
+Tier 1 (High value - public-facing, mutation-heavy):
+- SIMPLE_JSON_OBJECT: COMPLETE - model query + 11 frame conditions + invariant
+- SIMPLE_JSON_ARRAY: COMPLETE - model query + 10 frame conditions + invariant
+- SIMPLE_JSON_PATCH: COMPLETE - model query + 6 frame conditions + invariant
+
+Tier 2 (Moderate value - limited mutation):
+- SIMPLE_JSON_POINTER: COMPLETE - model query + invariant
+- SIMPLE_JSON_SERIALIZER: COMPLETE - model query + 2 frame conditions + invariant
+
+Tier 3 (Internal/immutable collections):
+- SIMPLE_JSON: COMPLETE - model query + 2 enriched postconditions + 1 frame condition + invariant
+- SIMPLE_JSON_STREAM: COMPLETE - 2 model queries + 2 invariants
+- SIMPLE_JSON_MERGE_PATCH: COMPLETE - model query + invariant
+- SIMPLE_JSON_SCHEMA_VALIDATION_RESULT: COMPLETE - model query + invariant
+
+Pre-existing (no changes needed):
+- SIMPLE_JSON_BUILDER: object_model + array_model already present with count postconditions
+
+## Design Notes
+
+Frame conditions use domain-based equality (MML_SET |=|) rather than full map equality
+for SIMPLE_JSON_OBJECT because SIMPLE_JSON_VALUE does not override is_equal.
+Domain-based frames correctly assert "no keys added or removed" without depending
+on wrapper object identity. MML_SEQUENCE prefix frames (|=|) work correctly for
+SIMPLE_JSON_ARRAY because the sequence captures element order and count.
+
+ECF: simple_mml dependency already present (no change needed).

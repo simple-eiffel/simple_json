@@ -206,6 +206,7 @@ feature -- Error Tracking
 		ensure
 			no_errors: not has_errors
 			empty_list: last_errors.is_empty
+			model_empty: errors_model.is_empty
 		end
 
 feature -- Building
@@ -368,6 +369,19 @@ feature -- JSONPath Queries
 				end
 			end
 		end
+feature -- Model Queries
+
+	errors_model: MML_SEQUENCE [SIMPLE_JSON_ERROR]
+			-- Mathematical model of parse errors in order.
+		do
+			create Result
+			across last_errors as ic loop
+				Result := Result & ic
+			end
+		ensure
+			count_matches: Result.count = last_errors.count
+		end
+
 feature {NONE} -- Implementation
 
 	last_json_text: detachable STRING_32
@@ -382,6 +396,8 @@ feature {NONE} -- Implementation
 		ensure
 			error_added: last_errors.has (a_error)
 			has_errors: has_errors
+			count_increased: last_errors.count = old last_errors.count + 1
+			prefix_unchanged: errors_model.front (old last_errors.count) |=| old errors_model
 		end
 
 	capture_parser_errors (a_parser: JSON_PARSER; a_json_text: STRING_32)
@@ -871,5 +887,8 @@ invariant
 	-- First error consistency
 	has_errors_implies_first_error: has_errors implies first_error /= Void
 	no_errors_implies_no_first_error: not has_errors implies first_error = Void
+
+	-- Model consistency
+	model_count: errors_model.count = last_errors.count
 
 end

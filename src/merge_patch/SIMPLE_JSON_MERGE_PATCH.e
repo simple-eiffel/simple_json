@@ -108,6 +108,19 @@ feature -- Status report
 			definition: Result = not validation_errors.is_empty
 		end
 
+feature -- Model Queries
+
+	validation_errors_model: MML_SEQUENCE [STRING]
+			-- Mathematical model of validation errors in order.
+		do
+			create Result
+			across validation_errors as ic loop
+				Result := Result & ic
+			end
+		ensure
+			count_matches: Result.count = validation_errors.count
+		end
+
 feature -- Operations
 
 	apply (a_target: SIMPLE_JSON_VALUE): SIMPLE_JSON_MERGE_PATCH_RESULT
@@ -414,6 +427,9 @@ invariant
 
 	-- Error list quality
 	no_void_error_messages: across validation_errors as ic_err all ic_err /= Void end
+
+	-- Model consistency
+	model_count: validation_errors_model.count = validation_errors.count
 
 note
 	copyright: "2025, Larry Rix"
