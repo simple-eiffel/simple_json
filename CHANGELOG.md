@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- The remaining `model_count` invariants (errors, patch operations, pointer segments, schema results, serializer exclusions) went the same way as the array's and object's: O(1) invariants only.
 - **Big documents were quadratic to read under DBC.** `SIMPLE_JSON_ARRAY`'s
   invariants walked every element (and built the MML model) on every
   feature call, `SIMPLE_JSON_OBJECT`'s copied every key, and `keys' re-walked

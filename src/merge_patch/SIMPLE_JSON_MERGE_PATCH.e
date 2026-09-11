@@ -417,6 +417,12 @@ feature {NONE} -- Implementation: Deep copy
 		end
 
 invariant
+	-- Per-element and model clauses were removed 2026-09-11: an
+	-- invariant runs on every feature call, so a clause that walks
+	-- the collection or builds its MML model makes every call O(n)
+	-- and a walk over the collection O(n^2) (simple_json read a
+	-- 1434-element array in 158 s under DBC). Models belong in
+	-- postconditions of the features that change them.
 	-- Core data integrity
 	patch_document_attached: patch_document /= Void
 	validation_errors_attached: validation_errors /= Void
@@ -429,7 +435,6 @@ invariant
 	no_void_error_messages: across validation_errors as ic_err all ic_err /= Void end
 
 	-- Model consistency
-	model_count: validation_errors_model.count = validation_errors.count
 
 note
 	copyright: "2025, Larry Rix"

@@ -223,6 +223,12 @@ feature {NONE} -- Implementation
 		end
 
 invariant
+	-- Per-element and model clauses were removed 2026-09-11: an
+	-- invariant runs on every feature call, so a clause that walks
+	-- the collection or builds its MML model makes every call O(n)
+	-- and a walk over the collection O(n^2) (simple_json read a
+	-- 1434-element array in 158 s under DBC). Models belong in
+	-- postconditions of the features that change them.
 	-- Segment list integrity
 	segments_attached: segments /= Void
 
@@ -231,7 +237,6 @@ invariant
 	no_empty_segments: across segments as ic_seg all not ic_seg.is_empty end
 
 	-- Model consistency
-	model_count: segments_model.count = segments.count
 
 note
 	copyright: "2025, Larry Rix"
