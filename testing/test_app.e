@@ -76,6 +76,7 @@ feature {NONE} -- Test Runners
 			run_test (agent simple_json_tests.test_parse_string, "test_parse_string")
 			run_test (agent simple_json_tests.test_parse_number, "test_parse_number")
 			run_test (agent simple_json_tests.test_parse_real, "test_parse_real")
+			run_test (agent simple_json_tests.test_as_real_on_integer, "test_as_real_on_integer")
 			run_test (agent simple_json_tests.test_parse_boolean_true, "test_parse_boolean_true")
 			run_test (agent simple_json_tests.test_parse_boolean_false, "test_parse_boolean_false")
 			run_test (agent simple_json_tests.test_parse_null, "test_parse_null")

@@ -121,12 +121,17 @@ feature -- Number access
 		end
 
 	as_real: DOUBLE
-			-- Get value as double
+			-- Get value as double. An integer JSON number is a number too;
+			-- JSON_NUMBER.real_64_item requires is_real, so integers convert.
 		require
 			is_number: is_number
 		do
 			if attached {JSON_NUMBER} json_value as al_l_number then
-				Result := al_l_number.real_64_item
+				if al_l_number.is_integer then
+					Result := al_l_number.integer_64_item.to_double
+				else
+					Result := al_l_number.real_64_item
+				end
 			end
 		end
 

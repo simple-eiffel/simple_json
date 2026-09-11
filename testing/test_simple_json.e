@@ -118,6 +118,27 @@ feature -- Test routines
 			end
 		end
 
+	test_as_real_on_integer
+			-- An integer JSON number is still a number; as_real must not fail on it.
+		local
+			json: SIMPLE_JSON
+		do
+			create json
+			if attached json.parse ("900") as v then
+				assert ("is_number", v.is_number)
+				assert ("is_integer", v.is_integer)
+				assert ("as_real_900", (v.as_real - 900.0).abs < 0.001)
+				assert ("real_value_900", (v.real_value - 900.0).abs < 0.001)
+			else
+				assert ("parse_failed", False)
+			end
+			if attached json.parse ("{%"h%": 19}") as o and then o.is_object then
+				assert ("real_item_19", (o.as_object.real_item ("h") - 19.0).abs < 0.001)
+			else
+				assert ("object_parse_failed", False)
+			end
+		end
+
 	test_parse_boolean_true
 		local
 			json: SIMPLE_JSON
