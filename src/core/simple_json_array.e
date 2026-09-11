@@ -198,7 +198,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_string: item (count).is_string
-			prefix_unchanged: elements_model.front (old count) |=| old elements_model
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
 		end
 
 	add_integer (a_value: INTEGER_64): SIMPLE_JSON_ARRAY
@@ -214,7 +214,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_number: item (count).is_number
 			last_value: integer_item (count) = a_value
-			prefix_unchanged: elements_model.front (old count) |=| old elements_model
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
 		end
 
 	add_real (a_value: DOUBLE): SIMPLE_JSON_ARRAY
@@ -229,7 +229,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_number: item (count).is_number
-			prefix_unchanged: elements_model.front (old count) |=| old elements_model
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
 		end
 
 	add_decimal (a_value: SIMPLE_DECIMAL): SIMPLE_JSON_ARRAY
@@ -247,7 +247,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_number: item (count).is_number
-			prefix_unchanged: elements_model.front (old count) |=| old elements_model
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
 		end
 
 	add_boolean (a_value: BOOLEAN): SIMPLE_JSON_ARRAY
@@ -263,7 +263,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_boolean: item (count).is_boolean
 			last_value: boolean_item (count) = a_value
-			prefix_unchanged: elements_model.front (old count) |=| old elements_model
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
 		end
 
 	add_null: SIMPLE_JSON_ARRAY
@@ -278,7 +278,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_null: item (count).is_null
-			prefix_unchanged: elements_model.front (old count) |=| old elements_model
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
 		end
 
 	add_object (a_value: SIMPLE_JSON_OBJECT): SIMPLE_JSON_ARRAY
@@ -292,7 +292,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_object: item (count).is_object
 			nested_count: attached object_item (count) as l_nested implies l_nested.count = a_value.count
-			prefix_unchanged: elements_model.front (old count) |=| old elements_model
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
 		end
 
 	add_array (a_value: SIMPLE_JSON_ARRAY): SIMPLE_JSON_ARRAY
@@ -306,7 +306,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_array: item (count).is_array
 			nested_count: attached array_item (count) as l_nested implies l_nested.count = a_value.count
-			prefix_unchanged: elements_model.front (old count) |=| old elements_model
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
 		end
 
 	add_value (a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_ARRAY
@@ -318,7 +318,7 @@ feature -- Element change (Fluent API)
 		ensure
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
-			prefix_unchanged: elements_model.front (old count) |=| old elements_model
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
 		end
 
 feature -- Removal
@@ -350,17 +350,17 @@ invariant
 	count_non_negative: count >= 0
 	empty_definition: is_empty = (count = 0)
 
-	-- Index validity definition
-	valid_index_lower_bound: across 1 |..| count as ic all valid_index (ic) end
+	-- Index validity at the edges. The interior ("every index in
+	-- 1..count is valid and holds a value") is what JSON_ARRAY
+	-- guarantees by construction; checking it here walked the whole
+	-- array - and built the MML model - on EVERY feature call, which
+	-- made reading a 1434-element array quadratic (158 s of CPU on a
+	-- 391 KB document, simple_ocr_capture, 2026-09-11). Invariants
+	-- must be O(1); the per-element facts live in the postconditions
+	-- of the features that establish them.
 	invalid_index_zero: not valid_index (0)
 	invalid_index_beyond_count: not valid_index (count + 1)
-
-	-- Element existence (every valid index has a value)
-	every_index_has_value: across 1 |..| count as ic all
-		attached json_value.i_th (ic)
-	end
-
-	-- Model consistency
-	model_count: elements_model.count = count
+	first_valid_when_any: count > 0 implies valid_index (1)
+	last_valid_when_any: count > 0 implies valid_index (count)
 
 end

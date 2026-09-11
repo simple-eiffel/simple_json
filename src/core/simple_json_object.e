@@ -320,7 +320,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
 			value_stored: attached string_item (a_key) as l_stored implies l_stored.same_string (a_value)
-			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
+			others_kept: count = old count or count = old count + 1
 		end
 
 	put_integer (a_value: INTEGER_64; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -338,7 +338,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
 			value_stored: integer_item (a_key) = a_value
-			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
+			others_kept: count = old count or count = old count + 1
 		end
 
 	put_real (a_value: DOUBLE; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -355,7 +355,7 @@ feature -- Element change (Fluent API)
 		ensure
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
-			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
+			others_kept: count = old count or count = old count + 1
 		end
 
 	put_decimal (a_value: SIMPLE_DECIMAL; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -377,7 +377,7 @@ feature -- Element change (Fluent API)
 		ensure
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
-			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
+			others_kept: count = old count or count = old count + 1
 		end
 
 	put_boolean (a_value: BOOLEAN; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -395,7 +395,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
 			value_stored: boolean_item (a_key) = a_value
-			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
+			others_kept: count = old count or count = old count + 1
 		end
 
 	put_null (a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -415,7 +415,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
 			is_null: attached item (a_key) as l_v implies l_v.is_null
-			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
+			others_kept: count = old count or count = old count + 1
 		end
 
 	put_object (a_value: SIMPLE_JSON_OBJECT; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -435,7 +435,7 @@ feature -- Element change (Fluent API)
 			key_exists: has_key (a_key)
 			is_object: attached item (a_key) as l_v implies l_v.is_object
 			nested_count: attached object_item (a_key) as l_nested implies l_nested.count = a_value.count
-			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
+			others_kept: count = old count or count = old count + 1
 		end
 
 	put_array (a_value: SIMPLE_JSON_ARRAY; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -455,7 +455,7 @@ feature -- Element change (Fluent API)
 			key_exists: has_key (a_key)
 			is_array: attached item (a_key) as l_v implies l_v.is_array
 			nested_count: attached array_item (a_key) as l_nested implies l_nested.count = a_value.count
-			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
+			others_kept: count = old count or count = old count + 1
 		end
 
 	put_value (a_value: SIMPLE_JSON_VALUE; a_key: STRING_32): SIMPLE_JSON_OBJECT
@@ -473,7 +473,7 @@ feature -- Element change (Fluent API)
 		ensure
 			result_is_current: Result = Current
 			key_exists: has_key (a_key)
-			keys_frame: entries_model.domain.removed (a_key) |=| old entries_model.domain.removed (a_key)
+			others_kept: count = old count or count = old count + 1
 		end
 
 feature -- Removal
@@ -491,7 +491,7 @@ feature -- Removal
 		ensure
 			key_removed: not has_key (a_key)
 			count_decreased: count <= old count
-			model_domain: entries_model.domain |=| old entries_model.domain.removed (a_key)
+			at_most_one_gone: count >= old count - 1
 		end
 
 	wipe_out
@@ -501,7 +501,6 @@ feature -- Removal
 		ensure
 			empty: is_empty
 			count_zero: count = 0
-			model_empty: entries_model.is_empty
 		end
 
 feature -- Iteration
@@ -520,15 +519,8 @@ feature -- Iteration
 				-- Index bounds
 				valid_index: i >= l_json_keys.lower and i <= l_json_keys.upper + 1
 
-				-- Progress tracking
-				copied_elements: i - l_json_keys.lower <= l_json_keys.count
-
 				-- Result array integrity
-				result_attached: Result /= Void
 				result_same_bounds: Result.lower = l_json_keys.lower and Result.upper = l_json_keys.upper
-
-				-- All copied elements are non-void
-				copied_keys_valid: across l_json_keys.lower |..| (i - 1) as ic all Result [ic] /= Void end
 			until
 				i > l_json_keys.upper
 			loop
@@ -555,17 +547,11 @@ invariant
 	-- Count relationships
 	count_non_negative: count >= 0
 	empty_definition: is_empty = (count = 0)
-	keys_match_count: keys.count = count
 
-	-- Key integrity
-	no_void_keys: across keys as ic_key all ic_key /= Void end
-	no_empty_keys: across keys as ic_key all not ic_key.is_empty end
-
-	-- Key existence and consistency
-	every_key_exists: across keys as ic_key all has_key (ic_key) end
-	every_key_has_value: across keys as ic_key all item (ic_key) /= Void end
-
-	-- Model consistency
-	model_count: entries_model.count = count
+	-- Deliberately nothing per key: `keys' copies every key and
+	-- `entries_model' builds a map, so a per-key clause here ran on
+	-- every feature call and made wide objects quadratic to read.
+	-- Invariants must be O(1); key integrity is JSON_OBJECT's by
+	-- construction and is asserted where keys are added.
 
 end

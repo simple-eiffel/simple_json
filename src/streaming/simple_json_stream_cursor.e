@@ -1,7 +1,10 @@
 note
 	description: "[
-		Iterator cursor for streaming JSON array elements.
-		Implements ITERATION_CURSOR for use with Eiffel's `across' loops.
+		The cursor of a SIMPLE_JSON_STREAM: one element in hand at a
+		time, pulled from the stream on demand. Creating it starts a
+		pass over the array; `forth' asks the stream for the next
+		element; `after' turns True when the array ends or the stream
+		faults. Nothing is buffered beyond the element in hand.
 		]"
 	date: "$Date$"
 	revision: "$Revision$"
@@ -19,91 +22,92 @@ create
 feature {NONE} -- Initialization
 
 	make (a_stream: SIMPLE_JSON_STREAM)
-			-- Initialize cursor for stream
-		require
-			stream_attached: a_stream /= Void
+			-- Begin a pass over `a_stream' and stand on its first element.
 		do
 			stream := a_stream
-			current_index := 0
 			start
 		ensure
 			stream_set: stream = a_stream
-			at_start: current_index = 1 or else stream.element_count = 0
 		end
 
 feature -- Access
 
 	item: SIMPLE_JSON_STREAM_ELEMENT
-			-- Current element
+			-- The element in hand.
 		require else
 			not_after: not after
-		local
-			l_value: detachable SIMPLE_JSON_VALUE
 		do
-			-- Get the current element from the stream
-			l_value := stream.elements.i_th (current_index)
-
-			check value_attached: attached l_value as al_value then
-				create Result.make (al_value, current_index)
+			check in_hand: attached current_value as al_value then
+				create Result.make (al_value, index)
 			end
 		end
+
+	index: INTEGER
+			-- Position of the element in hand, 1-based; 0 before the first.
 
 feature -- Status report
 
 	after: BOOLEAN
-			-- Is cursor past the last element?
-		do
-			Result := current_index > stream.element_count or else
-					  stream.element_count = 0
-		end
+			-- Is the pass over?
 
 feature -- Cursor movement
 
-	forth
-			-- Move to next element
+	start
+			-- Open (or reopen) the pass and take the first element.
 		do
-			current_index := current_index + 1
+			stream.open
+			index := 0
+			after := False
+			pull
+		ensure
+			at_first_or_done: index = 1 or after
 		end
 
-	start
-			-- Move to first element
+	forth
+			-- Take the next element.
 		do
-			if stream.element_count > 0 then
-				current_index := 1
-			else
-				current_index := 0
-			end
+			pull
+		ensure then
+			advanced: after or index = old index + 1
 		end
 
 feature {NONE} -- Implementation
 
 	stream: SIMPLE_JSON_STREAM
-			-- The stream being iterated
+			-- The stream being read.
 
-	current_index: INTEGER
-			-- Current position in stream (1-based, 0 means not started)
+	current_value: detachable SIMPLE_JSON_VALUE
+			-- The element in hand; Void once `after'.
+
+	pull
+			-- Ask the stream for one more element.
+		do
+			if stream.is_open then
+				current_value := stream.next_element
+			else
+				current_value := Void
+			end
+			if attached current_value then
+				index := index + 1
+			else
+				after := True
+			end
+		ensure
+			value_iff_not_after: (current_value /= Void) = not after
+		end
 
 invariant
-	-- Core data integrity
 	stream_attached: stream /= Void
+	index_non_negative: index >= 0
+	value_iff_not_after: (current_value /= Void) = not after
+	index_matches_stream: not after implies index = stream.element_count
 
-	-- Index validity
-	valid_index: current_index >= 0
-	reasonable_upper_bound: current_index <= stream.element_count + 1
-
-	-- After state consistency
-	after_definition: after = (current_index > stream.element_count or else stream.element_count = 0)
-
-	-- Cursor position semantics
-	-- current_index = 0: before first element
-	-- current_index in 1..element_count: valid element position
-	-- current_index > element_count: after last element
-	
 note
-	copyright: "Copyright (c) 2024, Larry Rix"
+	copyright: "Copyright (c) 2024-2026, Larry Rix"
 	license: "MIT License"
 	source: "[
 		SIMPLE_JSON Project
 		Streaming parser implementation
 	]"
+
 end

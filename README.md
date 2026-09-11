@@ -76,9 +76,31 @@ end
 - **JSON Patch** (RFC 6902) - add, remove, replace, move, copy, test
 - **JSON Merge Patch** (RFC 7386) - Declarative document merging
 - **JSONPath Queries** - SQL-like queries: "$.users[*].name"
-- **Streaming Parser** - Process gigabyte files with constant memory
+- **Streaming Parser** - `SIMPLE_JSON_STREAM` reads a file in chunks and hands out one array element at a time (root array, or the array under a top-level key); memory is one chunk plus one element, whatever the file size
+- **Linear at scale** - every invariant is O(1); a 3000-element array parses and walks in under half a second with all assertions on (see `BIG_DOCUMENT_TESTS`)
 - **Full Unicode** - every code point, emoji included, survives put/get and serialize/parse; since 0.2.0 `SIMPLE_JSON_TEXT` escapes and decodes all string text (ejson's own escaper is bypassed - it breaks beyond U+FFFF - and surrogate-pair escapes are combined)
 - **Decimal Precision** - Exact decimal values via simple_decimal (no floating-point artifacts)
+
+## Streaming a large array
+
+```eiffel
+local
+    stream: SIMPLE_JSON_STREAM
+do
+    -- the array under "events" in a root object; make_from_file for a root array
+    create stream.make_from_file_at ("captions.json3", "events")
+    across stream as ic loop
+        if ic.value.is_object then
+            print (ic.value.as_object.integer_item ("tStartMs").out + "%N")
+        end
+    end
+    if stream.has_errors then
+        print (stream.last_errors.first.message)
+    end
+end
+```
+
+The file is read `chunk_size` bytes at a time (64 KB by default, `set_chunk_size` to change); only the element in hand is ever parsed. A second `across` starts over.
 
 ## Installation
 

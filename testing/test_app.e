@@ -25,6 +25,8 @@ feature {NONE} -- Initialization
 			run_merge_patch_tests
 			run_patch_tests
 			run_stream_tests
+			print ("%N=== BIG DOCUMENT TESTS ===%N")
+			run_big_document_tests
 			run_error_tracking_tests
 			run_error_tracking_advanced_tests
 			run_decimal_tests
@@ -254,6 +256,20 @@ feature {NONE} -- Test Runners
 			run_test (agent patch_tests.test_to_json_string_move_operation, "test_to_json_string_move_operation")
 			run_test (agent patch_tests.test_to_json_string_copy_operation, "test_to_json_string_copy_operation")
 			run_test (agent patch_tests.test_to_json_string_test_operation, "test_to_json_string_test_operation")
+		end
+
+	run_big_document_tests
+		local
+			t: BIG_DOCUMENT_TESTS
+		do
+			create t
+			run_test (agent t.test_parse_and_walk_events, "test_parse_and_walk_events")
+			run_test (agent t.test_keys_of_wide_object, "test_keys_of_wide_object")
+			run_test (agent t.test_build_wide_array, "test_build_wide_array")
+			run_test (agent t.test_stream_events_from_string, "test_stream_events_from_string")
+			run_test (agent t.test_stream_events_from_file, "test_stream_events_from_file")
+			run_test (agent t.test_stream_root_array_of_strings_with_brackets, "test_stream_root_array_of_strings_with_brackets")
+			run_test (agent t.test_stream_unicode_survives_chunking, "test_stream_unicode_survives_chunking")
 		end
 
 	run_stream_tests

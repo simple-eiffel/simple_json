@@ -127,6 +127,25 @@
         <code class="code-inline">SIMPLE_JSON_STREAM</code> - Memory-Efficient Streaming for Large Files
     </p>
     <p>
+        The elements of one JSON array come out one at a time; the document is never held whole.
+        A file is read in chunks (64 KB by default, <code class="code-inline">set_chunk_size</code> to change),
+        each element's text is cut out by a structural scanner that honours strings, escapes and nesting,
+        and only that element is parsed. Memory is one chunk plus one element, whatever the file's size.
+    </p>
+    <p>
+        The array may be the document's root (<code class="code-inline">make_from_file</code>,
+        <code class="code-inline">make_from_string</code>) or sit under a top-level key of a root object
+        (<code class="code-inline">make_from_file_at (path, "events")</code>,
+        <code class="code-inline">make_from_string_at</code>); the members before it are skipped by
+        structure, not parsed. Iterate with <code class="code-inline">across stream as ic loop ic.value ... ic.index ... end</code>;
+        a second <code class="code-inline">across</code> starts over. An element the parser refuses ends the
+        stream with the reason in <code class="code-inline">last_errors</code>.
+    </p>
+    <p>
+        Measured with all assertions on: 3000 small objects stream in 375 ms from a file and 469 ms from a string
+        (<code class="code-inline">BIG_DOCUMENT_TESTS</code>).
+    </p>
+    <p>
         This component is part of the SIMPLE_JSON library providing comprehensive JSON manipulation capabilities.
         See the main <a href="../user_guide.html">User Guide</a> for complete usage examples.
     </p>
