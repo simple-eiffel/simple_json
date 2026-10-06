@@ -103,14 +103,23 @@ feature -- Malformed Input Tests
 		end
 
 	test_unclosed_string
-			-- Test unclosed string quote.
-			-- NOTE: This test is disabled as it can cause parser hangs on unclosed strings.
-			-- The underlying ISE JSON parser may enter infinite loop on this input.
+			-- Unclosed string quotes are rejected at once. ISE's JSON_PARSER does not stop at end
+			-- of input inside a string (~34 s and ~2 GB before failing), so SIMPLE_JSON refuses
+			-- such text before calling it; this test used to be disabled to avoid that hang.
+		local
+			l_json: SIMPLE_JSON
 		do
-			-- Test intentionally does nothing to avoid hanging
-			-- Real test would be: l_json.parse ("{%"key%": %"value}")
-			-- but unclosed strings can hang the parser
-			assert ("test_disabled_to_avoid_hang", True)
+			create l_json
+			assert ("torn object rejected", l_json.parse ({STRING_32} "{%"t%":%"hol") = Void)
+			assert ("error reported", l_json.has_errors)
+			assert ("error names it", l_json.last_errors.first.message.has_substring ({STRING_32} "Unterminated string"))
+			assert ("unclosed value rejected", l_json.parse ({STRING_32} "{%"key%": %"value}") = Void)
+			assert ("lone quote rejected", l_json.parse ({STRING_32} "%"") = Void)
+			assert ("trailing backslash rejected", l_json.parse ({STRING_32} "{%"k%":%"a\") = Void)
+			assert ("is_valid_json rejects", not l_json.is_valid_json ({STRING_32} "[%"open"))
+			assert ("escaped quote still parses", attached l_json.parse ({STRING_32} "{%"k%":%"a\%"b%"}"))
+			assert ("escaped backslash still parses", attached l_json.parse ({STRING_32} "{%"k%":%"a\\%"}"))
+			assert ("no errors after success", not l_json.has_errors)
 		end
 
 	test_trailing_comma_object

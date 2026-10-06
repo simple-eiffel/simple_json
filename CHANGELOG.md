@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **An unterminated string hung the parser for ~34 s and ~2 GB.** ISE's
+  `JSON_PARSER.next_json_string` does not stop at end of input, so text like
+  `{"t":"hol` (a torn JSONL line after a crash) kept appending NUL to its
+  buffer until the INTEGER index overflowed (~2^31 steps) and only then raised.
+  `parse` and `is_valid_json` now refuse such text before calling the parser,
+  with the error "Unterminated string starting at byte N". The adversarial test
+  `test_unclosed_string`, which had been disabled to avoid the hang, is real
+  again. Found by simple_prompter's journal replay, 2026-10-05.
 - The remaining `model_count` invariants (errors, patch operations, pointer segments, schema results, serializer exclusions) went the same way as the array's and object's: O(1) invariants only.
 - **Big documents were quadratic to read under DBC.** `SIMPLE_JSON_ARRAY`'s
   invariants walked every element (and built the MML model) on every

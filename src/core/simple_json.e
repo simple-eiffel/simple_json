@@ -45,6 +45,10 @@ feature -- Parsing
 			-- Convert STRING_32 to UTF-8 STRING_8 for the parser
 			l_utf8 := string_32_to_utf_8 (a_json_text)
 
+			if unterminated_string_at (l_utf8) > 0 then
+				-- Never hand JSON_PARSER an unterminated string (see `unterminated_string_at').
+				add_error (unterminated_string_error (l_utf8))
+			else
 			create l_parser.make_with_string (l_utf8)
 			l_parser.parse_content
 
@@ -66,6 +70,7 @@ feature -- Parsing
 					-- Capture errors from parser
 					capture_parser_errors (l_parser, a_json_text)
 				end
+			end
 			end
 		ensure
 			errors_cleared_on_success: Result /= Void implies not has_errors
@@ -113,6 +118,9 @@ feature -- Parsing
 			last_json_text := a_json_text
 
 			l_utf8 := string_32_to_utf_8 (a_json_text)
+			if unterminated_string_at (l_utf8) > 0 then
+				add_error (unterminated_string_error (l_utf8))
+			else
 			create l_parser.make_with_string (l_utf8)
 			l_parser.parse_content
 			Result := l_parser.is_valid
@@ -127,6 +135,7 @@ feature -- Parsing
 				if not Result then
 					capture_parser_errors (l_parser, a_json_text)
 				end
+			end
 			end
 		ensure
 			valid_implies_no_errors: Result implies not has_errors
@@ -383,6 +392,49 @@ feature -- Model Queries
 		end
 
 feature {NONE} -- Implementation
+
+	unterminated_string_at (a_utf8: READABLE_STRING_8): INTEGER
+			-- Byte position of the opening quote of a string literal that `a_utf8' never
+			-- closes, or 0 if every string is closed.
+			-- Guards ISE's JSON_PARSER: its `next_json_string' loop does not stop at end of
+			-- input, so an unterminated string (a torn JSONL line such as {"t":"hol) keeps
+			-- appending NUL until the INTEGER index overflows: ~2^31 steps, ~34 s and a ~2 GB
+			-- buffer before it fails (measured 2026-10-05, simple_prompter journal replay).
+		local
+			l_pos: INTEGER
+			l_in_string: BOOLEAN
+			l_open: INTEGER
+		do
+			from l_pos := 1 until l_pos > a_utf8.count loop
+				if l_in_string then
+					inspect a_utf8 [l_pos]
+					when '\' then
+						l_pos := l_pos + 1
+					when '"' then
+						l_in_string := False
+					else
+					end
+				elseif a_utf8 [l_pos] = '"' then
+					l_in_string := True
+					l_open := l_pos
+				end
+				l_pos := l_pos + 1
+			end
+			if l_in_string then
+				Result := l_open
+			end
+		ensure
+			in_range: Result >= 0 and Result <= a_utf8.count
+			at_a_quote: Result > 0 implies a_utf8 [Result] = '"'
+		end
+
+	unterminated_string_error (a_utf8: READABLE_STRING_8): SIMPLE_JSON_ERROR
+			-- Error describing the unterminated string in `a_utf8'.
+		require
+			has_unterminated: unterminated_string_at (a_utf8) > 0
+		do
+			create Result.make ({STRING_32} "Unterminated string starting at byte " + unterminated_string_at (a_utf8).out)
+		end
 
 	last_json_text: detachable STRING_32
 			-- The JSON text from the last parse operation (for error position calculation)
