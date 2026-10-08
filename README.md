@@ -14,7 +14,7 @@ Part of the [Simple Eiffel](https://github.com/simple-eiffel) ecosystem.
 
 ## Status
 
-✅ **Production Ready** — v1.0.0
+✅ **Production Ready** — v1.0.1
 - 265 tests passing, 100% coverage
 - JSON Schema Draft 7 validation
 - Full RFC compliance (6901, 6902, 7386)

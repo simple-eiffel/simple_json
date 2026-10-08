@@ -5,9 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.1] - 2026-10-08
 
 ### Fixed
+- Two documentation examples damaged by the 2026-02-05/06 naming-standards rename are back to their
+  original text (`simple_json_serializable.e`: `as n` / `n.to_string_8`; `simple_json_quick.e`: `as obj`).
+  Taken from the rename commits' own diffs; text only, no code change.
 - **An unterminated string hung the parser for ~34 s and ~2 GB.** ISE's
   `JSON_PARSER.next_json_string` does not stop at end of input, so text like
   `{"t":"hol` (a torn JSONL line after a crash) kept appending NUL to its

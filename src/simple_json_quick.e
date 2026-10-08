@@ -9,7 +9,7 @@ note
 			create json.make
 
 			-- Parse and query
-			if attached json.parse_object (json_string) as al_obj then
+			if attached json.parse_object (json_string) as obj then
 				name := json.string_at (obj, "user.name")
 				age := json.integer_at (obj, "user.age")
 			end
