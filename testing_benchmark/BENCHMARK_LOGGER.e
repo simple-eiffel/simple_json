@@ -18,7 +18,8 @@ feature {NONE} -- Initialization
 		do
 			create log_file.make_create_read_write (a_filename)
 			benchmark_count := 0
-			create start_time.make (1970, 1, 1, 0, 0, 0)  -- Initialize with epoch
+			create clock
+			start_nanoseconds := 0
 		ensure
 			file_created: log_file.exists
 		end
@@ -41,14 +42,14 @@ feature -- Logging
 		require
 			file_open: log_file.is_open_write
 		local
-			l_time: TIME
+			l_now: SIMPLE_DATE_TIME
 		do
-			create l_time.make_now
-			
+			create l_now.make_now
+
 			log_line (create_repeated_string ("=", 70))
 			log_line (a_title)
-			log_line ("Date: " + (create {DATE}.make_now).out)
-			log_line ("Time: " + l_time.formatted_out ("[0]hh:[0]mi:[0]ss"))
+			log_line ("Date: " + l_now.date.to_iso8601)
+			log_line ("Time: " + l_now.time.to_iso8601)
 			log_line (create_repeated_string ("=", 70))
 			log_line ("")
 		end
@@ -95,8 +96,8 @@ feature -- Logging
 			current_benchmark_name := a_name
 			current_iterations := a_iterations
 			
-			-- Capture start time using DATE_TIME
-			create start_time.make_now
+			-- Capture start time from the monotonic clock
+			start_nanoseconds := clock.nanoseconds
 			
 			log_line ("Benchmark: " + a_name)
 			log_line ("Iterations: " + a_iterations.out)
@@ -110,19 +111,13 @@ feature -- Logging
 			file_open: log_file.is_open_write
 			benchmark_started: current_benchmark_name /= Void
 		local
-			l_end_time: DATE_TIME
-			l_duration: DATE_TIME_DURATION
 			l_elapsed_ms: INTEGER_64
 			l_ops_per_sec: INTEGER
 		do
-			-- Capture end time and calculate duration
-			create l_end_time.make_now
-			l_duration := l_end_time.relative_duration (start_time)
-			
-			-- Convert to milliseconds
-			l_elapsed_ms := duration_to_milliseconds (l_duration)
-			
-			l_ops_per_sec := operations_per_second (current_iterations, l_elapsed_ms)
+			-- Elapsed milliseconds since `start_benchmark'
+			l_elapsed_ms := clock.elapsed_milliseconds (start_nanoseconds)
+
+			l_ops_per_sec := operations_per_second (current_iterations, l_elapsed_ms.max (1))
 			
 			log_line ("Duration: " + l_elapsed_ms.out + " ms")
 			log_line ("Operations/sec: " + format_with_commas (l_ops_per_sec))
@@ -149,28 +144,11 @@ feature {NONE} -- Implementation
 	current_iterations: INTEGER
 			-- Number of iterations in current benchmark
 
-	start_time: DATE_TIME
-			-- Start date/time of benchmark
+	clock: SIMPLE_MONOTONIC_CLOCK
+			-- Monotonic clock used for timing.
 
-	duration_to_milliseconds (a_duration: DATE_TIME_DURATION): INTEGER_64
-			-- Convert duration to milliseconds
-		local
-			l_seconds: INTEGER_64
-			l_fractional_ms: INTEGER_64
-		do
-			-- Get total seconds from days and time
-			l_seconds := a_duration.date.days_count.to_integer_64 * 86400 -- seconds in day
-			l_seconds := l_seconds + a_duration.time.seconds_count.to_integer_64
-			
-			-- Convert to milliseconds
-			Result := l_seconds * 1000
-			
-			-- Add fractional seconds as milliseconds
-			l_fractional_ms := (a_duration.time.fractional_second * 1000).truncated_to_integer_64
-			Result := Result + l_fractional_ms
-		ensure
-			non_negative: Result >= 0
-		end
+	start_nanoseconds: INTEGER_64
+			-- Monotonic clock reading when the current benchmark started.
 
 	log_line (a_message: STRING)
 			-- Write message to both file and console

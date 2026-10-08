@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-10-08
+
+### Fixed
+- The `simple_json_benchmark` target compiles again (4 VTCT). BENCHMARK_LOGGER used the ISE `TIME`, `DATE`,
+  `DATE_TIME` and `DATE_TIME_DURATION`, which the target no longer sees. It now times with the new
+  `SIMPLE_MONOTONIC_CLOCK` from simple_datetime (0.1.2) and stamps the header with `SIMPLE_DATE_TIME`. No ISE
+  `time` library is added. Operations per second now use at least 1 ms so a sub-millisecond run cannot violate
+  its precondition.
+
 ## [1.0.2] - 2026-10-08
 
 ### Fixed
