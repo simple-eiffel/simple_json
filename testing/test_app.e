@@ -36,6 +36,9 @@ feature {NONE} -- Initialization
 			print ("%N=== ADVERSARIAL TESTS ===%N")
 			run_adversarial_tests
 
+			print ("%N=== EMPTY ARRAY ADD TESTS ===%N")
+			run_empty_array_add_tests
+
 			print ("%N=== STRESS TESTS ===%N")
 			run_stress_tests
 
@@ -346,6 +349,24 @@ feature {NONE} -- Test Runners
 			run_test (agent serializer_tests.test_serialize_nested_object, "test_serialize_nested_object")
 			run_test (agent serializer_tests.test_serialize_to_string, "test_serialize_to_string")
 			run_test (agent serializer_tests.test_exclude_field, "test_exclude_field")
+		end
+
+	run_empty_array_add_tests
+			-- The first add to an array must not fault (1.0.2).
+		local
+			t: EMPTY_ARRAY_ADD_TESTS
+		do
+			create t
+			run_test (agent t.test_add_string_to_empty_array_faults_nothing, "test_add_string_to_empty_array_faults_nothing")
+			run_test (agent t.test_add_integer_to_empty_array_faults_nothing, "test_add_integer_to_empty_array_faults_nothing")
+			run_test (agent t.test_add_real_to_empty_array_faults_nothing, "test_add_real_to_empty_array_faults_nothing")
+			run_test (agent t.test_add_decimal_to_empty_array_faults_nothing, "test_add_decimal_to_empty_array_faults_nothing")
+			run_test (agent t.test_add_boolean_to_empty_array_faults_nothing, "test_add_boolean_to_empty_array_faults_nothing")
+			run_test (agent t.test_add_null_to_empty_array_faults_nothing, "test_add_null_to_empty_array_faults_nothing")
+			run_test (agent t.test_add_object_to_empty_array_faults_nothing, "test_add_object_to_empty_array_faults_nothing")
+			run_test (agent t.test_add_array_to_empty_array_faults_nothing, "test_add_array_to_empty_array_faults_nothing")
+			run_test (agent t.test_add_value_to_empty_array_faults_nothing, "test_add_value_to_empty_array_faults_nothing")
+			run_test (agent t.test_second_add_keeps_the_first, "test_second_add_keeps_the_first")
 		end
 
 	run_adversarial_tests

@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-10-08
+
+### Fixed
+- **The first add to any array faulted - and under SCOOP it killed the
+  process.** Every `SIMPLE_JSON_ARRAY` add feature (`add_string`, `add_integer`,
+  `add_real`, `add_decimal`, `add_boolean`, `add_null`, `add_object`,
+  `add_array`, `add_value`) carried `previous_kept: old count = 0 or else
+  json_value.i_th (old count) = old json_value.i_th (count)`. An `old`
+  expression is evaluated on entry whatever guards the clause, so on an
+  empty array it ran `i_th (0)`. ejson's `JSON_ARRAY` and base's
+  `ARRAYED_LIST` check no preconditions in a client build: the read took the
+  storage's block header as a reference and dereferenced it, a segmentation
+  fault. One thread at a time the runtime turned it into an
+  `OPERATING_SYSTEM_SIGNAL_FAILURE` that the old-expression trap kept and
+  never raised, so no test failed. Several SCOOP processors faulting together
+  killed simple_chat's server ("PANIC: caught signal #11", or no word at all)
+  a few dozen posts into a busy room, 2026-10-08. The clause now takes `old
+  last_json_value`, which is Void on an empty array and never indexes outside
+  `1..count`. Introduced with the O(1) postconditions of 2026-09-11.
+- New `EMPTY_ARRAY_ADD_TESTS` (10 tests) read the runtime's last exception
+  around each add to an empty array: 9 failed before the fix, all pass after.
+  New target `simple_json_scoop_tests` (SCOOP): eight processors build 20,000
+  arrays each from empty. Before the fix it died with a segmentation fault on
+  5 runs of 5; after it, 480,000 elements and 0 faults on 5 of 5.
+
 ## [1.0.1] - 2026-10-08
 
 ### Fixed

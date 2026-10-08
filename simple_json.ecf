@@ -38,7 +38,26 @@
 		<variable name="SYSTEM_PATH" value="$SIMPLE_EIFFEL/simple_json"/>
 		<library name="simple_testing" location="$SIMPLE_EIFFEL/simple_testing/simple_testing.ecf"/>
 		<library name="testing" location="$ISE_LIBRARY\library\testing\testing.ecf"/>
-		<cluster name="test" location=".\testing\" recursive="true"/>
+		<cluster name="test" location=".\testing\" recursive="true">
+			<file_rule>
+				<exclude>/scoop$</exclude>
+			</file_rule>
+		</cluster>
+	</target>
+	<!-- The empty-array assault (1.0.2). Every first add to a SIMPLE_JSON_ARRAY faulted inside its
+	     own postcondition; one thread at a time the runtime hid it, but processors faulting together
+	     killed simple_chat's server. Proving it needs several processors, so this target is SCOOP
+	     where the others are threads. -->
+	<target name="simple_json_scoop_tests" extends="simple_json">
+		<root class="SCOOP_TEST_APP" feature="make"/>
+		<option warning="warning">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<capability>
+			<concurrency use="scoop"/>
+		</capability>
+		<cluster name="scoop_tests" location=".\testing\scoop\" recursive="true"/>
 	</target>
 	<target name="simple_json_benchmark" extends="simple_json_tests">
 		<description>benchmarking code</description>

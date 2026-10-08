@@ -198,7 +198,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_string: item (count).is_string
-			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old last_json_value
 		end
 
 	add_integer (a_value: INTEGER_64): SIMPLE_JSON_ARRAY
@@ -214,7 +214,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_number: item (count).is_number
 			last_value: integer_item (count) = a_value
-			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old last_json_value
 		end
 
 	add_real (a_value: DOUBLE): SIMPLE_JSON_ARRAY
@@ -229,7 +229,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_number: item (count).is_number
-			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old last_json_value
 		end
 
 	add_decimal (a_value: SIMPLE_DECIMAL): SIMPLE_JSON_ARRAY
@@ -247,7 +247,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_number: item (count).is_number
-			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old last_json_value
 		end
 
 	add_boolean (a_value: BOOLEAN): SIMPLE_JSON_ARRAY
@@ -263,7 +263,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_boolean: item (count).is_boolean
 			last_value: boolean_item (count) = a_value
-			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old last_json_value
 		end
 
 	add_null: SIMPLE_JSON_ARRAY
@@ -278,7 +278,7 @@ feature -- Element change (Fluent API)
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
 			last_is_null: item (count).is_null
-			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old last_json_value
 		end
 
 	add_object (a_value: SIMPLE_JSON_OBJECT): SIMPLE_JSON_ARRAY
@@ -292,7 +292,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_object: item (count).is_object
 			nested_count: attached object_item (count) as l_nested implies l_nested.count = a_value.count
-			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old last_json_value
 		end
 
 	add_array (a_value: SIMPLE_JSON_ARRAY): SIMPLE_JSON_ARRAY
@@ -306,7 +306,7 @@ feature -- Element change (Fluent API)
 			count_increased: count = old count + 1
 			last_is_array: item (count).is_array
 			nested_count: attached array_item (count) as l_nested implies l_nested.count = a_value.count
-			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old last_json_value
 		end
 
 	add_value (a_value: SIMPLE_JSON_VALUE): SIMPLE_JSON_ARRAY
@@ -318,7 +318,7 @@ feature -- Element change (Fluent API)
 		ensure
 			result_is_current: Result = Current
 			count_increased: count = old count + 1
-			previous_kept: old count = 0 or else json_value.i_th (old count) = old json_value.i_th (count)
+			previous_kept: old count = 0 or else json_value.i_th (old count) = old last_json_value
 		end
 
 feature -- Removal
@@ -332,6 +332,33 @@ feature -- Removal
 			count_zero: count = 0
 			model_empty: elements_model.is_empty
 		end
+
+feature {NONE} -- Contract support
+
+	last_json_value: detachable JSON_VALUE
+			-- The last element of `json_value', or Void when there is none:
+			-- the value the add features' `previous_kept' takes as `old'.
+			--
+			-- An `old' expression is evaluated on ENTRY, whatever guard the
+			-- clause that uses it carries. `old json_value.i_th (count)' therefore
+			-- ran `i_th (0)' on every add to an EMPTY array, and neither ejson's
+			-- JSON_ARRAY nor base's ARRAYED_LIST checks its preconditions in a
+			-- client build: it read the word before the list's storage (the
+			-- block header) as a reference and dereferenced it. That is a
+			-- segmentation fault on every first add. The runtime turned it into
+			-- an OPERATING_SYSTEM_SIGNAL_FAILURE that the old-expression trap
+			-- kept and never raised - until SCOOP processors faulted together and
+			-- the process died (simple_chat's server, 2026-10-08). This query
+			-- never indexes outside 1..count.
+		do
+			if json_value.count > 0 then
+				Result := json_value.i_th (json_value.count)
+			end
+		ensure
+			void_when_empty: json_value.count = 0 implies Result = Void
+			last_otherwise: json_value.count > 0 implies Result = json_value.i_th (json_value.count)
+		end
+
 feature -- Constants
 
 	Max_reasonable_string_length: INTEGER = 10_000_000
