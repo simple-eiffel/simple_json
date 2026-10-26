@@ -47,7 +47,7 @@ First error:
 
 			if attached json.first_error as err then
 				l_actual_output.append_string ("First error:%N")
-				l_actual_output.append_string ("  Message: " + err.message + "%N")
+				l_actual_output.append_string ({STRING_32} "  Message: " + err.message + "%N")
 				l_actual_output.append_string ("  Line: " + err.line.out + "%N")
 				l_actual_output.append_string ("  Column: " + err.column.out + "%N")
 				l_actual_output.append_string ("  Position: " + err.position.out + "%N")

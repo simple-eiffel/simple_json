@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-10-26
+
+### Changed
+- Dropped the ISE `logging` library from the library target: nothing used it. Clean build, 283 pass.
+- Zero compiler warnings: five test lines use `{STRING_32}` literals (obsolete `as_string_8`).
+
+### Known
+- simple_json still builds on the ISE contrib `json` parser and value classes. Against the simple_* rule; to be
+  replaced by simple_json's own.
+
 ## [1.0.3] - 2026-10-08
 
 ### Fixed

@@ -72,7 +72,7 @@ feature -- Volume Tests
 		do
 			create l_json
 			create l_long.make_filled ('A', 10000)
-			if attached l_json.parse ("{%"text%": %"" + l_long.to_string_32 + "%"}") as v then
+			if attached l_json.parse ({STRING_32} "{%"text%": %"" + l_long.to_string_32 + "%"}") as v then
 				if attached v.as_object.string_item ("text") as s then
 					assert ("long_string", s.count = 10000)
 				end

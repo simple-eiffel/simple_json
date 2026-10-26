@@ -117,6 +117,7 @@ SIMPLE_EIFFEL=D:\prod
 ## Dependencies
 
 - simple_decimal (for exact decimal support)
+- ISE contrib `json` (the parser and value classes underneath SIMPLE_JSON; to be replaced by simple_json's own - the simple_* rule)
 
 ## Decimal Precision
 
