@@ -79,7 +79,7 @@ Name: Alice
 				value := v
 				name := json.query_string (value, "$.person.name")
 				if attached name then
-					l_actual_output.append_string ("Name: " + name + "%N")
+					l_actual_output.append_string ({STRING_32} "Name: " + name + "%N")
 				end
 			end
 
@@ -133,7 +133,7 @@ Street: 123 Main St
 				value := v
 				street := json.query_string (value, "$.person.address.street")
 				if attached street then
-					l_actual_output.append_string ("Street: " + street + "%N")
+					l_actual_output.append_string ({STRING_32} "Street: " + street + "%N")
 				end
 			end
 
@@ -163,7 +163,7 @@ First hobby: reading
 				value := v
 				hobby := json.query_string (value, "$.person.hobbies[0]")
 				if attached hobby then
-					l_actual_output.append_string ("First hobby: " + hobby + "%N")
+					l_actual_output.append_string ({STRING_32} "First hobby: " + hobby + "%N")
 				end
 			end
 
