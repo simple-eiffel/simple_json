@@ -63,43 +63,15 @@ feature -- Malformed Input Tests
 		end
 
 	test_unclosed_object
-			-- Test unclosed object brace.
-			-- NOTE: Parser behavior varies - test graceful handling.
-		local
-			l_json: SIMPLE_JSON
-			l_parsed: detachable SIMPLE_JSON_VALUE
-			l_retried: BOOLEAN
+			-- Unclosed object brace is rejected, not raised.
 		do
-			if not l_retried then
-				create l_json
-				-- Parser may raise exception on malformed input - that's acceptable
-				l_parsed := l_json.parse ("{%"key%": %"value%"")
-			end
-			-- Test passes if we get here (either parsed or caught exception)
-			assert ("handled_gracefully", True)
-		rescue
-			l_retried := True
-			retry
+			assert_rejected ("rejected", "{%"key%": %"value%"")
 		end
 
 	test_unclosed_array
-			-- Test unclosed array bracket.
-			-- NOTE: Parser behavior varies - test graceful handling.
-		local
-			l_json: SIMPLE_JSON
-			l_parsed: detachable SIMPLE_JSON_VALUE
-			l_retried: BOOLEAN
+			-- Unclosed array bracket is rejected, not raised.
 		do
-			if not l_retried then
-				create l_json
-				-- Parser may raise exception on malformed input - that's acceptable
-				l_parsed := l_json.parse ("[1, 2, 3")
-			end
-			-- Test passes if we get here (either parsed or caught exception)
-			assert ("handled_gracefully", True)
-		rescue
-			l_retried := True
-			retry
+			assert_rejected ("rejected", "[1, 2, 3")
 		end
 
 	test_unclosed_string
@@ -123,111 +95,33 @@ feature -- Malformed Input Tests
 		end
 
 	test_trailing_comma_object
-			-- Test trailing comma in object (invalid per RFC 8259).
-			-- NOTE: Parser may be lenient or raise exception - test graceful handling.
-		local
-			l_json: SIMPLE_JSON
-			l_retried: BOOLEAN
+			-- A trailing comma in an object is rejected.
 		do
-			if not l_retried then
-				create l_json
-				if attached l_json.parse ("{%"a%": 1,}") as v then
-					assert ("lenient_is_object", v.is_object)
-				else
-					assert ("rejected", True)
-				end
-			else
-				assert ("exception_handled", True)
-			end
-		rescue
-			l_retried := True
-			retry
+			assert_rejected ("rejected", "{%"a%": 1,}")
 		end
 
 	test_trailing_comma_array
-			-- Test trailing comma in array (invalid per RFC 8259).
-			-- NOTE: Parser may be lenient or raise exception - test graceful handling.
-		local
-			l_json: SIMPLE_JSON
-			l_retried: BOOLEAN
+			-- A trailing comma in an array is rejected.
 		do
-			if not l_retried then
-				create l_json
-				if attached l_json.parse ("[1, 2, 3,]") as v then
-					assert ("lenient_is_array", v.is_array)
-				else
-					assert ("rejected", True)
-				end
-			else
-				assert ("exception_handled", True)
-			end
-		rescue
-			l_retried := True
-			retry
+			assert_rejected ("rejected", "[1, 2,]")
 		end
 
 	test_leading_zeros_number
-			-- Test number with leading zeros (invalid per RFC 8259).
-			-- NOTE: Parser may be lenient or raise exception - test graceful handling.
-		local
-			l_json: SIMPLE_JSON
-			l_retried: BOOLEAN
+			-- Leading zeros are rejected.
 		do
-			if not l_retried then
-				create l_json
-				if attached l_json.parse ("007") as v then
-					assert ("lenient_is_number", v.is_number or v.is_integer)
-				else
-					assert ("rejected", True)
-				end
-			else
-				assert ("exception_handled", True)
-			end
-		rescue
-			l_retried := True
-			retry
+			assert_rejected ("rejected", "007")
 		end
 
 	test_infinity_rejected
-			-- Test that Infinity is rejected (not valid JSON).
-		local
-			l_json: SIMPLE_JSON
-			l_retried: BOOLEAN
+			-- Infinity is not valid JSON.
 		do
-			if not l_retried then
-				create l_json
-				if attached l_json.parse ("Infinity") as v then
-					assert ("handled_gracefully", True)
-				else
-					assert ("rejected", True)
-				end
-			else
-				assert ("exception_handled", True)
-			end
-		rescue
-			l_retried := True
-			retry
+			assert_rejected ("rejected", "Infinity")
 		end
 
 	test_nan_rejected
-			-- Test that NaN is rejected (not valid JSON).
-		local
-			l_json: SIMPLE_JSON
-			l_retried: BOOLEAN
+			-- NaN is not valid JSON.
 		do
-			if not l_retried then
-				create l_json
-				if attached l_json.parse ("NaN") as v then
-					assert ("handled_gracefully", True)
-				else
-					assert ("rejected", True)
-				end
-			else
-				assert ("exception_handled", True)
-			end
-		rescue
-			l_retried := True
-			retry
+			assert_rejected ("rejected", "NaN")
 		end
 
 feature -- String Escape Tests
@@ -281,31 +175,9 @@ feature -- String Escape Tests
 		end
 
 	test_control_character_rejected
-			-- Test that raw control characters are rejected.
-			-- NOTE: Parser may be lenient or raise exception - test graceful handling.
-		local
-			l_json: SIMPLE_JSON
-			l_bad: STRING_32
-			l_retried: BOOLEAN
+			-- A raw control character in a string is rejected.
 		do
-			if not l_retried then
-				create l_json
-				create l_bad.make (20)
-				l_bad.append ("{%"test%": %"")
-				l_bad.append_character ('%U')  -- Null character
-				l_bad.append ("%"}")
-				-- Control characters must be escaped
-				if attached l_json.parse (l_bad) as v then
-					assert ("lenient_is_object", v.is_object)
-				else
-					assert ("control_rejected", True)
-				end
-			else
-				assert ("exception_handled", True)
-			end
-		rescue
-			l_retried := True
-			retry
+			assert_rejected ("rejected", "%"a%Nb%"")
 		end
 
 feature -- Type Coercion Tests
@@ -554,8 +426,7 @@ feature -- Serializer Adversarial Tests
 			create l_serializer.make
 			create l_obj
 			l_json := l_serializer.to_json (l_obj)
-			-- Should return empty JSON object
-			assert ("empty_object", True)  -- Just verify it doesn't crash
+			assert_integers_equal ("empty_object", 0, l_json.count)
 		end
 
 	test_serialize_with_null_field
@@ -664,6 +535,18 @@ feature -- UTF-8 BOM Tests
 			if l_file.exists then
 				l_file.delete
 			end
+		end
+
+feature {NONE} -- Helpers
+
+	assert_rejected (a_label: STRING; a_text: STRING_32)
+			-- Assert that `a_text' gives no value and at least one error, without an exception.
+		local
+			l_json: SIMPLE_JSON
+		do
+			create l_json
+			assert (a_label + " no value", l_json.parse (a_text) = Void)
+			assert (a_label + " has errors", l_json.has_errors)
 		end
 
 end

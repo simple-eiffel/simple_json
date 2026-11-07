@@ -471,10 +471,11 @@ feature {NONE} -- Implementation
 
 				if l_position > 0 then
 					-- Create error with position information
+					-- JSON_PARSER can report a position past the end of unclosed input.
 					create l_error.make_with_position (
 						remove_position_from_message (l_error_text),
 						a_json_text,
-						l_position
+						l_position.min (a_json_text.count + 1)
 					)
 				else
 					-- Create error without position
