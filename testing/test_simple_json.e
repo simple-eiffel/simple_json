@@ -271,20 +271,36 @@ feature -- Test routines
 		end
 
 	test_unicode_string
+			-- Chinese and Russian survive storing, writing out as JSON text and parsing back.
+			-- The text is written by code point: a literal in a file without a BOM is read as
+			-- Latin-1, and the old test compared that garbage with itself.
 		local
 			json: SIMPLE_JSON
 			obj: SIMPLE_JSON_OBJECT
+			l_chinese, l_russian: STRING_32
+			l_back: SIMPLE_JSON_OBJECT
 		do
+			l_chinese := {STRING_32} "%/20320/%/22909/"
+			l_russian := {STRING_32} "%/1047/%/1076/%/1088/%/1072/%/1074/%/1089/%/1090/%/1074/%/1091/%/1081/"
+			assert ("really chinese (U+4F60)", l_chinese.count = 2 and l_chinese.item (1).code = 0x4F60)
+			assert ("really russian (U+0417)", l_russian.count = 10 and l_russian.item (1).code = 0x0417)
 			create json
 			obj := json.new_object
 				.put_string ("Hello", "english")
-				.put_string ("你好", "chinese")
-				.put_string ("Здравствуй", "russian")
+				.put_string (l_chinese, "chinese")
+				.put_string (l_russian, "russian")
 			assert_integers_equal ("count_3", 3, obj.count)
 			if attached obj.string_item ("chinese") as s then
-				assert_strings_equal ("chinese_correct", "你好", s)
+				assert ("chinese_stored", s.same_string (l_chinese))
 			else
 				assert ("chinese_exists", False)
+			end
+			if attached json.parse (obj.to_json_string) as al_parsed and then al_parsed.is_object then
+				l_back := al_parsed.as_object
+				assert ("chinese_round_trip", attached l_back.string_item ("chinese") as c and then c.same_string (l_chinese))
+				assert ("russian_round_trip", attached l_back.string_item ("russian") as r and then r.same_string (l_russian))
+			else
+				assert ("parses_back", False)
 			end
 		end
 
